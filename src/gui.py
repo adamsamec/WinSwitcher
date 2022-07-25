@@ -64,7 +64,7 @@ class MainFrame(wx.Frame):
   
   # Handles  the window close event.
   def onClose(self, event):
-    self.switcher.hideAppSwitcherAndShowLastWindow()
+    self.switcher.hideAppSwitcherAndShowPrevWindow()
 
   # Handles the window activate or deactivate event.
   def onActivate(self, event):
@@ -93,7 +93,7 @@ class MainFrame(wx.Frame):
 
   # Handles the help button click.
   def onHelpButtonClick(self, event):
-    helpDialog = HelpHTMLDialog(title = 'Help{}{}'.format(MainFrame.WINDOW_TITLE_SEPARATOR, MainFrame.WINDOW_TITLE), parent = self)
+    helpDialog = HelpHTMLDialog(title=f'Help{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
 
   # Update the running apps listbox
   def updateList(self, apps):
@@ -106,7 +106,7 @@ class MainFrame(wx.Frame):
   def switchToSelectedApp(self):
     pos = self.appsListbox.GetSelection()
     pid = self.apps[pos]['pid']
-    self.switcher.switchToApp(pid)
+    self.switcher.switchToWindow(pid)
 
 # Help HTML dialog class.
 class HelpHTMLDialog(wx.Dialog):
