@@ -1,3 +1,7 @@
+# TODO:
+# * Implement list filtering by typing.
+# * Group command line windows into single app.
+
 import rich
 import subprocess
 import sys
@@ -31,18 +35,18 @@ class WinSwitcher:
   def __init__(self, config):
     self.config = config  
     self.pressedKeys = set()
-    self.appsWindowPid= self.getForegroundWindowPid()
-    self.prevWindowPid = self.appsWindowPid
+    self.uiPid= self.getForegroundAppPid()
+    self.prevAppPid = self.uiPid
     self.runningWindows = []
 
   # Returns the PID of the window in the foreground.
-  def getForegroundWindowPid(self):
+  def getForegroundAppPid(self):
     pids = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow())
     return pids[-1]
 
       # Sets the apps UI object for the switcher.
-  def setAppsAppsUI(self, ui):
-    self.appsUi = ui
+  def setUI(self, ui):
+    self.ui = ui
 
   # Returns the title of the app specified by PID
   def getAppTitle(self, pid):
@@ -72,7 +76,17 @@ class WinSwitcher:
       }
       self.runningWindows.append(window)
 
-  # Returns the list of running apps titles, their PIDs and corresponding windows.
+  # Updates the list of the currently running windows.
+  def updateRunningWindows(self):
+    self.runningWindows = []
+    win32gui.EnumWindows(self.winEnumHandler, None)
+
+    # Rename the  title for File Explorer desktop item
+    window = self.runningWindows[-1]
+    if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
+      window['title'] = WinSwitcher.TITLE_REPLACEMENTS['Program Manager']
+
+  # Returns a list of running apps titles, their PIDs and corresponding windows.
   def getRunningAppsAndWindows(self):
     gpsCommand = 'powershell "Get-Process | where {$_.MainWindowTitle } | select ProcessName,Id"'
     gpsProcess = subprocess.Popen(gpsCommand, shell=True, stdout=subprocess.PIPE)
@@ -121,58 +135,87 @@ class WinSwitcher:
     apps.insert(0, app)
 
     # Complement the apps dictionary with corresponding running windows
-    self.runningWindows = []
-    win32gui.EnumWindows(self.winEnumHandler, None)
+    self.updateRunningWindows()
+
     for app in apps:
       num = 0
       for window in self.runningWindows:
         if window['parentPid'] == app['pid']:
-          # Rename the window title for File Explorer desktop
-          if (num == len(self.runningWindows) - 1) and (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
-            window['title'] = WinSwitcher.TITLE_REPLACEMENTS['Program Manager']
+          if window['filename'] == 'explorer.exe':
+            # Add hwnd for the FileExplorer app if not already added
+            try:
+              app['lastWindowHwnd']
+            except KeyError:
+              app['lastWindowHwnd'] = window['hwnd']
           app['windows'].append(window)
         num += 1
           # rich.print(apps)
     return apps
 
-  # Switches to the app specified by the given PID.
-  def switchToApp(self, pid):
+  # Returns a list of windows for the application in the foreground.
+  def getForegroundAppWindows(self):
+    self.updateRunningWindows()
+    windows = []
+    pid = self.getForegroundAppPid()
+    for window in self.runningWindows:
+      if window['parentPid'] == pid:
+        windows.append(window)
+    return windows
+
+  # Switches to the given app.
+  def switchToApp(self, app):
     try:
-      app = Application().connect(process=pid)
-      app.top_window().set_focus()
-    except:
-      print(f'Switching to app with PID: {pid} failed.')
+      # Apps which cannot be switched via PID are switched via hwnd of their last window
+      app['lastWindowHwnd']
+    except KeyError:
+      try:
+        app = Application().connect(process=app['pid'])
+        app.top_window().set_focus()
+      except:
+        print(f'Switching to app with PID: {pid} failed.')
+      return
+    self.switchToWindow(app['lastWindowHwnd'])
 
   # Switches to the window specified by the given hwnd.
   def switchToWindow(self, hwnd):
-    win32gui.SetForegroundWindow(hwnd)
+    try:
+      win32gui.SetForegroundWindow(hwnd)
+    except:
+      print(f'Switching to window with handle: {hwnd} failed.')
 
   # Shows the app switcher.
-  def showAppSwitcher(self):
-    self.prevWindowPid = self.getForegroundWindowPid()
-    apps = self.getRunningAppsAndWindows()
-    self.appsUi.updateListUsingApps(apps)
-    self.appsUi.show()
+  def showSwitcher(self, type, args):
+    self.prevAppPid = self.getForegroundAppPid()
+    self.hideSwitcher()
+    if type == 'apps':
+      apps = self.getRunningAppsAndWindows()
+      self.ui.updateListUsingApps(apps)
+    elif type == 'windows':
+      windows = self.getForegroundAppWindows()
+      self.ui.updateListUsingForegroundAppWindows(windows)
+    self.ui.show()
     # self.ui.Iconize(False)
-    self.switchToApp(self.appsWindowPid)
-    self.appsUi.Raise()
+    app = {'pid': self.uiPid}
+    self.switchToApp(app)
+    self.ui.Raise()
 
   # Hides the app switcher and switches to the window which was previously in the foreground.
-  def hideAppSwitcherAndShowPrevWindow(self):
-    self.hideAppSwitcher()
-    self.switchToApp(self.prevWindowPid)
+  def hideSwitcherAndShowPrevWindow(self):
+    self.hideSwitcher()
+    app = {'pid': self.prevAppPid}
+    self.switchToApp(app)
 
   # Hides the app switcher.
-  def hideAppSwitcher(self):
-    self.appsUi.hide()
+  def hideSwitcher(self):
+    self.ui.hide()
 
   # Called when switched out of the apps window.
   def windowDeactivated(self):
-    self.hideAppSwitcher()
+    self.hideSwitcher()
 
   # Exits the program.
   def exitSwitcher(self):
-    self.appsUi.cleanAndClose()
+    self.ui.cleanAndClose()
     sys.exit()
 
   # Called when key is pressed.
@@ -188,8 +231,11 @@ class WinSwitcher:
         if keys.issubset(self.pressedKeys):
           command = shortcut['command']
           if command == 'showApps':
-            # running showAppSwitcher() in a new thread fixes the issue of Win key not being released after calling showAppSwitcher()
-            thread = Thread(target=self.showAppSwitcher)
+            # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
+            thread = Thread(target=self.showSwitcher, args=('apps', None))
+            thread.start()
+          if command == 'showWindows':
+            thread = Thread(target=self.showSwitcher, args=('windows', None))
             thread.start()
           elif command == 'exit':
             self.exitSwitcher()
@@ -203,7 +249,7 @@ def main():
   config = Config()
   switcher = WinSwitcher(config)
   mainFrame = MainFrame(switcher, config, title=MainFrame.WINDOW_TITLE)
-  switcher.setAppsAppsUI(mainFrame)
+  switcher.setUI(mainFrame)
   with keyboard.Listener(on_press=switcher.onKeyDown, on_release=switcher.onKeyUp) as listener:
     app.MainLoop()
     listener.join()

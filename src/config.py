@@ -13,6 +13,12 @@ class Config:
 },
 {
 'keys': [
+    {Key.cmd, Key.f11},
+],
+'command': 'showWindows',
+},
+{
+'keys': [
     {Key.cmd, Key.f4},
 ],
 'command': 'exit',

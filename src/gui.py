@@ -6,6 +6,8 @@ class MainFrame(wx.Frame):
 
   WINDOW_TITLE_SEPARATOR = ' | '
   WINDOW_TITLE = 'WinSwitcher'
+  APPS_LIST_LABEL = 'Running apps'
+  FOREGROUND_APP_WINDOWS_LIST_LABEL = 'Open windows'
 
   # Initializes the object by linking it with the given WinSwitcher and Config objects, binding the event handlers, and creating the GUI.
   def __init__(self, switcher, config, title, parent = None):
@@ -28,8 +30,8 @@ class MainFrame(wx.Frame):
 
     # Running apps or windows listbox
     runningListboxHbox = wx.BoxSizer(wx.HORIZONTAL)
-    runningLabel = wx.StaticText(self.panel, -1, 'Running apps')
-    runningListboxHbox.Add(runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    self.runningLabel = wx.StaticText(self.panel, -1, MainFrame.APPS_LIST_LABEL)
+    runningListboxHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.runningListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
     runningListboxHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
@@ -66,7 +68,7 @@ class MainFrame(wx.Frame):
   
   # Handles  the window close event.
   def onClose(self, event):
-    self.switcher.hideAppSwitcherAndShowPrevWindow()
+    self.switcher.hideSwitcherAndShowPrevWindow()
 
   # Handles the window activate and deactivate events.
   def onActivate(self, event):
@@ -80,7 +82,7 @@ class MainFrame(wx.Frame):
     
     # Escape
     if key == wx.WXK_ESCAPE:
-      self.switcher.hideAppSwitcherAndShowPrevWindow()
+      self.switcher.hideSwitcherAndShowPrevWindow()
     else:
       event.Skip()
     
@@ -90,16 +92,18 @@ class MainFrame(wx.Frame):
     
     # Enter
     if key == wx.WXK_RETURN:
-      if self.showing == 'apps':
+      if self.showing == 'runningApps':
         self.switchToSelectedApp()
-      elif self.showing == 'windows':
-        self.switchToSelectedWindow()
+      elif self.showing == 'selectedAppWindows':
+        self.switchToSelectedAppSelectedWindow()
+      elif self.showing == 'foregroundAppWindows':
+        self.switchToForegroundAppSelectedWindow()
     # Right arrow
-    if (key == wx.WXK_RIGHT) and (self.showing == 'apps'):
-      self.updateListUsingWindows()
+    if (key == wx.WXK_RIGHT) and (self.showing == 'runningApps'):
+      self.updateListUsingSelectedAppWindows()
     # Left arrow
-    if (key == wx.WXK_LEFT) and (self.showing == 'windows'):
-      self.updateListUsingApps(self.apps)
+    if (key == wx.WXK_LEFT) and (self.showing == 'selectedAppWindows'):
+      self.updateListUsingApps(self.runningApps)
     else:
       event.Skip()
 
@@ -107,38 +111,56 @@ class MainFrame(wx.Frame):
   def onHelpButtonClick(self, event):
     helpDialog = HelpHTMLDialog(title=f'Help{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
 
-  # Update the running apps or windows listbox with the running apps list.
+  # Update the running apps or windows listbox with the given running apps.
   def updateListUsingApps(self, apps):
-    self.apps = apps
+    self.runningApps = apps
     self.runningListbox.Clear()
     for app in apps:
       self  .runningListbox.Append(app['title'])
-    if self.showing == 'windows':
-      self  .runningListbox.SetSelection(self.appsSelection)
+    if self.showing == 'selectedAppWindows':
+      self  .runningListbox.SetSelection(self.runningAppsSelection)
     else:
       self  .runningListbox.SetSelection(0)
-    self.showing= 'apps'
+    self.runningLabel.SetLabel(MainFrame.APPS_LIST_LABEL)
+    self.showing= 'runningApps'
 
-  # Update the running apps or windows listbox with the running windows list for the currently selected app.
-  def updateListUsingWindows(self):
-    self.appsSelection = self.runningListbox.GetSelection()
-    windows = self.apps[self.appsSelection]['windows']
+  # Update the running apps or windows listbox with the given running windows.
+  def updateListUsingWindows(self, windows):
     self.runningListbox.Clear()
     for window in windows:
       self  .runningListbox.Append(window['title'])
-    self.showing = 'windows'
+
+  # Update the running apps or windows listbox with the running windows for the selected app.
+  def updateListUsingSelectedAppWindows(self):
+    self.runningAppsSelection = self.runningListbox.GetSelection()
+    windows = self.runningApps[self.runningAppsSelection]['windows']
+    self.updateListUsingWindows(windows)
+    self.showing = 'selectedAppWindows'
+
+  # Update the running apps or windows listbox with the given running windows for the app currently in the foreground.
+  def updateListUsingForegroundAppWindows(self, windows):
+    self.updateListUsingWindows(windows)
+    self.foregroundAppWindows = windows
+    self.runningLabel.SetLabel(MainFrame.FOREGROUND_APP_WINDOWS_LIST_LABEL)
+    self.showing = 'foregroundAppWindows'
 
   # Switch to the app currently selected in the apps listbox.
   def switchToSelectedApp(self):
     selection = self.runningListbox.GetSelection()
-    pid = self.apps[selection]['pid']
-    self.switcher.switchToApp(pid)
+    app = self.runningApps[selection]
+    self.switcher.switchToApp(app)
 
-  # Switch to the window currently selected in the running apps or windows listbox.
-  def switchToSelectedWindow(self):
+  # Switch to the selected app window currently selected in the running apps or windows listbox.
+  def switchToSelectedAppSelectedWindow(self):
     selection= self.runningListbox.GetSelection()
-    windows = self.apps[self.appsSelection]['windows']
+    windows = self.runningApps[self.runningAppsSelection]['windows']
     hwnd = windows[selection]['hwnd']
+    self.switcher.switchToWindow(hwnd)
+
+  # Switch to the foreground app window currently selected in the running apps or windows listbox.
+  def switchToForegroundAppSelectedWindow(self):
+    selection= self.runningListbox.GetSelection()
+    hwnd = self.foregroundAppWindows[selection]['hwnd']
     self.switcher.switchToWindow(hwnd)
 
 # Help HTML dialog class.
