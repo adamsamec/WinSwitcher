@@ -13,10 +13,11 @@ class MainFrame(wx.Frame):
     super(MainFrame, self).__init__(parent, title=title, style=style)
     self.switcher = switcher
     self.config = config
+    self.showing = None
     
     self.Bind(wx.EVT_CLOSE, self.onClose)
     self.Bind(wx.EVT_ACTIVATE, self.onActivate)
-    self.Bind(wx.EVT_KEY_UP, self.onKeyUp)
+    self.Bind(wx.EVT_CHAR_HOOK, self.charHook)
     
     self.addWidgets()
     
@@ -25,13 +26,13 @@ class MainFrame(wx.Frame):
     self.panel = wx.Panel(self)    
     vbox = wx.BoxSizer(wx.VERTICAL)
 
-    # Running apps listbox
-    listboxHbox = wx.BoxSizer(wx.HORIZONTAL)
-    appsLabel = wx.StaticText(self.panel, -1, 'Running apps')
-    listboxHbox.Add(appsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
-    self.appsListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
-    self.appsListbox.Bind(wx.EVT_KEY_UP, self.onAppsListboxKeyUp)
-    listboxHbox.Add(self.appsListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    # Running apps or windows listbox
+    runningListboxHbox = wx.BoxSizer(wx.HORIZONTAL)
+    runningLabel = wx.StaticText(self.panel, -1, 'Running apps')
+    runningListboxHbox.Add(runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    self.runningListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
+    self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
+    runningListboxHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -40,7 +41,7 @@ class MainFrame(wx.Frame):
     self.helpButton.Bind(wx.EVT_BUTTON, self.onHelpButtonClick)
     bottomButtonsHbox.Add(self.helpButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
-    vbox.Add(listboxHbox)
+    vbox.Add(runningListboxHbox)
     vbox.Add(bottomButtonsHbox)
     self.panel.SetSizer(vbox)
 
@@ -49,11 +50,12 @@ class MainFrame(wx.Frame):
     self.Centre()
     self.Show()
     self.Fit()
-    self.appsListbox.SetFocus()
+    self.runningListbox.SetFocus()
 
   # Hides the window.
   def hide(self):
     self.Hide()
+    self.showing = None
     
       # Cleans everything and closes the window.
   def cleanAndClose(self):
@@ -66,28 +68,38 @@ class MainFrame(wx.Frame):
   def onClose(self, event):
     self.switcher.hideAppSwitcherAndShowPrevWindow()
 
-  # Handles the window activate or deactivate event.
+  # Handles the window activate and deactivate events.
   def onActivate(self, event):
     if not event.GetActive():
       self.switcher.windowDeactivated()
     event.Skip()
 
   # Handles  the key press events for the whole frame.
-  def onKeyUp(self, event):
+  def charHook(self, event):
     key = event.GetKeyCode()
     
     # Escape
     if key == wx.WXK_ESCAPE:
-      self.switcher.hideAppSwitcherAndShowLastWindow()
+      self.switcher.hideAppSwitcherAndShowPrevWindow()
     else:
       event.Skip()
     
-  def onAppsListboxKeyUp(self, event):
+  # Handles  the key press events for the running apps and windows listbox.
+  def onRunningListboxCharHook(self, event):
     key = event.GetKeyCode()
     
     # Enter
     if key == wx.WXK_RETURN:
-      self.switchToSelectedApp()
+      if self.showing == 'apps':
+        self.switchToSelectedApp()
+      elif self.showing == 'windows':
+        self.switchToSelectedWindow()
+    # Right arrow
+    if (key == wx.WXK_RIGHT) and (self.showing == 'apps'):
+      self.updateListUsingWindows()
+    # Left arrow
+    if (key == wx.WXK_LEFT) and (self.showing == 'windows'):
+      self.updateListUsingApps(self.apps)
     else:
       event.Skip()
 
@@ -95,18 +107,39 @@ class MainFrame(wx.Frame):
   def onHelpButtonClick(self, event):
     helpDialog = HelpHTMLDialog(title=f'Help{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
 
-  # Update the running apps listbox
-  def updateList(self, apps):
+  # Update the running apps or windows listbox with the running apps list.
+  def updateListUsingApps(self, apps):
     self.apps = apps
-    self.appsListbox.Clear()
+    self.runningListbox.Clear()
     for app in apps:
-      self  .appsListbox.Append(app['title'])
+      self  .runningListbox.Append(app['title'])
+    if self.showing == 'windows':
+      self  .runningListbox.SetSelection(self.appsSelection)
+    else:
+      self  .runningListbox.SetSelection(0)
+    self.showing= 'apps'
+
+  # Update the running apps or windows listbox with the running windows list for the currently selected app.
+  def updateListUsingWindows(self):
+    self.appsSelection = self.runningListbox.GetSelection()
+    windows = self.apps[self.appsSelection]['windows']
+    self.runningListbox.Clear()
+    for window in windows:
+      self  .runningListbox.Append(window['title'])
+    self.showing = 'windows'
 
   # Switch to the app currently selected in the apps listbox.
   def switchToSelectedApp(self):
-    pos = self.appsListbox.GetSelection()
-    pid = self.apps[pos]['pid']
-    self.switcher.switchToWindow(pid)
+    selection = self.runningListbox.GetSelection()
+    pid = self.apps[selection]['pid']
+    self.switcher.switchToApp(pid)
+
+  # Switch to the window currently selected in the running apps or windows listbox.
+  def switchToSelectedWindow(self):
+    selection= self.runningListbox.GetSelection()
+    windows = self.apps[self.appsSelection]['windows']
+    hwnd = windows[selection]['hwnd']
+    self.switcher.switchToWindow(hwnd)
 
 # Help HTML dialog class.
 class HelpHTMLDialog(wx.Dialog):

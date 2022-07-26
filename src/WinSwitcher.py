@@ -1,3 +1,4 @@
+import rich
 import subprocess
 import sys
 from threading import Thread
@@ -16,9 +17,15 @@ from gui import MainFrame
 # Main application class.
 class WinSwitcher:
 
-  # Process names which to exclude from the apps and windows list
-  EXCLUDED_APPS = ['ApplicationFrameHost', 'SystemSettings', 'TextInputHost']
-  EXCLUDED_WINDOWS = ['ApplicationFrameHost.exe', 'SystemSettings.exe', 'TextInputHost.exe']
+  # Processes which to exclude from the apps and windows list
+  EXCLUDED_APP_NAMES = ['ApplicationFrameHost', 'SystemSettings', 'TextInputHost']
+  EXCLUDED_WINDOW_FILENAMES = ['ApplicationFrameHost.exe', 'SystemSettings.exe', 'TextInputHost.exe']
+
+  # Replacements for app and window titles
+  TITLE_REPLACEMENTS = {
+'Windows Explorer': 'File Explorer',
+'Program Manager': 'Desktop',
+  }
 
   # Initializes the object.
   def __init__(self, config):
@@ -53,14 +60,14 @@ class WinSwitcher:
       if not title:
         return
       childPid, parentPid = win32process.GetWindowThreadProcessId(hwnd)
-      # childPid = pids[0]
-      # parentPid = pids[1]
-      exe = psutil.Process(parentPid).name()
-      if exe in WinSwitcher.EXCLUDED_WINDOWS:
+      filename = psutil.Process(parentPid).name()
+      if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
         return
       window = {
         'childPid': childPid,
         'parentPid': parentPid,
+        'hwnd': hwnd,
+        'filename': filename,
         'title': title,
       }
       self.runningWindows.append(window)
@@ -83,7 +90,7 @@ class WinSwitcher:
 
         # Skip some strange application items
         name = line[:-len(pid)].rstrip()
-        if name in WinSwitcher.EXCLUDED_APPS:
+        if name in WinSwitcher.EXCLUDED_APP_NAMES:
           continue
 
         pidNum = int(pid)
@@ -94,7 +101,7 @@ class WinSwitcher:
         'windows': []
         }
         apps.append(app)
-        print(f'{name} {pid} {title}')
+        # print(f'{name} {pid} {title}')
       i = i + 1
 
     # File Explorer is not listed, so handle it separately
@@ -103,6 +110,9 @@ class WinSwitcher:
     line = tasklistProcess.stdout.readlines()[2]
     pidNum = int(line.decode().split()[-1])
     title = self.getAppTitle(pidNum)
+    if title == 'Windows Explorer':
+    # Rename the title for File Explorer
+      title = WinSwitcher.TITLE_REPLACEMENTS['Windows Explorer']
     app = {
       'pid': pidNum,
       'title': title,
@@ -111,35 +121,46 @@ class WinSwitcher:
     apps.insert(0, app)
 
     # Complement the apps dictionary with corresponding running windows
+    self.runningWindows = []
     win32gui.EnumWindows(self.winEnumHandler, None)
     for app in apps:
+      num = 0
       for window in self.runningWindows:
         if window['parentPid'] == app['pid']:
+          # Rename the window title for File Explorer desktop
+          if (num == len(self.runningWindows) - 1) and (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
+            window['title'] = WinSwitcher.TITLE_REPLACEMENTS['Program Manager']
           app['windows'].append(window)
+        num += 1
+          # rich.print(apps)
     return apps
 
-  # Switches to the window specified by the give n PID.
-  def switchToWindow(self, pid):
+  # Switches to the app specified by the given PID.
+  def switchToApp(self, pid):
     try:
       app = Application().connect(process=pid)
       app.top_window().set_focus()
     except:
-      print(f'Switching to window with PID: {pid} failed.')
+      print(f'Switching to app with PID: {pid} failed.')
+
+  # Switches to the window specified by the given hwnd.
+  def switchToWindow(self, hwnd):
+    win32gui.SetForegroundWindow(hwnd)
 
   # Shows the app switcher.
   def showAppSwitcher(self):
     self.prevWindowPid = self.getForegroundWindowPid()
     apps = self.getRunningAppsAndWindows()
-    self.appsUi.updateList(apps)
+    self.appsUi.updateListUsingApps(apps)
     self.appsUi.show()
     # self.ui.Iconize(False)
-    self.switchToWindow(self.appsWindowPid)
+    self.switchToApp(self.appsWindowPid)
     self.appsUi.Raise()
 
   # Hides the app switcher and switches to the window which was previously in the foreground.
   def hideAppSwitcherAndShowPrevWindow(self):
     self.hideAppSwitcher()
-    self.switchToWindow(self.prevWindowPid)
+    self.switchToApp(self.prevWindowPid)
 
   # Hides the app switcher.
   def hideAppSwitcher(self):
@@ -170,7 +191,6 @@ class WinSwitcher:
             # running showAppSwitcher() in a new thread fixes the issue of Win key not being released after calling showAppSwitcher()
             thread = Thread(target=self.showAppSwitcher)
             thread.start()
-            # timer.start()
           elif command == 'exit':
             self.exitSwitcher()
 
@@ -184,7 +204,6 @@ def main():
   switcher = WinSwitcher(config)
   mainFrame = MainFrame(switcher, config, title=MainFrame.WINDOW_TITLE)
   switcher.setAppsAppsUI(mainFrame)
-  switcher.getRunningAppsAndWindows()
   with keyboard.Listener(on_press=switcher.onKeyDown, on_release=switcher.onKeyUp) as listener:
     app.MainLoop()
     listener.join()
