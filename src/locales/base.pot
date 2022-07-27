@@ -1,0 +1,37 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2022-07-27 22:14+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=cp1252\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../src\WinSwitcher.py:86
+msgid "Program Manager"
+msgstr ""
+
+#: ../src\WinSwitcher.py:128
+msgid "Windows Explorer"
+msgstr ""
+
+#: ../src\gui.py:33 ../src\gui.py:125
+msgid "Running apps"
+msgstr ""
+
+#: ../src\gui.py:42 ../src\gui.py:112
+msgid "Help"
+msgstr ""
+
+#: ../src\gui.py:145
+msgid "Open windows"
+msgstr ""
+

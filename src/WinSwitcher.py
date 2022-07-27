@@ -1,4 +1,7 @@
 # TODO:
+# * Try moving cx_Freeze setup file out of src folder.
+# * Recognize File Explorer base on process filename instead of title.
+# * Language detection.
 # * Test on Czech Windows.
 # * Implement list filtering by typing.
 # * Group command line windows into single app.
@@ -18,6 +21,7 @@ import wx
 
 from config import Config
 from gui import MainFrame
+from lang import _
 
 # Main application class.
 class WinSwitcher:
@@ -25,12 +29,6 @@ class WinSwitcher:
   # Processes which to exclude from the apps and windows list
   EXCLUDED_APP_NAMES = ['ApplicationFrameHost', 'SystemSettings', 'TextInputHost']
   EXCLUDED_WINDOW_FILENAMES = ['ApplicationFrameHost.exe', 'SystemSettings.exe', 'TextInputHost.exe']
-
-  # Replacements for app and window titles
-  TITLE_REPLACEMENTS = {
-'Windows Explorer': 'File Explorer',
-'Program Manager': 'Desktop',
-  }
 
   # Initializes the object.
   def __init__(self, config):
@@ -85,7 +83,7 @@ class WinSwitcher:
     # Rename the  title for File Explorer desktop item
     window = self.runningWindows[-1]
     if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
-      window['title'] = WinSwitcher.TITLE_REPLACEMENTS['Program Manager']
+      window['title'] = _('Program Manager')
 
   # Returns a list of running apps titles, their PIDs and corresponding windows.
   def getRunningAppsAndWindows(self):
@@ -127,7 +125,7 @@ class WinSwitcher:
     title = self.getAppTitle(pidNum)
     if title == 'Windows Explorer':
     # Rename the title for File Explorer
-      title = WinSwitcher.TITLE_REPLACEMENTS['Windows Explorer']
+      title = _('Windows Explorer')
     app = {
       'pid': pidNum,
       'title': title,

@@ -1,13 +1,13 @@
 import markdown2
 import wx
 
+from lang import _
+
 # Main frame class.
 class MainFrame(wx.Frame):
 
   WINDOW_TITLE_SEPARATOR = ' | '
   WINDOW_TITLE = 'WinSwitcher'
-  APPS_LIST_LABEL = 'Running apps'
-  FOREGROUND_APP_WINDOWS_LIST_LABEL = 'Open windows'
 
   # Initializes the object by linking it with the given WinSwitcher and Config objects, binding the event handlers, and creating the GUI.
   def __init__(self, switcher, config, title, parent = None):
@@ -30,7 +30,7 @@ class MainFrame(wx.Frame):
 
     # Running apps or windows listbox
     runningListboxHbox = wx.BoxSizer(wx.HORIZONTAL)
-    self.runningLabel = wx.StaticText(self.panel, -1, MainFrame.APPS_LIST_LABEL)
+    self.runningLabel = wx.StaticText(self.panel, -1, _('Running apps'))
     runningListboxHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.runningListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
@@ -39,7 +39,7 @@ class MainFrame(wx.Frame):
     bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
 
         # Help button
-    self.helpButton = wx.Button(self.panel, label='Help')
+    self.helpButton = wx.Button(self.panel, label=_('Help'))
     self.helpButton.Bind(wx.EVT_BUTTON, self.onHelpButtonClick)
     bottomButtonsHbox.Add(self.helpButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
@@ -109,7 +109,8 @@ class MainFrame(wx.Frame):
 
   # Handles the help button click.
   def onHelpButtonClick(self, event):
-    helpDialog = HelpHTMLDialog(title=f'Help{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
+    helpTitle = _('Help')
+    helpDialog = HelpHTMLDialog(title=f'{helpTitle}{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
 
   # Update the running apps or windows listbox with the given running apps.
   def updateListUsingApps(self, apps):
@@ -121,7 +122,7 @@ class MainFrame(wx.Frame):
       self  .runningListbox.SetSelection(self.runningAppsSelection)
     else:
       self  .runningListbox.SetSelection(0)
-    self.runningLabel.SetLabel(MainFrame.APPS_LIST_LABEL)
+    self.runningLabel.SetLabel(_('Running apps'))
     self.showing= 'runningApps'
 
   # Update the running apps or windows listbox with the given running windows.
@@ -141,7 +142,7 @@ class MainFrame(wx.Frame):
   def updateListUsingForegroundAppWindows(self, windows):
     self.updateListUsingWindows(windows)
     self.foregroundAppWindows = windows
-    self.runningLabel.SetLabel(MainFrame.FOREGROUND_APP_WINDOWS_LIST_LABEL)
+    self.runningLabel.SetLabel(_('Open windows'))
     self.showing = 'foregroundAppWindows'
 
   # Switch to the app currently selected in the apps listbox.
