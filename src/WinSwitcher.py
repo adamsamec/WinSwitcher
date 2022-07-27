@@ -1,4 +1,5 @@
 # TODO:
+# * Test on Czech Windows.
 # * Implement list filtering by typing.
 # * Group command line windows into single app.
 
@@ -164,12 +165,13 @@ class WinSwitcher:
 
   # Switches to the given app.
   def switchToApp(self, app):
+    pid = app['pid']
     try:
       # Apps which cannot be switched via PID are switched via hwnd of their last window
       app['lastWindowHwnd']
     except KeyError:
       try:
-        app = Application().connect(process=app['pid'])
+        app = Application().connect(process=pid)
         app.top_window().set_focus()
       except:
         print(f'Switching to app with PID: {pid} failed.')
