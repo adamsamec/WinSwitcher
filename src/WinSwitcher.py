@@ -1,10 +1,10 @@
 # TODO:
-# * Try moving cx_Freeze setup file out of src folder.
+# *Add filenames to apps dict. 
 # * Recognize File Explorer base on process filename instead of title.
-# * Language detection.
 # * Test on Czech Windows.
 # * Implement list filtering by typing.
 # * Group command line windows into single app.
+# * Fix the bug of no screen reader feedback when showing apps switcher when window switcher is shown.
 
 import rich
 import subprocess
@@ -110,6 +110,7 @@ class WinSwitcher:
         title = self.getAppTitle(pidNum)
         app = {
           'pid': pidNum,
+          'filename': None,
           'title': title,
         'windows': []
         }
@@ -126,18 +127,18 @@ class WinSwitcher:
     if title == 'Windows Explorer':
     # Rename the title for File Explorer
       title = _('Windows Explorer')
+
     app = {
       'pid': pidNum,
       'title': title,
+      'filename': 'explorer.exe',
       'windows': [],
     }
     apps.insert(0, app)
 
-    # Complement the apps dictionary with corresponding running windows
+    # Complement the apps dictionary with the corresponding open windows
     self.updateRunningWindows()
-
     for app in apps:
-      num = 0
       for window in self.runningWindows:
         if window['parentPid'] == app['pid']:
           if window['filename'] == 'explorer.exe':
@@ -147,8 +148,16 @@ class WinSwitcher:
             except KeyError:
               app['lastWindowHwnd'] = window['hwnd']
           app['windows'].append(window)
-        num += 1
           # rich.print(apps)
+
+    # Add window count to the app title
+    for app in apps:
+      count = len(app['windows'])
+      if app['filename'] == 'explorer.exe':
+        # Do not count Desktop as a window
+        count -= 1
+      countText = _('{} windows').format(count)
+      app['title'] += f' ({countText})'
     return apps
 
   # Returns a list of windows for the application in the foreground.

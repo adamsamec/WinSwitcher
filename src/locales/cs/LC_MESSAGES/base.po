@@ -25,7 +25,7 @@ msgstr "File Explorer"
 
 #: src\gui.py:32 src\gui.py:124
 msgid "Running apps"
-msgstr "Běžící aplikace"
+msgstr "Spuštěné aplikace"
 
 #: src\gui.py:41 src\gui.py:111
 msgid "Help"
