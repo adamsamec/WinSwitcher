@@ -2,4 +2,3 @@
 * Test on Czech Windows.
 * Implement list filtering by typing.
 * Group command line windows into single app.
-* Fix the bug of no screen reader feedback when showing apps switcher when window switcher is shown.
