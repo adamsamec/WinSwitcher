@@ -115,6 +115,7 @@ class MainFrame(wx.Frame):
   # Update the running apps or windows listbox with the given running apps.
   def updateListUsingApps(self, apps):
     self.runningApps = apps
+    self.runningLabel.SetLabel(_('Running apps'))
     self.runningListbox.Clear()
     for app in apps:
       self  .runningListbox.Append(app['title'])
@@ -122,7 +123,6 @@ class MainFrame(wx.Frame):
       self  .runningListbox.SetSelection(self.runningAppsSelection)
     else:
       self  .runningListbox.SetSelection(0)
-    self.runningLabel.SetLabel(_('Running apps'))
     self.showing= 'runningApps'
 
   # Update the running apps or windows listbox with the given open windows.
@@ -141,9 +141,9 @@ class MainFrame(wx.Frame):
 
   # Update the running apps or windows listbox with the given running windows for the app currently in the foreground.
   def updateListUsingForegroundAppWindows(self, windows):
+    self.runningLabel.SetLabel(_('Open windows'))
     self.updateListUsingWindows(windows)
     self.foregroundAppWindows = windows
-    self.runningLabel.SetLabel(_('Open windows'))
     self.showing = 'foregroundAppWindows'
 
   # Switch to the app currently selected in the apps listbox.
