@@ -125,13 +125,14 @@ class MainFrame(wx.Frame):
     self.runningLabel.SetLabel(_('Running apps'))
     self.showing= 'runningApps'
 
-  # Update the running apps or windows listbox with the given running windows.
+  # Update the running apps or windows listbox with the given open windows.
   def updateListUsingWindows(self, windows):
     self.runningListbox.Clear()
     for window in windows:
       self  .runningListbox.Append(window['title'])
+    self  .runningListbox.SetSelection(0)
 
-  # Update the running apps or windows listbox with the running windows for the selected app.
+  # Update the running apps or windows listbox with the open windows for the selected app.
   def updateListUsingSelectedAppWindows(self):
     self.runningAppsSelection = self.runningListbox.GetSelection()
     windows = self.runningApps[self.runningAppsSelection]['windows']

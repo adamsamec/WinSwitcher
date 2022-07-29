@@ -140,7 +140,6 @@ class WinSwitcher:
     # Complete the apps dictionary with the corresponding open windows
     self.updateOpenWindows()
     for app in apps:
-      print(app['filename'] + ' ' + str(app['pid']))
       app['windows'] = []
       for window in self.openWindows:
         if window['parentPid'] == app['pid']:
@@ -163,11 +162,10 @@ class WinSwitcher:
     # rich.print(apps)
     return apps
 
-  # Returns a list of windows for the application in the foreground.
-  def getForegroundAppWindows(self):
+  # Returns a list of open windows for the application with the given PID.
+  def getAppWindows(self, pid):
     self.updateOpenWindows()
     windows = []
-    pid = self.getForegroundAppPid()
     for window in self.openWindows:
       if window['parentPid'] == pid:
         windows.append(window)
@@ -200,13 +198,17 @@ class WinSwitcher:
     foregroundAppPid = self.getForegroundAppPid()
     if foregroundAppPid != self.guiPid:
       self.prevAppPid = foregroundAppPid
-    self.hideSwitcher()
+    isStayingInSwitcher = foregroundAppPid == self.guiPid
+    # self.hideSwitcher()
     if type == 'apps':
       apps = self.getRunningAppsAndWindows()
       self.ui.updateListUsingApps(apps)
     elif type == 'windows':
-      windows = self.getForegroundAppWindows()
+      pid = self.getForegroundAppPid() if not isStayingInSwitcher else self.prevAppPid
+      windows = self.getAppWindows(pid)
       self.ui.updateListUsingForegroundAppWindows(windows)
+    if isStayingInSwitcher:
+      return
     self.ui.show()
     # self.ui.Iconize(False)
     app = {'pid': self.pid}
