@@ -16,12 +16,25 @@ from config import Config
 from gui import MainFrame
 from lang import _
 
+# Exception used when filtering apps.
+class SkipApp(Exception):
+  pass
+
 # Main application class.
 class WinSwitcher:
 
-  # Processes which to exclude from the apps and windows list
+  # App names and window process filenames which to exclude from the list
   EXCLUDED_APP_NAMES = ['ApplicationFrameHost', 'SystemSettings', 'TextInputHost']
   EXCLUDED_WINDOW_FILENAMES = ['ApplicationFrameHost.exe', 'SystemSettings.exe', 'TextInputHost.exe']
+
+  # Replacements for app titles to make them shorter or more readable
+  REPLACED_APP_TITLES = {
+    'Windows Explorer': _('File Explorer'),
+    'Windows Command Processor': _('Command Prompt'),
+  }
+
+  # Apps whose windows should be grouped under one app
+  APP_GROUPINGS = ['cmd', 'TOTALCMD64']
 
   # Initializes the object.
   def __init__(self, config):
@@ -29,7 +42,7 @@ class WinSwitcher:
     self.pressedKeys = set()
     self.pid= self.getForegroundAppPid()
     self.prevAppPid = self.pid
-    self.openWindows = []
+    self.runningWindows = []
 
   # Returns the PID of the window in the foreground.
   def getForegroundAppPid(self):
@@ -50,6 +63,8 @@ class WinSwitcher:
     langs = win32api.GetFileVersionInfo(path, r'\VarFileInfo\Translation')
     key = r'StringFileInfo\%04x%04x\FileDescription' % (langs[0][0], langs[0][1])
     title = (win32api.GetFileVersionInfo(path, key))
+    if title in list(WinSwitcher.REPLACED_APP_TITLES.keys()):
+      title = WinSwitcher.REPLACED_APP_TITLES[title]
     info= {
       'pid': pid,
       'filename': filename,
@@ -74,19 +89,19 @@ class WinSwitcher:
         'filename': filename,
         'title': title,
       }
-      self.openWindows.append(window)
+      self.runningWindows.append(window)
 
   # Updates the list of the currently running windows.
-  def updateOpenWindows(self):
-    self.openWindows = []
+  def updateRunningWindows(self):
+    self.runningWindows = []
     win32gui.EnumWindows(self.winEnumHandler, None)
 
     # Rename the  title for File Explorer desktop item
-    window = self.openWindows[-1]
+    window = self.runningWindows[-1]
     if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
       window['title'] = _('Program Manager')
 
-  # Returns a list of running apps where each app consists of info about itss PID, process filename, app title and its open windows.
+  # Returns a list of running apps where each app consists of info about itss PID, process filename, app title and its running windows.
   def getRunningAppsAndWindows(self):
     gpCommand = 'powershell "Get-Process | where {$_.MainWindowTitle } | select ProcessName, Id | Format-List"'
     gpProcess = subprocess.Popen(gpCommand, shell=True, stdout=subprocess.PIPE)
@@ -128,28 +143,43 @@ class WinSwitcher:
     # PID line is the third one
     pidLine = tasklistProcess.stdout.readlines()[2].decode()
 
-    pidNum = int(pidLine.split()[-1])
-    title = _('File Explorer')
-    app = {
-      'pid': pidNum,
-      'filename': explorerFilename,
-      'title': title,
-    }
+    pid = int(pidLine.split()[-1])
+    app = self.getAppInfo(pid)
+    app['name'] = 'FileExplorer'
     apps.insert(0, app)
 
-    # Complete the apps dictionary with the corresponding open windows
-    self.updateOpenWindows()
-    for app in apps:
-      app['windows'] = []
-      for window in self.openWindows:
-        if window['processId'] == app['pid']:
-          if window['filename'] == explorerFilename:
-            # Add hwnd for the FileExplorer app if not already added
-            try:
-              app['lastWindowHwnd']
-            except KeyError:
-              app['lastWindowHwnd'] = window['hwnd']
-          app['windows'].append(window)
+    # Complete the apps dictionary with the corresponding running windows
+    self.updateRunningWindows()
+    groupIndexes = {}
+    filteredApps = []
+    for index, app in enumerate(apps):
+      try:
+        app['windows'] = []
+        for window in self.runningWindows:
+          if window['processId'] == app['pid']:
+            for groupName in WinSwitcher.APP_GROUPINGS:
+              # Check if the current app is not one which should be grouped
+              if app['name'] == groupName:
+                try:
+                  groupIndexes[groupName]
+                  # If we are on another app which should be grouped, add its window to the app at the saved index, and skip app addition to filtered apps
+                  apps[groupIndexes[groupName]]['windows'].append(window)
+                  raise SkipApp
+                  # Otherwise, save the ap's index
+                except KeyError:
+                  groupIndexes[groupName] = index
+                  break
+            if window['filename'] == explorerFilename:
+              # Add hwnd for the FileExplorer app if not already added
+              try:
+                app['lastWindowHwnd']
+              except KeyError:
+                app['lastWindowHwnd'] = window['hwnd']
+            app['windows'].append(window)
+        filteredApps.append(app)
+      except SkipApp:
+        name = app['name']
+    apps = filteredApps
 
     # Add window count to the app title
     for app in apps:
@@ -159,14 +189,14 @@ class WinSwitcher:
         count -= 1
       countText = _('{} windows').format(count)
       app['title'] += f' ({countText})'
-    rich.print(apps)
+    # rich.print(apps)
     return apps
 
-  # Returns a list of open windows for the application with the given PID.
+  # Returns a list of running windows for the application with the given PID.
   def getAppWindows(self, pid):
-    self.updateOpenWindows()
+    self.updateRunningWindows()
     windows = []
-    for window in self.openWindows:
+    for window in self.runningWindows:
       if window['processId'] == pid:
         windows.append(window)
     return windows

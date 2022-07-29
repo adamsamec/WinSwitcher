@@ -34,6 +34,7 @@ class MainFrame(wx.Frame):
     runningListboxHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.runningListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
+    self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
     runningListboxHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -107,6 +108,17 @@ class MainFrame(wx.Frame):
     else:
       event.Skip()
 
+  # Handles  the key down events for the running apps and windows listbox.
+  def onRunningListboxKeyDown(self, event):
+    key = event.GetKeyCode()
+
+    # Right or Left arrow
+    if (key == wx.WXK_RIGHT) or (key == wx.WXK_LEFT):
+      # Disable the navigation behavior  for the Right and Left arrow keys
+      pass
+    else:
+      event.Skip()
+
   # Handles the help button click.
   def onHelpButtonClick(self, event):
     helpTitle = _('Help')
@@ -125,14 +137,14 @@ class MainFrame(wx.Frame):
       self  .runningListbox.SetSelection(0)
     self.showing= 'runningApps'
 
-  # Update the running apps or windows listbox with the given open windows.
+  # Update the running apps or windows listbox with the given running windows.
   def updateListUsingWindows(self, windows):
     self.runningListbox.Clear()
     for window in windows:
       self  .runningListbox.Append(window['title'])
     self  .runningListbox.SetSelection(0)
 
-  # Update the running apps or windows listbox with the open windows for the selected app.
+  # Update the running apps or windows listbox with the running windows for the selected app.
   def updateListUsingSelectedAppWindows(self):
     self.runningAppsSelection = self.runningListbox.GetSelection()
     windows = self.runningApps[self.runningAppsSelection]['windows']
@@ -141,7 +153,7 @@ class MainFrame(wx.Frame):
 
   # Update the running apps or windows listbox with the given running windows for the app currently in the foreground.
   def updateListUsingForegroundAppWindows(self, windows):
-    self.runningLabel.SetLabel(_('Open windows'))
+    self.runningLabel.SetLabel(_('Running windows'))
     self.updateListUsingWindows(windows)
     self.foregroundAppWindows = windows
     self.showing = 'foregroundAppWindows'
