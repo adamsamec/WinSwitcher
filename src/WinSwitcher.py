@@ -63,13 +63,13 @@ class WinSwitcher:
       title = win32gui.GetWindowText(hwnd)
       if not title:
         return
-      childPid, parentPid = win32process.GetWindowThreadProcessId(hwnd)
-      filename = psutil.Process(parentPid).name()
+      threadId, processId = win32process.GetWindowThreadProcessId(hwnd)
+      filename = psutil.Process(processId).name()
       if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
         return
       window = {
-        'childPid': childPid,
-        'parentPid': parentPid,
+        'threadId': threadId,
+        'processId': processId,
         'hwnd': hwnd,
         'filename': filename,
         'title': title,
@@ -142,7 +142,7 @@ class WinSwitcher:
     for app in apps:
       app['windows'] = []
       for window in self.openWindows:
-        if window['parentPid'] == app['pid']:
+        if window['processId'] == app['pid']:
           if window['filename'] == explorerFilename:
             # Add hwnd for the FileExplorer app if not already added
             try:
@@ -159,7 +159,7 @@ class WinSwitcher:
         count -= 1
       countText = _('{} windows').format(count)
       app['title'] += f' ({countText})'
-    # rich.print(apps)
+    rich.print(apps)
     return apps
 
   # Returns a list of open windows for the application with the given PID.
@@ -167,7 +167,7 @@ class WinSwitcher:
     self.updateOpenWindows()
     windows = []
     for window in self.openWindows:
-      if window['parentPid'] == pid:
+      if window['processId'] == pid:
         windows.append(window)
     return windows
 
