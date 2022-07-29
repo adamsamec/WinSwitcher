@@ -27,8 +27,8 @@ class WinSwitcher:
   def __init__(self, config):
     self.config = config  
     self.pressedKeys = set()
-    self.uiPid= self.getForegroundAppPid()
-    self.prevAppPid = self.uiPid
+    self.pid= self.getForegroundAppPid()
+    self.prevAppPid = self.pid
     self.openWindows = []
 
   # Returns the PID of the window in the foreground.
@@ -36,9 +36,11 @@ class WinSwitcher:
     pids = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow())
     return pids[-1]
 
-      # Sets the apps UI object for the switcher.
+      # Sets the apps UI object for the switcher and saves its process PID.
   def setUI(self, ui):
     self.ui = ui
+    hwnd = ui.GetHandle()
+    self.guiPid = win32process.GetWindowThreadProcessId(hwnd)[1]
 
   # Returns the info about the app specified by the given PID.
   def getAppInfo(self, pid):
@@ -138,6 +140,7 @@ class WinSwitcher:
     # Complete the apps dictionary with the corresponding open windows
     self.updateOpenWindows()
     for app in apps:
+      print(app['filename'] + ' ' + str(app['pid']))
       app['windows'] = []
       for window in self.openWindows:
         if window['parentPid'] == app['pid']:
@@ -194,7 +197,9 @@ class WinSwitcher:
 
   # Shows the app switcher.
   def showSwitcher(self, type, args):
-    self.prevAppPid = self.getForegroundAppPid()
+    foregroundAppPid = self.getForegroundAppPid()
+    if foregroundAppPid != self.guiPid:
+      self.prevAppPid = foregroundAppPid
     self.hideSwitcher()
     if type == 'apps':
       apps = self.getRunningAppsAndWindows()
@@ -204,7 +209,7 @@ class WinSwitcher:
       self.ui.updateListUsingForegroundAppWindows(windows)
     self.ui.show()
     # self.ui.Iconize(False)
-    app = {'pid': self.uiPid}
+    app = {'pid': self.pid}
     self.switchToApp(app)
     self.ui.Raise()
 
