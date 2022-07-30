@@ -146,10 +146,10 @@ class WinSwitcher:
     app['name'] = 'FileExplorer'
     apps.insert(0, app)
 
-    # Complete the apps dictionary with the corresponding running windows
+    # Complete the apps dictionary with the corresponding running windows and group the apps based on process path
     self.updateRunningWindows()
     groupIndexes = {}
-    filteredApps = []
+    groupedApps = []
     for index, app in enumerate(apps):
       groupName = app['path']
       app['windows'] = []
@@ -160,16 +160,15 @@ class WinSwitcher:
             groupIndexes[groupName]
 
             # We are on an app for which we've already created a group, so add its window to the app at the saved index
-            apps[groupIndexes[groupName]]['windows'].append(window)
 
-            # skip app addition to filtered apps
+            # If app's windows are empty, we have already added them to the group instead, so skip this app addition to the grouped apps
             if len(app['windows']) == 0:
               skipApp = True
 
           except KeyError:
             # We are on  an app for which we've not yet created a group, so create the group and save the app'ss index to it
             groupIndexes[groupName] = index
-            app['windows'].append(window)
+            # app['windows'].append(window)
 
           if window['filename'] == explorerFilename:
             # Add hwnd for the FileExplorer app if not already added
@@ -177,9 +176,10 @@ class WinSwitcher:
               app['lastWindowHwnd']
             except KeyError:
               app['lastWindowHwnd'] = window['hwnd']
+          apps[groupIndexes[groupName]]['windows'].append(window)
       if not skipApp:
-        filteredApps.append(app)
-    apps = filteredApps
+        groupedApps.append(app)
+    apps = groupedApps
 
     # Add window count to the app title
     for app in apps:
