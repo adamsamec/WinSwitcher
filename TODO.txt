@@ -1,4 +1,3 @@
 # TODO
 * Test on Czech Windows.
 * Implement list filtering by typing.
-* Group command line windows into single app.

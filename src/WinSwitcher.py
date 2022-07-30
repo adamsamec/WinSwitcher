@@ -77,14 +77,17 @@ class WinSwitcher:
       if not title:
         return
       threadId, processId = win32process.GetWindowThreadProcessId(hwnd)
-      filename = psutil.Process(processId).name()
+      process = psutil.Process(processId)
+      filename = process.name()
       if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
         return
+      path = process.exe()
       window = {
         'threadId': threadId,
         'processId': processId,
         'hwnd': hwnd,
         'filename': filename,
+        'path': path,
         'title': title,
       }
       self.runningWindows.append(window)
@@ -195,9 +198,10 @@ class WinSwitcher:
   # Returns a list of running windows for the application with the given PID.
   def getAppWindows(self, pid):
     self.updateRunningWindows()
+    app = self.getAppInfo(pid)
     windows = []
     for window in self.runningWindows:
-      if window['processId'] == pid:
+      if (window['processId'] == pid) or (window['path'] == app['path']):
         windows.append(window)
     return windows
 
