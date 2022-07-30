@@ -33,9 +33,6 @@ class WinSwitcher:
     'Windows Command Processor': _('Command Prompt'),
   }
 
-  # Apps whose windows should be grouped under one app
-  APP_GROUPINGS = ['cmd', 'TOTALCMD64']
-
   # Initializes the object.
   def __init__(self, config):
     self.config = config  
@@ -68,6 +65,7 @@ class WinSwitcher:
     info= {
       'pid': pid,
       'filename': filename,
+      'path': path,
       'title': title,
     }
     return info
@@ -153,32 +151,34 @@ class WinSwitcher:
     groupIndexes = {}
     filteredApps = []
     for index, app in enumerate(apps):
-      try:
-        app['windows'] = []
-        for window in self.runningWindows:
-          if window['processId'] == app['pid']:
-            for groupName in WinSwitcher.APP_GROUPINGS:
-              # Check if the current app is not one which should be grouped
-              if app['name'] == groupName:
-                try:
-                  groupIndexes[groupName]
-                  # If we are on another app which should be grouped, add its window to the app at the saved index, and skip app addition to filtered apps
-                  apps[groupIndexes[groupName]]['windows'].append(window)
-                  raise SkipApp
-                  # Otherwise, save the ap's index
-                except KeyError:
-                  groupIndexes[groupName] = index
-                  break
-            if window['filename'] == explorerFilename:
-              # Add hwnd for the FileExplorer app if not already added
-              try:
-                app['lastWindowHwnd']
-              except KeyError:
-                app['lastWindowHwnd'] = window['hwnd']
+      groupName = app['path']
+      app['windows'] = []
+      skipApp = False
+      for window in self.runningWindows:
+        if window['processId'] == app['pid']:
+          try:
+            groupIndexes[groupName]
+
+            # We are on an app for which we've already created a group, so add its window to the app at the saved index
+            apps[groupIndexes[groupName]]['windows'].append(window)
+
+            # skip app addition to filtered apps
+            if len(app['windows']) == 0:
+              skipApp = True
+
+          except KeyError:
+            # We are on  an app for which we've not yet created a group, so create the group and save the app'ss index to it
+            groupIndexes[groupName] = index
             app['windows'].append(window)
+
+          if window['filename'] == explorerFilename:
+            # Add hwnd for the FileExplorer app if not already added
+            try:
+              app['lastWindowHwnd']
+            except KeyError:
+              app['lastWindowHwnd'] = window['hwnd']
+      if not skipApp:
         filteredApps.append(app)
-      except SkipApp:
-        name = app['name']
     apps = filteredApps
 
     # Add window count to the app title
