@@ -191,7 +191,7 @@ class WinSwitcher:
         # Do not count Desktop as a window of File Explorer
         count -= 1
       countText = _('{} windows').format(count)
-      app['title'] += f' ({countText})'
+      app['titleAndCount'] = f'{app["title"]} ({countText})'
     # rich.print(apps)
     return apps
 
@@ -233,7 +233,6 @@ class WinSwitcher:
     if foregroundAppPid != self.guiPid:
       self.prevAppPid = foregroundAppPid
     isStayingInSwitcher = foregroundAppPid == self.guiPid
-    # self.hideSwitcher()
     if type == 'apps':
       apps = self.getRunningAppsAndWindows()
       self.ui.updateListUsingApps(apps)
@@ -241,9 +240,9 @@ class WinSwitcher:
       pid = self.getForegroundAppPid() if not isStayingInSwitcher else self.prevAppPid
       windows = self.getAppWindows(pid)
       self.ui.updateListUsingForegroundAppWindows(windows)
+    self.ui.show()
     if isStayingInSwitcher:
       return
-    self.ui.show()
     # self.ui.Iconize(False)
     app = {'pid': self.pid}
     self.switchToApp(app)

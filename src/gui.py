@@ -2,7 +2,7 @@ import markdown2
 import wx
 
 from lang import _
-
+import util
 # Main frame class.
 class MainFrame(wx.Frame):
 
@@ -28,14 +28,23 @@ class MainFrame(wx.Frame):
     self.panel = wx.Panel(self)    
     vbox = wx.BoxSizer(wx.VERTICAL)
 
+    # Filter textbox
+    filterHbox = wx.BoxSizer(wx.HORIZONTAL)
+    filterLabel = wx.StaticText(self.panel, -1, _('Filter'))
+    filterHbox.Add(filterLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    self.filterTextbox= wx.TextCtrl(self.panel)
+    self.filterTextbox.Bind(wx.EVT_CHAR_HOOK, self.onFilterTextboxCharHook)
+    self.filterTextbox.Bind(wx.EVT_TEXT, self.onFilterTextboxChange)
+    filterHbox.Add(self.filterTextbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+
     # Running apps or windows listbox
-    runningListboxHbox = wx.BoxSizer(wx.HORIZONTAL)
+    runningHbox = wx.BoxSizer(wx.HORIZONTAL)
     self.runningLabel = wx.StaticText(self.panel, -1, _('Running apps'))
-    runningListboxHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    runningHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.runningListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
     self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
-    runningListboxHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    runningHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -44,7 +53,8 @@ class MainFrame(wx.Frame):
     self.helpButton.Bind(wx.EVT_BUTTON, self.onHelpButtonClick)
     bottomButtonsHbox.Add(self.helpButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
-    vbox.Add(runningListboxHbox)
+    vbox.Add(filterHbox)
+    vbox.Add(runningHbox)
     vbox.Add(bottomButtonsHbox)
     self.panel.SetSizer(vbox)
 
@@ -53,6 +63,7 @@ class MainFrame(wx.Frame):
     self.Centre()
     self.Show()
     self.Fit()
+    self.resetFilter()
     self.runningListbox.SetFocus()
 
   # Hides the window.
@@ -73,21 +84,48 @@ class MainFrame(wx.Frame):
 
   # Handles the window activate and deactivate events.
   def onActivate(self, event):
-    if not event.GetActive():
+    if event.GetActive():
+      self.runningListbox.SetFocus()
+    else:
       self.switcher.windowDeactivated()
     event.Skip()
 
-  # Handles  the key press events for the whole frame.
+  # Handles  the key press event for the whole frame.
   def charHook(self, event):
     key = event.GetKeyCode()
+    modifiers = event.GetModifiers()
+    onlyControlDown = modifiers == wx.MOD_CONTROL
     
     # Escape
     if key == wx.WXK_ESCAPE:
       self.switcher.hideSwitcherAndShowPrevWindow()
+
+          # Control + F
+    elif (key == ord('F')) and onlyControlDown:
+      self.filterTextbox.SetFocus()
+
     else:
       event.Skip()
     
-  # Handles  the key press events for the running apps and windows listbox.
+  # Handles  the key press event for the filter textbox.
+  def onFilterTextboxCharHook(self, event):
+    key = event.GetKeyCode()
+
+    # Enter
+    if key == wx.WXK_RETURN:
+      self.runningListbox.SetFocus()
+
+    else:
+      event.Skip()
+
+  # Handles  the text change event for the filter textbox.
+  def onFilterTextboxChange(self, event):
+    if self.showing:
+      self.updateList(self.showing)
+      self.setDefaultSelection()
+    event.Skip()
+
+  # Handles  the key press event for the running apps and windows listbox.
   def onRunningListboxCharHook(self, event):
     key = event.GetKeyCode()
     
@@ -99,16 +137,19 @@ class MainFrame(wx.Frame):
         self.switchToSelectedAppSelectedWindow()
       elif self.showing == 'foregroundAppWindows':
         self.switchToForegroundAppSelectedWindow()
+
     # Right arrow
     if (key == wx.WXK_RIGHT) and (self.showing == 'runningApps'):
       self.updateListUsingSelectedAppWindows()
+
     # Left arrow
     if (key == wx.WXK_LEFT) and (self.showing == 'selectedAppWindows'):
-      self.updateListUsingApps(self.runningApps)
+      self.updateListUsingApps(self.runningApps, False)
+
     else:
       event.Skip()
 
-  # Handles  the key down events for the running apps and windows listbox.
+  # Handles  the key down event for the running apps and windows listbox.
   def onRunningListboxKeyDown(self, event):
     key = event.GetKeyCode()
 
@@ -116,6 +157,7 @@ class MainFrame(wx.Frame):
     if (key == wx.WXK_RIGHT) or (key == wx.WXK_LEFT):
       # Disable the navigation behavior  for the Right and Left arrow keys
       pass
+
     else:
       event.Skip()
 
@@ -124,56 +166,107 @@ class MainFrame(wx.Frame):
     helpTitle = _('Help')
     helpDialog = HelpHTMLDialog(title=f'{helpTitle}{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
 
-  # Update the running apps or windows listbox with the given running apps.
-  def updateListUsingApps(self, apps):
+  # Resets the text of the filter textbox and the listbox selection mappings.
+  def resetFilter(self):
+    self.filterTextbox.SetValue('')
+
+  # Sets the running apps and windows listbox selection to the default value, i.e., to the firs item in the listbox if not empty.
+  def setDefaultSelection(self):
+    if len(self.selectionMapping) > 0:
+      self.runningListbox.SetSelection(0)
+
+  # Returns the app or window selection index derived from the item currently selected in the running apps and windows listbox.
+  def getMappedSelection(self):
+    selection = self.runningListbox.GetSelection()
+    return self.selectionMapping[selection] if selection >= 0 else selection
+
+  # Updates the running apps or windows listbox with the filter applied.
+  def updateList(self, showing):
+    filterText = self.filterTextbox.GetValue().strip()
+    mappedSelection = self.getMappedSelection()
+    self.runningListbox.Clear()
+
+    # If showing windows for the selected app, filter is ignored
+    if showing == 'selectedAppWindows':
+      windows = self.runningApps[mappedSelection]['windows']
+      length = len(windows)
+      self.selectionMapping= range(length)
+      for window in windows:
+        self  .runningListbox.Append(window['title'])
+      return
+
+    # If the filter text is empty, fil the listbox with all the items
+    if len(filterText) == 0:
+      if showing == 'runningApps':
+        for app in self.runningApps:
+          self  .runningListbox.Append(app['titleAndCount'])
+        length = len(self.runningApps)
+        self.selectionMapping= range(length)
+      elif showing == 'foregroundAppWindows':
+        for window in self.foregroundAppWindows:
+          self  .runningListbox.Append(window['title'])
+        length = len(self.foregroundAppWindows)
+        self.selectionMapping= range(length)
+      return
+
+    # Filter text is not empty, so fill the listbox with filtred items
+    self.selectionMapping = []
+    if showing == 'runningApps':
+      for index, app in enumerate(self.runningApps):
+        if util.isFoundNotSensitive(filterText, app['title']):
+          self.runningListbox.Append(app['titleAndCount'])
+          self.selectionMapping.append(index)
+    elif showing == 'foregroundAppWindows':
+      for index, window in enumerate(self.foregroundAppWindows):
+        if util.isFoundNotSensitive(filterText, window['title']):
+          self.runningListbox.Append(window['title'])
+          self.selectionMapping.append(index)
+
+  # Updates the running apps or windows listbox with the given running apps.
+  def updateListUsingApps(self, apps, resetFilter=True):
     self.runningApps = apps
     self.runningLabel.SetLabel(_('Running apps'))
-    self.runningListbox.Clear()
-    for app in apps:
-      self  .runningListbox.Append(app['title'])
+    if resetFilter:
+      self.resetFilter()
+    self.updateList('runningApps')
     if self.showing == 'selectedAppWindows':
       self  .runningListbox.SetSelection(self.runningAppsSelection)
     else:
-      self  .runningListbox.SetSelection(0)
+      self.setDefaultSelection()
     self.showing= 'runningApps'
 
-  # Update the running apps or windows listbox with the given running windows.
-  def updateListUsingWindows(self, windows):
-    self.runningListbox.Clear()
-    for window in windows:
-      self  .runningListbox.Append(window['title'])
-    self  .runningListbox.SetSelection(0)
-
-  # Update the running apps or windows listbox with the running windows for the selected app.
+  # Updates the running apps or windows listbox with the running windows for the selected app.
   def updateListUsingSelectedAppWindows(self):
+    self.runningAppsMappedSelection = self.getMappedSelection()
     self.runningAppsSelection = self.runningListbox.GetSelection()
-    windows = self.runningApps[self.runningAppsSelection]['windows']
-    self.updateListUsingWindows(windows)
+    self.updateList('selectedAppWindows')
+    self.setDefaultSelection()
     self.showing = 'selectedAppWindows'
 
-  # Update the running apps or windows listbox with the given running windows for the app currently in the foreground.
+  # Updates the running apps or windows listbox with the given running windows for the app currently in the foreground.
   def updateListUsingForegroundAppWindows(self, windows):
     self.runningLabel.SetLabel(_('Running windows'))
-    self.updateListUsingWindows(windows)
     self.foregroundAppWindows = windows
+    self.updateList('foregroundAppWindows')
+    self.setDefaultSelection()
     self.showing = 'foregroundAppWindows'
 
   # Switch to the app currently selected in the apps listbox.
   def switchToSelectedApp(self):
-    selection = self.runningListbox.GetSelection()
+    selection = self.getMappedSelection()
     app = self.runningApps[selection]
     self.switcher.switchToApp(app)
 
   # Switch to the selected app window currently selected in the running apps or windows listbox.
   def switchToSelectedAppSelectedWindow(self):
-    selection= self.runningListbox.GetSelection()
-    windows = self.runningApps[self.runningAppsSelection]['windows']
+    selection= self.getMappedSelection()
+    windows = self.runningApps[self.runningAppsMappedSelection]['windows']
     hwnd = windows[selection]['hwnd']
     self.switcher.switchToWindow(hwnd)
 
   # Switch to the foreground app window currently selected in the running apps or windows listbox.
   def switchToForegroundAppSelectedWindow(self):
-    selection= self.runningListbox.GetSelection()
+    selection= self.getMappedSelection()
     hwnd = self.foregroundAppWindows[selection]['hwnd']
     self.switcher.switchToWindow(hwnd)
 
@@ -240,7 +333,7 @@ class HelpHTMLDialog(wx.Dialog):
   def close(self):
     self.Destroy()
     
-  # Handles  the key press events for the whole dialog.
+  # Handles  the key press event for the whole dialog.
   def charHook(self, event):
     key = event.GetKeyCode()
     
