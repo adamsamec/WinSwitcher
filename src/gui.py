@@ -121,7 +121,11 @@ class MainFrame(wx.Frame):
   # Handles  the text change event for the filter textbox.
   def onFilterTextboxChange(self, event):
     if self.showing:
-      self.updateList(self.showing)
+      if self.showing == 'selectedAppWindows':
+        self.updateListUsingApps(resetFilter=False)
+        self.updateList('runningApps')
+      else:
+        self.updateList(self.showing)
       self.setDefaultSelection()
     event.Skip()
 
@@ -144,7 +148,7 @@ class MainFrame(wx.Frame):
 
     # Left arrow
     if (key == wx.WXK_LEFT) and (self.showing == 'selectedAppWindows'):
-      self.updateListUsingApps(self.runningApps, False)
+      self.updateListUsingApps(resetFilter=False)
 
     else:
       event.Skip()
@@ -223,8 +227,9 @@ class MainFrame(wx.Frame):
           self.selectionMapping.append(index)
 
   # Updates the running apps or windows listbox with the given running apps.
-  def updateListUsingApps(self, apps, resetFilter=True):
-    self.runningApps = apps
+  def updateListUsingApps(self, apps=None, resetFilter=True):
+    if apps:
+      self.runningApps = apps
     self.runningLabel.SetLabel(_('Running apps'))
     if resetFilter:
       self.resetFilter()
