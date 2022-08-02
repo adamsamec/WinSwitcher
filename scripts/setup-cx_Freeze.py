@@ -9,7 +9,7 @@ options = {
   'build_exe': '..\\build\\WinSwitcher'
 }
 executables = [cx_Freeze.Executable('..\\src\\WinSwitcher.py',
-  # base = 'Win32GUI',
+  base = 'Win32GUI',
   targetName = 'WinSwitcher.exe'
   )]
 

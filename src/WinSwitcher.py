@@ -46,12 +46,6 @@ class WinSwitcher:
     pids = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow())
     return pids[-1]
 
-      # Sets the apps UI object for the switcher and saves its process PID.
-  def setUI(self, ui):
-    self.ui = ui
-    hwnd = ui.GetHandle()
-    self.guiPid = win32process.GetWindowThreadProcessId(hwnd)[1]
-
   # Returns the info about the app specified by the given PID.
   def getAppInfo(self, pid):
     process = psutil.Process(pid)
@@ -292,16 +286,25 @@ class WinSwitcher:
     if key in self.pressedKeys:
       self.pressedKeys.remove(key)
 
+      # Sets the apps UI object for the switcher and saves its process PID.
+  def setUI(self, ui):
+    self.ui = ui
+    hwnd = ui.GetHandle()
+    self.guiPid = win32process.GetWindowThreadProcessId(hwnd)[1]
+
+  # Starts the program by setting up global keyboard listeners and initiating the main GUI loop.
+  def start(self, app, ui):
+    self.setUI(ui)
+    with keyboard.Listener(on_press=self.onKeyDown, on_release=self.onKeyUp) as listener:
+      app.MainLoop()
+      listener.join()
+
 # Main function.
 def main():
   app = wx.App()
   config = Config()
   switcher = WinSwitcher(config)
   mainFrame = MainFrame(switcher, config, title=MainFrame.WINDOW_TITLE)
-  switcher.setUI(mainFrame)
-  with keyboard.Listener(on_press=switcher.onKeyDown, on_release=switcher.onKeyUp) as listener:
-    app.MainLoop()
-    listener.join()
-    del app
+  switcher.start(app, mainFrame)
 
 main()
