@@ -1,5 +1,6 @@
 # TODO
-* Test on Czech Windows.
+* Test on Czech Windows and other machine.
 * Sounds or announcements when starting and quitting the app.
 * Filter results announcements.
-* Help dialog.
+* Update Readme.md.
+* Check and improve the visual UI.

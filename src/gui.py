@@ -1,8 +1,8 @@
-import markdown2
 import wx
 
 from lang import _
 import util
+
 # Main frame class.
 class MainFrame(wx.Frame):
 
@@ -46,16 +46,8 @@ class MainFrame(wx.Frame):
     self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
     runningHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
-    bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Help button
-    self.helpButton = wx.Button(self.panel, label=_('Help'))
-    self.helpButton.Bind(wx.EVT_BUTTON, self.onHelpButtonClick)
-    bottomButtonsHbox.Add(self.helpButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
-
     vbox.Add(filterHbox)
     vbox.Add(runningHbox)
-    vbox.Add(bottomButtonsHbox)
     self.panel.SetSizer(vbox)
 
   # Shows the window.
@@ -165,11 +157,6 @@ class MainFrame(wx.Frame):
     else:
       event.Skip()
 
-  # Handles the help button click.
-  def onHelpButtonClick(self, event):
-    helpTitle = _('Help')
-    helpDialog = HelpHTMLDialog(title=f'{helpTitle}{MainFrame.WINDOW_TITLE_SEPARATOR}{MainFrame.WINDOW_TITLE}', parent = self)
-
   # Resets the text of the filter textbox and the listbox selection mappings.
   def resetFilter(self):
     self.filterTextbox.SetValue('')
@@ -275,75 +262,3 @@ class MainFrame(wx.Frame):
     hwnd = self.foregroundAppWindows[selection]['hwnd']
     self.switcher.switchToWindow(hwnd)
 
-# Help HTML dialog class.
-class HelpHTMLDialog(wx.Dialog):
-
-  # Paths to Markdown pages directory and files
-  MARKDOWN_PATH = 'md/'
-  HELP_PAGE_PATH = MARKDOWN_PATH + 'help.md'
-
-  # Initializes the object by creating the CEF  web browser and binding the event handlers.
-  def __init__(self, title, parent = None):
-    super(HelpHTMLDialog, self).__init__(parent = parent, title = title)
-    
-    self.SetSize((1000, 800))
-    self.Bind(wx.EVT_CHAR_HOOK, self.charHook)
-    self.addBrowser()
-    
-    self.Centre()
-    self.ShowModal()
-    
-  # Adds the web browser to this dialog and binds the dialog close event.
-  def addBrowser(self):
-    self.panel = wx.Panel(self)
-    self.Bind(wx.EVT_CLOSE, self.onClose)
-    
-    html = self.loadHTML()
-    
-  # Closes all CEF processes on dialog close.
-  def onClose(self, event):
-    event.Skip()
-    
-  # Loads the page in Markdown, converts it into HTML and returns it.
-  def loadHTML(self):
-    path = HelpHTMLDialog.HELP_PAGE_PATH
-    content = ''
-    with open(path, encoding='utf-8') as file:
-      # Load file line by line
-      while True:
-        line = file.readline()
-        content += line
-        if not line:
-          break
-    
-    # Convert the page from Markkdown to HTML
-    md = markdown2.Markdown()
-    html = md.convert(content)
-    
-    # Wrap the page content with the basic HTML structure.
-    html = '''
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-</head>
-<body>
-''' + html + '''
-</body>
-</html>
-'''
-    return html
-    
-  # Closes the dialog without any changes.
-  def close(self):
-    self.Destroy()
-    
-  # Handles  the key press event for the whole dialog.
-  def charHook(self, event):
-    key = event.GetKeyCode()
-    
-    # Escape
-    if key == wx.WXK_ESCAPE:
-      self.close()
-    else:
-      event.Skip()
