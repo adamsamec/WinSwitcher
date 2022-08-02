@@ -1,8 +1,10 @@
+import accessible_output2.outputs.auto
 from pathlib import Path
 import rich
 import subprocess
 import sys
 from threading import Thread
+import time
 import win32api
 import win32gui
 import win32process
@@ -35,7 +37,8 @@ class WinSwitcher:
 
   # Initializes the object.
   def __init__(self, config):
-    self.config = config  
+    self.config = config
+    self.sr = accessible_output2.outputs.auto.Auto()
     self.pressedKeys = set()
     self.pid= self.getForegroundAppPid()
     self.prevAppPid = self.pid
@@ -256,9 +259,13 @@ class WinSwitcher:
   def windowDeactivated(self):
     self.hideSwitcher()
 
-  # Exits the program.
+  # Cleans everything and exits the program.
   def exitSwitcher(self):
     self.ui.cleanAndClose()
+    self.srOutput(_('Exitting WinSwitcher'), True)
+
+    # Give some time to finish the speech before exitting
+    time.sleep(3)
     sys.exit()
 
   # Called when key is pressed.
@@ -292,9 +299,14 @@ class WinSwitcher:
     hwnd = ui.GetHandle()
     self.guiPid = win32process.GetWindowThreadProcessId(hwnd)[1]
 
-  # Starts the program by setting up global keyboard listeners and initiating the main GUI loop.
+  # Outputs the given text via screen reader, optionally interrupting the current output.
+  def srOutput(self, text, interrupt=False):
+    self.sr.output(text, interrupt=interrupt)
+
+  # Starts the program by setting up global keyboard listener and initiating the main GUI loop.
   def start(self, app, ui):
     self.setUI(ui)
+    self.srOutput(_('WinSwitcher started'), True)
     with keyboard.Listener(on_press=self.onKeyDown, on_release=self.onKeyUp) as listener:
       app.MainLoop()
       listener.join()
