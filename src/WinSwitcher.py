@@ -40,27 +40,36 @@ class WinSwitcher:
     self.config = config
     self.sr = accessible_output2.outputs.auto.Auto()
     self.pressedKeys = set()
-    self.pid= self.getForegroundAppPid()
-    self.prevAppPid = self.pid
     self.runningWindows = []
 
-  # Returns the PID of the window in the foreground.
-  def getForegroundAppPid(self):
-    pids = win32process.GetWindowThreadProcessId(win32gui.GetForegroundWindow())
-    return pids[-1]
+    hwnd = self.getForegroundWindowHwnd()
+    pid = win32process.GetWindowThreadProcessId(hwnd)[1]
+    self.app = Application().connect(process=pid)
+    self.prevWindowHwnd = hwnd
 
-  # Returns the info about the app specified by the given PID.
-  def getAppInfo(self, pid):
-    process = psutil.Process(pid)
-    path = process.exe()
-    filename = Path(path).name
+  # Returns the hwnd of the window in the foreground.
+  def getForegroundWindowHwnd(self):
+    hwnd = win32gui.GetForegroundWindow()
+    return hwnd
+
+  # Returns the title of the app specified by the given process path.
+  def getAppTitle(self, path):
     langs = win32api.GetFileVersionInfo(path, r'\VarFileInfo\Translation')
     key = r'StringFileInfo\%04x%04x\FileDescription' % (langs[0][0], langs[0][1])
     title = (win32api.GetFileVersionInfo(path, key))
+    return title
+    
+  # Returns the info about the app specified by the given last window hwnd.
+  def getAppInfo(self, lastWindowHwnd):
+    threadId, processId = win32process.GetWindowThreadProcessId(lastWindowHwnd)
+    process = psutil.Process(processId)
+    filename = process.name()
+    path = process.exe()
+    title = self.getAppTitle(path)
     if title in list(WinSwitcher.REPLACED_APP_TITLES.keys()):
       title = WinSwitcher.REPLACED_APP_TITLES[title]
     info= {
-      'pid': pid,
+      'lastWindowHwnd': lastWindowHwnd,
       'filename': filename,
       'path': path,
       'title': title,
@@ -99,157 +108,102 @@ class WinSwitcher:
     if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
       window['title'] = _('Program Manager')
 
-  # Returns a list of running apps where each app consists of info about itss PID, process filename, app title and its running windows.
+  # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its running windows.
   def getRunningAppsAndWindows(self):
-    gpCommand = 'powershell "Get-Process | where {$_.MainWindowTitle } | select ProcessName, Id | Format-List"'
-    gpProcess = subprocess.Popen(gpCommand, shell=True, stdout=subprocess.PIPE)
-    
-      # decode() converts from binary string and rstrip() removes trailing "\r\n"
-    lines = [line.decode().rstrip() for line in gpProcess.stdout if not line.decode()[0].isspace()]
-
-    lineCount = len(lines)
-    lineNum = 0
-    propCount = 2
-    apps = []
-    while lineNum < lineCount:
-      line = lines[lineNum]
-      modLineNum = lineNum % propCount
-      value = line[line.find(':') + 2:]
-
-      # Process name
-      if modLineNum == 0:
-        skipApp = False
-        name = value
-
-        # Skip some strange unwanted apps
-        if name in WinSwitcher.EXCLUDED_APP_NAMES:
-          skipApp =True
-
-      # PID
-      elif (modLineNum == 1) and not skipApp:
-        pid = int(value)
-        app = self.getAppInfo(pid)
-        app['name'] = name
-        apps.append(app)
-      lineNum += 1
-
-    # File Explorer is not listed, so add it separately
-    explorerFilename = 'explorer.exe'
-    tasklistCommand = f'tasklist /FI "ImageName eq {explorerFilename}" /FI "Status eq Running" /FO LIST'
-    tasklistProcess = subprocess.Popen(tasklistCommand, shell=True, stdout=subprocess.PIPE)
-
-    # PID line is the third one
-    pidLine = tasklistProcess.stdout.readlines()[2].decode()
-
-    pid = int(pidLine.split()[-1])
-    app = self.getAppInfo(pid)
-    app['name'] = 'FileExplorer'
-    apps.insert(0, app)
-
-    # Complete the apps dictionary with the corresponding running windows and group the apps based on process path
     self.updateRunningWindows()
-    groupIndexes = {}
-    groupedApps = []
-    for index, app in enumerate(apps):
-      groupName = app['path']
-      app['windows'] = []
-      skipApp = False
-      for window in self.runningWindows:
-        if window['processId'] == app['pid']:
-          try:
-            groupIndexes[groupName]
+    apps = []
+    appIndexes = {}
+    appIndex = 0
 
-            # We are on an app for which we've already created a group, so add its window to the app at the saved index
+    for window in self.runningWindows:
+      appKey = window['path']
+      try:
+        appIndexes[appKey]
 
-            # If app's windows are empty, we have already added them to the group instead, so skip this app addition to the grouped apps
-            if len(app['windows']) == 0:
-              skipApp = True
+        # We are on a window for which we've already created an ap, so add the window to that appp
+        app = apps[appIndexes[appKey]]
+        app['windows'].append(window)
 
-          except KeyError:
-            # We are on  an app for which we've not yet created a group, so create the group and save the app'ss index to it
-            groupIndexes[groupName] = index
-            # app['windows'].append(window)
-
-          if window['filename'] == explorerFilename:
-            # Add hwnd for the FileExplorer app if not already added
-            try:
-              app['lastWindowHwnd']
-            except KeyError:
-              app['lastWindowHwnd'] = window['hwnd']
-          apps[groupIndexes[groupName]]['windows'].append(window)
-      if not skipApp:
-        groupedApps.append(app)
-    apps = groupedApps
+      except KeyError:
+        # We are on  a window for which we've not yet created an app, so create the app and save the index for that app
+        lastWindowHwnd = window['hwnd']
+        path = window['path']
+        filename = Path(path).name
+        title = self.getAppTitle(path)
+        app = {
+'lastWindowHwnd': lastWindowHwnd,
+'path': path,
+'filename': filename,
+'title': title,
+'windows': [window],
+        }
+        apps.append(app)
+        appIndexes[appKey] = appIndex
+        appIndex += 1
 
     # Add window count to the app title
     for app in apps:
       count = len(app['windows'])
-      if app['filename'] == explorerFilename:
+      if app['filename'] == 'explorer.exe':
         # Do not count Desktop as a window of File Explorer
         count -= 1
       countText = _('{} windows').format(count)
       app['titleAndCount'] = f'{app["title"]} ({countText})'
-    # rich.print(apps)
+    rich.print(apps)
     return apps
 
-  # Returns a list of running windows for the application with the given PID.
-  def getAppWindows(self, pid):
+  # Returns a list of running windows for the app with the given last window hwnd.
+  def getAppWindows(self, lastWindowHwnd):
     self.updateRunningWindows()
-    app = self.getAppInfo(pid)
+    app = self.getAppInfo(lastWindowHwnd)
     windows = []
     for window in self.runningWindows:
-      if (window['processId'] == pid) or (window['path'] == app['path']):
+      if window['path'] == app['path']:
         windows.append(window)
     return windows
 
-  # Switches to the given app.
-  def switchToApp(self, app):
-    pid = app['pid']
+  # Switches to WinSwitcher.
+  def switchToSwitcher(self):
+    # self.app.top_window().set_focus()
+    # return
     try:
-      # Apps which cannot be switched via PID are switched via hwnd of their last window
-      app['lastWindowHwnd']
-    except KeyError:
-      try:
-        app = Application().connect(process=pid)
-        app.top_window().set_focus()
-      except:
-        print(f'Switching to app with PID: {pid} failed.')
-      return
-    self.switchToWindow(app['lastWindowHwnd'])
+      self.app.top_window().set_focus()
+    except:
+      print('Switching to WinSwitcher failed.')
 
   # Switches to the window specified by the given hwnd.
   def switchToWindow(self, hwnd):
     try:
       win32gui.SetForegroundWindow(hwnd)
     except:
-      print(f'Switching to window with handle: {hwnd} failed.')
+        print(f'Switching to window with handle: {hwnd} failed.')
 
   # Shows the app switcher.
   def showSwitcher(self, type, args):
-    foregroundAppPid = self.getForegroundAppPid()
-    if foregroundAppPid != self.guiPid:
-      self.prevAppPid = foregroundAppPid
-    isStayingInSwitcher = foregroundAppPid == self.guiPid
+    foregroundWindowHwnd = self.getForegroundWindowHwnd()
+    isStayingInSwitcher = foregroundWindowHwnd == self.guiHwnd
+    if not isStayingInSwitcher:
+      # Save the previous window hwnd if not switching from apps list to windows list or vice versa, that is, if not staying in WinSwitcher
+      self.prevWindowHwnd = foregroundWindowHwnd
+
     if type == 'apps':
       apps = self.getRunningAppsAndWindows()
       self.ui.updateListUsingApps(apps)
     elif type == 'windows':
-      pid = self.getForegroundAppPid() if not isStayingInSwitcher else self.prevAppPid
-      windows = self.getAppWindows(pid)
+      hwnd = foregroundWindowHwnd if not isStayingInSwitcher else self.prevWindowHwnd
+      windows = self.getAppWindows(hwnd)
       self.ui.updateListUsingForegroundAppWindows(windows)
     self.ui.show()
     if isStayingInSwitcher:
       return
     # self.ui.Iconize(False)
-    app = {'pid': self.pid}
-    self.switchToApp(app)
+    self.switchToSwitcher()
     self.ui.Raise()
 
   # Hides the app switcher and switches to the window which was previously in the foreground.
   def hideSwitcherAndShowPrevWindow(self):
     self.hideSwitcher()
-    app = {'pid': self.prevAppPid}
-    self.switchToApp(app)
+    self.switchToWindow(self.prevWindowHwnd)
 
   # Hides the app switcher.
   def hideSwitcher(self):
@@ -293,11 +247,10 @@ class WinSwitcher:
     if key in self.pressedKeys:
       self.pressedKeys.remove(key)
 
-      # Sets the apps UI object for the switcher and saves its process PID.
+      # Sets the apps UI object for the switcher and saves its hwnd.
   def setUI(self, ui):
     self.ui = ui
-    hwnd = ui.GetHandle()
-    self.guiPid = win32process.GetWindowThreadProcessId(hwnd)[1]
+    self.guiHwnd = ui.GetHandle()
 
   # Outputs the given text via screen reader, optionally interrupting the current output.
   def srOutput(self, text, interrupt=False):

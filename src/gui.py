@@ -12,7 +12,7 @@ class MainFrame(wx.Frame):
   # Initializes the object by linking it with the given WinSwitcher and Config objects, binding the event handlers, and creating the GUI.
   def __init__(self, switcher, config, title, parent = None):
     style = wx.DEFAULT_FRAME_STYLE & (~wx.CLOSE_BOX) & (~wx.MINIMIZE_BOX) & (~wx.MAXIMIZE_BOX)
-    super(MainFrame, self).__init__(parent, title=title, style=style)
+    super(MainFrame, self).__init__(parent, title=title, style=style, size=(1300, 600))
     self.switcher = switcher
     self.config = config
     self.showing = None
@@ -32,7 +32,7 @@ class MainFrame(wx.Frame):
     filterHbox = wx.BoxSizer(wx.HORIZONTAL)
     filterLabel = wx.StaticText(self.panel, -1, _('Filter'))
     filterHbox.Add(filterLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
-    self.filterTextbox= wx.TextCtrl(self.panel)
+    self.filterTextbox= wx.TextCtrl(self.panel, size=(800, 0))
     self.filterTextbox.Bind(wx.EVT_CHAR_HOOK, self.onFilterTextboxCharHook)
     self.filterTextbox.Bind(wx.EVT_TEXT, self.onFilterTextboxChange)
     filterHbox.Add(self.filterTextbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
@@ -41,7 +41,7 @@ class MainFrame(wx.Frame):
     runningHbox = wx.BoxSizer(wx.HORIZONTAL)
     self.runningLabel = wx.StaticText(self.panel, -1, _('Running apps'))
     runningHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
-    self.runningListbox = wx.ListBox(self.panel, size=(100, 0), choices = [], style = wx.LB_SINGLE)
+    self.runningListbox = wx.ListBox(self.panel, size=(1200, 500), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
     self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
     runningHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
@@ -246,8 +246,8 @@ class MainFrame(wx.Frame):
   # Switch to the app currently selected in the apps listbox.
   def switchToSelectedApp(self):
     selection = self.getMappedSelection()
-    app = self.runningApps[selection]
-    self.switcher.switchToApp(app)
+    hwnd = self.runningApps[selection]['lastWindowHwnd']
+    self.switcher.switchToWindow(hwnd)
 
   # Switch to the selected app window currently selected in the running apps or windows listbox.
   def switchToSelectedAppSelectedWindow(self):
