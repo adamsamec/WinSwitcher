@@ -70,7 +70,7 @@ class WinSwitcher:
   # Handler which is called for each running window and saves its information.
   def winEnumHandler(self, hwnd, ctx):
     # Do not include WinSwitcher in the list
-    if hwnd in [self.hwnd, self.guiHwnd]:
+    if hwnd in [self.guiHwnd]:
       return
     if win32gui.IsWindowVisible(hwnd):
       title = win32gui.GetWindowText(hwnd)
@@ -143,7 +143,7 @@ class WinSwitcher:
         count -= 1
       countText = _('{} windows').format(count)
       app['titleAndCount'] = f'{app["title"]} ({countText})'
-    rich.print(apps)
+    # rich.print(apps)
     return apps
 
   # Returns a list of running windows for the app with the given last window hwnd.
@@ -206,7 +206,6 @@ class WinSwitcher:
 
   # Cleans everything and exits the program.
   def exitSwitcher(self):
-    self.ui.cleanAndClose()
     self.srOutput(_('Exitting WinSwitcher'), True)
 
     # Give some time to finish the speech before exitting
@@ -229,11 +228,9 @@ class WinSwitcher:
             # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
             thread = Thread(target=self.showSwitcher, args=('apps', None))
             thread.start()
-          if command == 'showWindows':
+          elif command == 'showWindows':
             thread = Thread(target=self.showSwitcher, args=('windows', None))
             thread.start()
-          elif command == 'exit':
-            self.exitSwitcher()
 
     if key in self.pressedKeys:
       self.pressedKeys.remove(key)

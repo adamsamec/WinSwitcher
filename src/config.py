@@ -17,12 +17,6 @@ class Config:
 ],
 'command': 'showWindows',
 },
-{
-'keys': [
-    {Key.cmd, Key.f4},
-],
-'command': 'exit',
-},
 ]
 
   def getShortcuts(self):

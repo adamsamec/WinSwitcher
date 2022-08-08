@@ -63,16 +63,14 @@ class MainFrame(wx.Frame):
     self.Hide()
     self.showing = None
     
-      # Cleans everything and closes the window.
+      # Cleans everything and destroys the window.
   def cleanAndClose(self):
-    try:
-      self.Destroy()
-    except:
-      pass
+    wx.CallAfter(self.Destroy)
   
   # Handles  the window close event.
   def onClose(self, event):
-    self.switcher.hideSwitcherAndShowPrevWindow()
+    self.cleanAndClose()
+    self.switcher.exitSwitcher()
 
   # Handles the window activate and deactivate events.
   def onActivate(self, event):
