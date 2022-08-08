@@ -11,7 +11,7 @@ import win32process
 
 import psutil
 from pynput import keyboard
-from pywinauto import Application
+from pywinauto import mouse
 import wx
 
 from config import Config
@@ -42,10 +42,10 @@ class WinSwitcher:
     self.pressedKeys = set()
     self.runningWindows = []
 
-    hwnd = self.getForegroundWindowHwnd()
-    pid = win32process.GetWindowThreadProcessId(hwnd)[1]
-    self.app = Application().connect(process=pid)
-    self.prevWindowHwnd = hwnd
+    self.hwnd = self.getForegroundWindowHwnd()
+    # pid = win32process.GetWindowThreadProcessId(hwnd)[1]
+    # self.app = Application().connect(process=pid)
+    self.prevWindowHwnd = self.hwnd
 
   # Returns the hwnd of the window in the foreground.
   def getForegroundWindowHwnd(self):
@@ -149,7 +149,7 @@ class WinSwitcher:
         count -= 1
       countText = _('{} windows').format(count)
       app['titleAndCount'] = f'{app["title"]} ({countText})'
-    rich.print(apps)
+    # rich.print(apps)
     return apps
 
   # Returns a list of running windows for the app with the given last window hwnd.
@@ -164,12 +164,9 @@ class WinSwitcher:
 
   # Switches to WinSwitcher.
   def switchToSwitcher(self):
-    # self.app.top_window().set_focus()
-    # return
-    try:
-      self.app.top_window().set_focus()
-    except:
-      print('Switching to WinSwitcher failed.')
+    # Mouse movement out of the screen bypasses the Windows system windows switching restriction
+    mouse.move(coords=(-10000, 500))
+    self.switchToWindow(self.hwnd)
 
   # Switches to the window specified by the given hwnd.
   def switchToWindow(self, hwnd):
