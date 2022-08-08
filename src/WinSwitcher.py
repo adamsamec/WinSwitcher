@@ -1,5 +1,8 @@
 import accessible_output2.outputs.auto
 from pathlib import Path
+import psutil
+from pynput import keyboard
+from pywinauto import mouse
 import rich
 import subprocess
 import sys
@@ -8,19 +11,11 @@ import time
 import win32api
 import win32gui
 import win32process
-
-import psutil
-from pynput import keyboard
-from pywinauto import mouse
 import wx
 
 from config import Config
 from gui import MainFrame
 from lang import _
-
-# Exception used when filtering apps.
-class SkipApp(Exception):
-  pass
 
 # Main application class.
 class WinSwitcher:
@@ -41,10 +36,7 @@ class WinSwitcher:
     self.sr = accessible_output2.outputs.auto.Auto()
     self.pressedKeys = set()
     self.runningWindows = []
-
     self.hwnd = self.getForegroundWindowHwnd()
-    # pid = win32process.GetWindowThreadProcessId(hwnd)[1]
-    # self.app = Application().connect(process=pid)
     self.prevWindowHwnd = self.hwnd
 
   # Returns the hwnd of the window in the foreground.
