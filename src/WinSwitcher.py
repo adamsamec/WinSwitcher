@@ -9,6 +9,7 @@ import sys
 from threading import Thread
 import time
 import win32api
+import win32con
 import win32gui
 import win32process
 import wx
@@ -48,24 +49,16 @@ class WinSwitcher:
     langs = win32api.GetFileVersionInfo(path, r'\VarFileInfo\Translation')
     key = r'StringFileInfo\%04x%04x\FileDescription' % (langs[0][0], langs[0][1])
     title = (win32api.GetFileVersionInfo(path, key))
-    return title
-    
-  # Returns the info about the app specified by the given last window hwnd.
-  def getAppInfo(self, lastWindowHwnd):
-    threadId, processId = win32process.GetWindowThreadProcessId(lastWindowHwnd)
-    process = psutil.Process(processId)
-    filename = process.name()
-    path = process.exe()
-    title = self.getAppTitle(path)
     if title in list(WinSwitcher.REPLACED_APP_TITLES.keys()):
       title = WinSwitcher.REPLACED_APP_TITLES[title]
-    info= {
-      'lastWindowHwnd': lastWindowHwnd,
-      'filename': filename,
-      'path': path,
-      'title': title,
-    }
-    return info
+    return title
+    
+  # Returns the path for the process specified by the given window hwnd.
+  def getProcessPath(self, hwnd):
+    threadId, processId = win32process.GetWindowThreadProcessId(hwnd)
+    process = psutil.Process(processId)
+    path = process.exe()
+    return path
 
   # Handler which is called for each running window and saves its information.
   def winEnumHandler(self, hwnd, ctx):
@@ -149,10 +142,10 @@ class WinSwitcher:
   # Returns a list of running windows for the app with the given last window hwnd.
   def getAppWindows(self, lastWindowHwnd):
     self.updateRunningWindows()
-    app = self.getAppInfo(lastWindowHwnd)
+    path = self.getProcessPath(lastWindowHwnd)
     windows = []
     for window in self.runningWindows:
-      if window['path'] == app['path']:
+      if window['path'] == path:
         windows.append(window)
     return windows
 
@@ -165,6 +158,7 @@ class WinSwitcher:
   # Switches to the window specified by the given hwnd.
   def switchToWindow(self, hwnd):
     try:
+      win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
       win32gui.SetForegroundWindow(hwnd)
     except:
         print(f'Switching to window with handle: {hwnd} failed.')
