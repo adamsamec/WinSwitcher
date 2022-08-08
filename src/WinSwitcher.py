@@ -20,8 +20,7 @@ from lang import _
 # Main application class.
 class WinSwitcher:
 
-  # App names and window process filenames which to exclude from the list
-  EXCLUDED_APP_NAMES = ['ApplicationFrameHost', 'SystemSettings', 'TextInputHost']
+  # Window process filenames which to exclude from the list
   EXCLUDED_WINDOW_FILENAMES = ['ApplicationFrameHost.exe', 'SystemSettings.exe', 'TextInputHost.exe']
 
   # Replacements for app titles to make them shorter or more readable
@@ -70,6 +69,9 @@ class WinSwitcher:
 
   # Handler which is called for each running window and saves its information.
   def winEnumHandler(self, hwnd, ctx):
+    # Do not include WinSwitcher in the list
+    if hwnd in [self.hwnd, self.guiHwnd]:
+      return
     if win32gui.IsWindowVisible(hwnd):
       title = win32gui.GetWindowText(hwnd)
       if not title:
@@ -141,7 +143,7 @@ class WinSwitcher:
         count -= 1
       countText = _('{} windows').format(count)
       app['titleAndCount'] = f'{app["title"]} ({countText})'
-    # rich.print(apps)
+    rich.print(apps)
     return apps
 
   # Returns a list of running windows for the app with the given last window hwnd.

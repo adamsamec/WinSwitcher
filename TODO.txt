@@ -1,6 +1,6 @@
 # TODO
+* Alt + F4 for exiting instead of global keyboard shortcut.
+* Decrease the file size or count of the freezed binary.
 * Test on Czech Windows and other machine.
-* Sounds or announcements when starting and quitting the app.
 * Filter results announcements.
 * Update Readme.md.
-* Check and improve the visual UI.
