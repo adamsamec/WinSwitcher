@@ -1,4 +1,5 @@
 import accessible_output2.outputs.auto
+import os
 from pathlib import Path
 import psutil
 from pynput import keyboard
@@ -49,8 +50,16 @@ class WinSwitcher:
     langs = win32api.GetFileVersionInfo(path, r'\VarFileInfo\Translation')
     key = r'StringFileInfo\%04x%04x\FileDescription' % (langs[0][0], langs[0][1])
     title = (win32api.GetFileVersionInfo(path, key))
+
+    # If the title is missing, use the filename without the .exe extension instead
+    name = os.path.splitext(Path(path).name)[0]
+    if not title:
+      title = name
+
+    # Some titles are not the same as in Taskbar, so replace at least those we know about
     if title in list(WinSwitcher.REPLACED_APP_TITLES.keys()):
       title = WinSwitcher.REPLACED_APP_TITLES[title]
+
     return title
     
   # Returns the path for the process specified by the given window hwnd.
