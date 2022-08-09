@@ -71,28 +71,25 @@ class WinSwitcher:
 
   # Handler which is called for each running window and saves its information.
   def winEnumHandler(self, hwnd, ctx):
-    # Do not include WinSwitcher in the list
-    if hwnd in [self.guiHwnd]:
+    # Do not include the switcher window in the list
+    if hwnd == self.guiHwnd:
       return
-    if win32gui.IsWindowVisible(hwnd):
-      title = win32gui.GetWindowText(hwnd)
-      if not title:
-        return
-      threadId, processId = win32process.GetWindowThreadProcessId(hwnd)
-      process = psutil.Process(processId)
-      filename = process.name()
-      if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
-        return
-      path = process.exe()
-      window = {
-        'threadId': threadId,
-        'processId': processId,
-        'hwnd': hwnd,
-        'filename': filename,
-        'path': path,
-        'title': title,
-      }
-      self.runningWindows.append(window)
+    if not win32gui.IsWindowVisible(hwnd):
+      return
+    title = win32gui.GetWindowText(hwnd)
+    if not title:
+      return
+    path = self.getProcessPath(hwnd)
+    filename = Path(path).name
+    if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
+      return
+    window = {
+      'hwnd': hwnd,
+      'path': path,
+      'filename': filename,
+      'title': title,
+    }
+    self.runningWindows.append(window)
 
   # Updates the list of the currently running windows.
   def updateRunningWindows(self):
