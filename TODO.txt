@@ -2,4 +2,3 @@
 * Some apps cannot be switched to, e.g. the modern ones.
 * Test on Czech Windows and other machine.
 * Filter results announcements.
-* Update Readme.md.

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-07-27 18:41+0200\n"
+"POT-Creation-Date: 2022-08-10 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,23 +15,39 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: src\WinSwitcher.py:92
-msgid "Program Manager"
-msgstr "Show Desktop"
+#: ../src\WinSwitcher.py:30
+msgid "File Explorer"
+msgstr ""
 
-#: src\WinSwitcher.py:134
-msgid "Windows Explorer"
-msgstr "File Explorer"
+#: ../src\WinSwitcher.py:31
+msgid "Command Prompt"
+msgstr ""
 
-#: src\gui.py:32 src\gui.py:124
+#: ../src\WinSwitcher.py:102
+msgid "Show Desktop"
+msgstr ""
+
+#: ../src\WinSwitcher.py:143
+msgid "{} windows"
+msgstr ""
+
+#: ../src\WinSwitcher.py:209
+msgid "Exitting WinSwitcher"
+msgstr ""
+
+#: ../src\WinSwitcher.py:250
+msgid "WinSwitcher started"
+msgstr ""
+
+#: ../src\gui.py:33
+msgid "Filter"
+msgstr ""
+
+#: ../src\gui.py:42 ../src\gui.py:218
 msgid "Running apps"
 msgstr ""
 
-#: src\gui.py:41 src\gui.py:111
-msgid "Help"
-msgstr ""
-
-#: src\gui.py:144
-msgid "Open windows"
+#: ../src\gui.py:238
+msgid "Running windows"
 msgstr ""
 

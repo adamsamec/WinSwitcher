@@ -99,7 +99,7 @@ class WinSwitcher:
     # Rename the  title for File Explorer desktop item
     window = self.runningWindows[-1]
     if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
-      window['title'] = _('Program Manager')
+      window['title'] = _('Show Desktop')
 
   # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its running windows.
   def getRunningAppsAndWindows(self):
