@@ -45,12 +45,12 @@ The filtering is not case sensitive and also matches the list items disregarding
 
 ## Download
 ### Installer
-Below, you can download the installer for WinSwitcher, which also creates a startup shortcut, so you don't have to run WinSwitcher manually every time your system restarts.
+Below, you can download the installer for WinSwitcher, which also creates a startup shortcut, so you don't have to run WinSwitcher manually every time your system restarts. Note that Windows Defender may prevent this installer from starting. In that case, visit the "More info"link which should be available on the page displayed to you, and then press the "Run anyway" button.
 
 [Download WinSwitcher installer for Windows (32-bit)][installer-download].
 
 ### Portable
-WinSwitcher is also available as a portable executable. Download the ZIP archive from the link below,extract it to a location of your choice and run it by executing the WinSwitcher.exe file. However, note that the installer, which is available for download above, also creates startup shortcut for you, so you don't have to start WinSwitcher manually every time your system restarts.
+WinSwitcher is also available as a portable executable. Download the ZIP archive from the link below,extract it to a location of your choice and run it by executing the WinSwitcher.exe file. Note that the installer available for download above, as opposed to this portable version, also creates startup shortcut for you, so you don't have to start WinSwitcher manually every time your system restarts.
 
 [Download WinSwitcher portable for Windows (32-bit)][portable-download].
 
