@@ -44,10 +44,15 @@ The filtering is not case sensitive and also matches the list items disregarding
 * Sometimes after switching to a window, the focus is not properly placed to that window. To workaround this condition, press Alt + Tab and then Alt + Shift + Tab.
 
 ## Download
-### Executable
-WinSwitcher is available as a portable executable. Download the ZIP archive from the link below,extract it to a location of your choice and run it by executing the WinSwitcher.exe file.
+### Installer
+Below, you can download the installer for WinSwitcher, which also creates a startup shortcut, so you don't have to run WinSwitcher manually every time your system restarts.
 
-[Download WinSwitcher for Windows (32-bit)][executable-download]
+[Download WinSwitcher installer for Windows (32-bit)][installer-download].
+
+### Portable
+WinSwitcher is also available as a portable executable. Download the ZIP archive from the link below,extract it to a location of your choice and run it by executing the WinSwitcher.exe file. However, note that the installer, which is available for download above, also creates startup shortcut for you, so you don't have to start WinSwitcher manually every time your system restarts.
+
+[Download WinSwitcher portable for Windows (32-bit)][portable-download].
 
 ### Source files
 WinSwitcher is an open-source software developed in Python. You can find all the necessary source files in the "src" folder of this repo, and run the program from that folder by executing the following if all the Python dependancies are met:
@@ -78,4 +83,5 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[executable-download]: http://files.adamsamec.cz/adamsamec.cz/files/apps/WinSwitcher%20(Win-32bit).zip
+[installer-download]: http://files.adamsamec.cz/apps/WinSwitcher-0.1-win32.msi
+[portable-download]: http://files.adamsamec.cz/adamsamec.cz/files/apps/WinSwitcher%20(Win-32bit).zip
