@@ -34,7 +34,7 @@ By pressing Control + F when WinSwitcher is invoked, the focus is moved from the
 
 The filtering is not case sensitive and also matches the list items disregarding the diacritics, curls, strokes and other modified latin letters. 
 
-## Keyboard shortcuts
+### Keyboard shortcuts
 * Windows + F12: Global shortcut which shows the list of running applications.
 * Windows + F11: Global shortcut which shows the list of running windows for the application in the foreground.
 * Control + F: When WinSwitcher is invoked, moves focus to the filter text field.
