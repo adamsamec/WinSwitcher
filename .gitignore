@@ -3,3 +3,5 @@ src/error.log
 build
 dist
 temp
+scripts/build
+scripts/dist

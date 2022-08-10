@@ -1,10 +1,10 @@
+import cx_Freeze
 import os
 import sys
 
-import cx_Freeze
 
 sys.path.append(os.path.realpath(sys.path[0] + '\\..\\src'))
-  
+
 options = {
   'build_exe': '..\\build\\WinSwitcher'
 }
