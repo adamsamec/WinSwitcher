@@ -5,49 +5,40 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-10 10:38+0200\n"
+"POT-Creation-Date: 2022-08-11 13:24+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=cp1252\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../src\WinSwitcher.py:30
 msgid "File Explorer"
-msgstr ""
+msgstr "Průzkumník souborů"
 
-#: ../src\WinSwitcher.py:31
 msgid "Command Prompt"
-msgstr ""
+msgstr "Příkazový řádek"
 
-#: ../src\WinSwitcher.py:102
 msgid "Show Desktop"
-msgstr ""
+msgstr "Zobrazit Plochu"
 
-#: ../src\WinSwitcher.py:143
 msgid "{} windows"
-msgstr ""
+msgstr "{} oken"
 
-#: ../src\WinSwitcher.py:209
-msgid "Exitting WinSwitcher"
-msgstr ""
+msgid "Exiting WinSwitcher"
+msgstr "Ukončuji WinSwitcher"
 
-#: ../src\WinSwitcher.py:250
 msgid "WinSwitcher started"
-msgstr ""
+msgstr "WinSwitcher spuštěn"
 
-#: ../src\gui.py:33
 msgid "Filter"
-msgstr ""
+msgstr "Filtr"
 
-#: ../src\gui.py:42 ../src\gui.py:218
 msgid "Running apps"
-msgstr ""
+msgstr "Spuštěné aplikace"
 
-#: ../src\gui.py:238
 msgid "Running windows"
-msgstr ""
+msgstr "Spuštěná okna"
 

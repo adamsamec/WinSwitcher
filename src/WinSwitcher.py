@@ -206,9 +206,9 @@ class WinSwitcher:
 
   # Cleans everything and exits the program.
   def exitSwitcher(self):
-    self.srOutput(_('Exitting WinSwitcher'), True)
+    self.srOutput(_('Exiting WinSwitcher'), True)
 
-    # Give some time to finish the speech before exitting
+    # Give some time to finish the speech before exiting
     time.sleep(3)
     sys.exit()
 
