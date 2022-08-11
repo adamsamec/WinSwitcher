@@ -5,20 +5,35 @@ import sys
 sys.path.append(os.path.realpath(sys.path[0] + '\\..\\src'))
 
 shortcut_table = [
-     ('StartupShortcut',        # Shortcut
-     'StartupFolder',          # Directory
-     'WinSwitcher',           # Name
-     'TARGETDIR',              # Component
-     '[TARGETDIR]WinSwitcher.exe',# Target
-     None,                     # Arguments
-     None,                     # Description
-     None,                     # Hotkey
-     None,                     # Icon
-     None,                     # IconIndex
-     None,                     # ShowCmd
-     'TARGETDIR'               # WkDir
-     ),
-    ]
+  (
+    'StartupShortcut',        # Shortcut
+    'StartupFolder',          # Directory
+    'WinSwitcher',           # Name
+    'TARGETDIR',              # Component
+    '[TARGETDIR]WinSwitcher.exe',# Target
+    None,                     # Arguments
+    None,                     # Description
+    None,                     # Hotkey
+    None,                     # Icon
+    None,                     # IconIndex
+    None,                     # ShowCmd
+    'TARGETDIR'               # WkDir
+  ),
+  (
+    'DesktopShortcut',        # Shortcut
+    'DesktopFolder',          # Directory
+    'WinSwitcher',           # Name
+    'TARGETDIR',              # Component
+    '[TARGETDIR]WinSwitcher.exe',# Target
+    None,                     # Arguments
+    None,                     # Description
+    None,                     # Hotkey
+    None,                     # Icon
+    None,                     # IconIndex
+    None,                     # ShowCmd
+    'TARGETDIR'               # WkDir
+  ),
+]
 msi_data = {"Shortcut": shortcut_table}
 bdist_msi_options = {'data': msi_data}
 
