@@ -27,7 +27,8 @@ class WinSwitcher:
 
   # Replacements for app titles to make them shorter or more readable
   REPLACED_APP_TITLES = {
-    'Windows Explorer': _('File Explorer'),
+    'Windows Explorer': 'File Explorer',
+    'Průzkumník Windows': 'Průzkumník souborů',
     'Windows Command Processor': _('Command Prompt'),
   }
 

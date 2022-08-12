@@ -15,9 +15,6 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-msgid "File Explorer"
-msgstr "Průzkumník souborů"
-
 msgid "Command Prompt"
 msgstr "Příkazový řádek"
 
@@ -25,7 +22,7 @@ msgid "Show Desktop"
 msgstr "Zobrazit Plochu"
 
 msgid "{} windows"
-msgstr "{} oken"
+msgstr "{} okna"
 
 msgid "Exiting WinSwitcher"
 msgstr "Ukončuji WinSwitcher"

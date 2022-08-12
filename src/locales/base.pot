@@ -15,9 +15,6 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-msgid "File Explorer"
-msgstr ""
-
 msgid "Command Prompt"
 msgstr ""
 
