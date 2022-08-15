@@ -30,29 +30,29 @@ By pressing Windows + F11, the user can invoke a list of running windows  only f
 To make the navigation in the applications or windows list faster, WinSwitcher supports the navigation by typing feature, that is, typing the first letters of an application name or a window title moves focus to the first matched item.
 
 ### Applications or windows list filtering
-By pressing Control + F when WinSwitcher is invoked, the focus is moved from the list of applications or windows to the filter text field. Typing a text to that field immediately filters the applications or windows listed. Pressing Enter when on the filter text field moves focus back to the applications or windows list. The filter text field can be navigated to also by pressing Shift +Tab or Tab when on the applications or windows list.
+By pressing Control + F when WinSwitcher is invoked, the focus is moved to the filter text field. Typing a text to that field immediately filters the applications or windows listed below. Pressing Enter when on the filter text field moves focus back to the applications or windows list. The navigation between the list of applications or windows and the filter text field is also possible using the Tab key or Shift + Tab.
 
 The filtering is not case sensitive and also matches the list items disregarding the diacritics, curls, strokes and other modified latin letters. 
 
 ### Keyboard shortcuts
 * Windows + F12: Global shortcut which shows the list of running applications.
-* Windows + F11: Global shortcut which shows the list of running windows for the application in the foreground.
+* Windows + F11: Global shortcut which shows the list of running windows only for the application in the foreground.
 * Control + F: When WinSwitcher is invoked, moves focus to the filter text field.
 
 ### Known limitations
-* WinSwitcher is unable to list and switch to modern Windows applications.
-* Sometimes after switching to a window, the focus is not properly placed to that window. To workaround this condition, press Alt + Tab and then Alt + Shift + Tab.
+* WinSwitcher is unable to list and switch to modern Windows applications, such as Mail or Calculator.
+* Sometimes after an attempt to switch to a window, the focus is not properly placed to that window. What may help in this condition is pressing Alt + Tab and then Alt + Shift + Tab.
 
 ## Download
 ### Installer
 Below, you can download the installer for WinSwitcher, which also creates a startup shortcut, so you don't have to run WinSwitcher manually every time your system restarts. The installer also creates a Desktop shortcut.
 
-Note that Windows Defender may prevent this installer from starting. In that case, visit the "More info"link which should be available on the page displayed to you, and then press the "Run anyway" button.
+Note that Windows Defender security software may prevent this installer from starting. In that case, visit the "More info"link which should be available on the page displayed to you, and then press the "Run anyway" button.
 
 [Download WinSwitcher installer for Windows (32-bit)][installer-download].
 
-### Portable
-WinSwitcher is also available as a portable executable. Download the ZIP archive from the link below,extract it to a location of your choice and run it by executing the WinSwitcher.exe file. Note that the installer available for download above, as opposed to this portable version, also creates startup shortcut for you, so you don't have to start WinSwitcher manually every time your system restarts.
+### Portable version
+WinSwitcher is also available as a portable executable not requiring installation. Download the ZIP archive from the link below,extract it to a location of your choice and run it by executing the WinSwitcher.exe file. Note that the installer available for download above, as opposed to this portable version, also creates startup shortcut for you, so you don't have to start WinSwitcher manually every time your system restarts.
 
 [Download WinSwitcher portable for Windows (32-bit)][portable-download].
 
