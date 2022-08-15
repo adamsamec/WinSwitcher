@@ -1,12 +1,12 @@
 # WinSwitcher
 ## Introduction
-WinSwicher is a utility which runs in background and brings easier application and windows switching to Microsoft Windows. WinSwitcher enables efficient applications and windows switching functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows.
+WinSwicher is a utility which runs in background and brings easier application and windows switching to Microsoft Windows. WinSwitcher enables efficient applications and windows switching functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their windows at the same time.
 
 ## Features
 After starting, WinSwitcher notifies the user it has been started and then runs in background until its applications or windows switching functionality is invoked using the corresponding keyboard shortcuts, which are global, that is, the shortcuts work no matter which application or window is currently in the foreground. The user can invoke the following lists:
 
 * List of running applications and their windows.
-* List of running windows for the application in the foreground.
+* List of running windows only for the application in the foreground.
 
 ### List of running applications and their windows
 By pressing Windows + F12, the user can invoke a list of currently running applications, ordered by the most recently used application first. The list can be operated using the following keys:
@@ -18,7 +18,7 @@ By pressing Windows + F12, the user can invoke a list of currently running appli
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
-### List of running windows for the application in the foreground
+### List of running windows only for the application in the foreground
 By pressing Windows + F11, the user can invoke a list of running windows  only for the application in the foreground, ordered by the most recently used window first. The list can be operated using the following keys:
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
