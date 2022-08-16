@@ -1,4 +1,5 @@
 # TODO
+* Solve the issue of Win + F12 or Win + F11 conflicting with the foreground app shortcuts, such as in Microsoft Word or Total commander, where WinSwitcher cannot be invoked.
 * Some apps cannot be switched to, e.g. the modern ones.
-* Test on Czech Windows and other machine.
 * Filter results announcements.
+* Window and app closing functionality.

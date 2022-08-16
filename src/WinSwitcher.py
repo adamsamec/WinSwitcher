@@ -37,7 +37,7 @@ class WinSwitcher:
     self.config = config
     self.sr = accessible_output2.outputs.auto.Auto()
     self.pressedKeys = set()
-    self.runningWindows = []
+    self.openWindows = []
     self.hwnd = self.getForegroundWindowHwnd()
     self.prevWindowHwnd = self.hwnd
 
@@ -70,7 +70,7 @@ class WinSwitcher:
     path = process.exe()
     return path
 
-  # Handler which is called for each running window and saves its information.
+  # Handler which is called for each open window and saves its information.
   def winEnumHandler(self, hwnd, ctx):
     # Do not include the switcher window in the list
     if hwnd == self.guiHwnd:
@@ -90,26 +90,26 @@ class WinSwitcher:
       'filename': filename,
       'title': title,
     }
-    self.runningWindows.append(window)
+    self.openWindows.append(window)
 
-  # Updates the list of the currently running windows.
-  def updateRunningWindows(self):
-    self.runningWindows = []
+  # Updates the list of the currently open windows.
+  def updateOpenWindows(self):
+    self.openWindows = []
     win32gui.EnumWindows(self.winEnumHandler, None)
 
     # Rename the  title for File Explorer desktop item
-    window = self.runningWindows[-1]
+    window = self.openWindows[-1]
     if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
       window['title'] = _('Show Desktop')
 
-  # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its running windows.
+  # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its open windows.
   def getRunningAppsAndWindows(self):
-    self.updateRunningWindows()
+    self.updateOpenWindows()
     apps = []
     appIndexes = {}
     appIndex = 0
 
-    for window in self.runningWindows:
+    for window in self.openWindows:
       appKey = window['path']
       try:
         appIndexes[appKey]
@@ -146,12 +146,12 @@ class WinSwitcher:
     # rich.print(apps)
     return apps
 
-  # Returns a list of running windows for the app with the given last window hwnd.
+  # Returns a list of open windows for the app with the given last window hwnd.
   def getAppWindows(self, lastWindowHwnd):
-    self.updateRunningWindows()
+    self.updateOpenWindows()
     path = self.getProcessPath(lastWindowHwnd)
     windows = []
-    for window in self.runningWindows:
+    for window in self.openWindows:
       if window['path'] == path:
         windows.append(window)
     return windows

@@ -225,7 +225,7 @@ class MainFrame(wx.Frame):
       self.setDefaultSelection()
     self.showing= 'runningApps'
 
-  # Updates the running apps or windows listbox with the running windows for the selected app.
+  # Updates the running apps or windows listbox with the open windows for the selected app.
   def updateListUsingSelectedAppWindows(self):
     self.runningAppsMappedSelection = self.getMappedSelection()
     self.runningAppsSelection = self.runningListbox.GetSelection()
@@ -233,9 +233,9 @@ class MainFrame(wx.Frame):
     self.setDefaultSelection()
     self.showing = 'selectedAppWindows'
 
-  # Updates the running apps or windows listbox with the given running windows for the app currently in the foreground.
+  # Updates the running apps or windows listbox with the given open windows for the app currently in the foreground.
   def updateListUsingForegroundAppWindows(self, windows):
-    self.runningLabel.SetLabel(_('Running windows'))
+    self.runningLabel.SetLabel(_('Open windows'))
     self.foregroundAppWindows = windows
     self.updateList('foregroundAppWindows')
     self.setDefaultSelection()
