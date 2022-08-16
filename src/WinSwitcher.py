@@ -27,8 +27,6 @@ class WinSwitcher:
 
   # Replacements for app titles to make them shorter or more readable
   REPLACED_APP_TITLES = {
-    'Windows Explorer': 'File Explorer',
-    'Průzkumník Windows': 'Průzkumník souborů',
     'Windows Command Processor': _('Command Prompt'),
   }
 
@@ -135,10 +133,13 @@ class WinSwitcher:
         appIndexes[appKey] = appIndex
         appIndex += 1
 
-    # Add window count to the app title
+    # Add window count to the app title and rename the File Explorer app
     for app in apps:
       count = len(app['windows'])
       if app['filename'] == 'explorer.exe':
+        # Rename the File Explorer app
+        app['title'] = _('File Explorer')
+        
         # Do not count Desktop as a window of File Explorer
         count -= 1
       countText = _('{} windows').format(count)
