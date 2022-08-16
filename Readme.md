@@ -1,25 +1,25 @@
 # WinSwitcher
 ## Introduction
-WinSwicher is a utility which runs in background and brings easier application and windows switching to Microsoft Windows. WinSwitcher enables efficient applications and windows switching functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their windows at the same time.
+WinSwicher is a utility which runs in background and brings easier application and windows switching to Microsoft Windows. WinSwitcher enables efficient applications and windows switching functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time.
 
 ## Features
 After starting, WinSwitcher notifies the user it has been started and then runs in background until its applications or windows switching functionality is invoked using the corresponding keyboard shortcuts, which are global, that is, the shortcuts work no matter which application or window is currently in the foreground. The user can invoke the following lists:
 
-* List of running applications and their windows.
-* List of running windows only for the application in the foreground.
+* List of running applications and their open windows.
+* List of open windows only for the application in the foreground.
 
-### List of running applications and their windows
+### List of running applications and their open windows
 By pressing Windows + F12, the user can invoke a list of currently running applications, ordered by the most recently used application first. The list can be operated using the following keys:
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
-* Right arrow: When an application is selected, navigates to the list of running windows only for that selected application.
+* Right arrow: When an application is selected, navigates to the list of open windows only for that selected application.
 * Left arrow: When a window is selected, navigates back to the list of running applications.
 * Enter: When an application is selected, switches to that application's most recently used window. If a window is selected, switches to that window. Then hides WinSwitcher.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
-### List of running windows only for the application in the foreground
-By pressing Windows + F11, the user can invoke a list of running windows  only for the application in the foreground, ordered by the most recently used window first. The list can be operated using the following keys:
+### List of open windows only for the application in the foreground
+By pressing Windows + F11, the user can invoke a list of open windows  only for the application in the foreground, ordered by the most recently used window first. The list can be operated using the following keys:
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
 * Enter: When a window is selected, switches to that window. Then hides WinSwitcher.
@@ -36,7 +36,7 @@ The filtering is not case sensitive and also matches the list items disregarding
 
 ### Keyboard shortcuts summary
 * Windows + F12: Global shortcut which shows the list of running applications.
-* Windows + F11: Global shortcut which shows the list of running windows only for the application in the foreground.
+* Windows + F11: Global shortcut which shows the list of open windows only for the application in the foreground.
 * Control + F: When WinSwitcher is invoked, moves focus to the filter text field.
 
 ### Known limitations
@@ -57,9 +57,11 @@ WinSwitcher is also available as a portable executable not requiring installatio
 [Download WinSwitcher portable for Windows (32-bit)][portable-download].
 
 ### Source files
-WinSwitcher is an open-source software developed in Python. You can find all the necessary source files in the "src" folder of this repo, and run the program from that folder by executing the following if all the Python dependancies are met:
+WinSwitcher is a free and open-source software developed in Python. You can find all the necessary source files in the "src" folder of this repo, and run the program from that folder by executing the following if all the Python dependancies are met:
 
-    python WinSwitcher.py
+```
+python WinSwitcher.py
+```
 
 ## License
 WinSwitcher is available under the MIT licence
