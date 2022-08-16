@@ -229,6 +229,7 @@ class MainFrame(wx.Frame):
   def updateListUsingSelectedAppWindows(self):
     self.runningAppsMappedSelection = self.getMappedSelection()
     self.runningAppsSelection = self.runningListbox.GetSelection()
+    self.runningLabel.SetLabel(_('Open windows'))
     self.updateList('selectedAppWindows')
     self.setDefaultSelection()
     self.showing = 'selectedAppWindows'
