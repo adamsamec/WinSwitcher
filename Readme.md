@@ -88,4 +88,4 @@ IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [installer-download]: http://files.adamsamec.cz/apps/WinSwitcher-0.1-win32.msi
-[portable-download]: http://files.adamsamec.cz/adamsamec.cz/files/apps/WinSwitcher%20(Win-32bit).zip
+[portable-download]: http://files.adamsamec.cz/apps/WinSwitcher-0.1-win32.zip
