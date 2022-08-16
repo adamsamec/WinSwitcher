@@ -15,17 +15,20 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
+msgid "File Explorer"
+msgstr "Prieskumník súborov"
+
 msgid "Command Prompt"
 msgstr "Príkazový riadok"
 
 msgid "Show Desktop"
-msgstr "Zobraziť pracovnú plochu"
+msgstr "Zobraziť Plochu"
 
 msgid "{} windows"
-msgstr "Okná"
+msgstr "{} Okná"
 
 msgid "Exiting WinSwitcher"
-msgstr "WinSwitcher ukončený"
+msgstr "Ukončujem WinSwitcher"
 
 msgid "WinSwitcher started"
 msgstr "WinSwitcher spustený"
@@ -36,6 +39,6 @@ msgstr "Filter"
 msgid "Running apps"
 msgstr "Spustené aplikácie"
 
-msgid "Running windows"
+msgid "Open windows"
 msgstr "Otvorené okná"
 

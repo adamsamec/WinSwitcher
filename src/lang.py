@@ -2,7 +2,7 @@ import ctypes
 import gettext
 import locale
 
-SUPPORTED_LANGS = ['en', 'cs']
+SUPPORTED_LANGS = ['cs', 'en', 'sk']
 DEFAULT_LANG = 'en'
 
 # Detect and save the system UI language
