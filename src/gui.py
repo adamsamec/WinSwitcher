@@ -291,6 +291,7 @@ class SettingsDialog(wx.Dialog):
     self.switcher = switcher
     self.config = config
     
+    self.Bind(wx.EVT_ACTIVATE, self.onActivate)
     self.Bind(wx.EVT_CHAR_HOOK, self.charHook)
     
     self.addWidgets()
@@ -343,7 +344,16 @@ class SettingsDialog(wx.Dialog):
   # Closes the dialog.
   def close(self):
     self.Parent.settingsDialog = None
-    self.Destroy()
+    self.Hide()
+    self.Parent.show()
+    # self.Destroy()
+
+  # Handles the dialog activate and deactivate events.
+  def onActivate(self, event):
+    if event.GetActive():
+      self.Parent.Hide()
+    else:
+      self.Hide()
 
   # Handles  the key press events for the whole dialog.
   def charHook(self, event):

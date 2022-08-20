@@ -193,12 +193,12 @@ class WinSwitcher:
     self.switchToSwitcher()
     self.ui.Raise()
 
-  # Hides the app switcher and switches to the window which was previously in the foreground.
+  # Hides the switcher and switches to the window which was previously in the foreground.
   def hideSwitcherAndShowPrevWindow(self):
     self.hideSwitcher()
     self.switchToWindow(self.prevWindowHwnd)
 
-  # Hides the app switcher.
+  # Hides the switcher.
   def hideSwitcher(self):
     self.ui.hide()
 

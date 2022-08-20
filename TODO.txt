@@ -1,5 +1,4 @@
 # TODO
-* Switching out of settings and back to switcher bug. Switching out should close the settings.
 * Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
 * Remove the Show Desktop item from File Explorer list.
 * Fix download links not working in Google Chrome.
