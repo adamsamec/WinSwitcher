@@ -1,8 +1,10 @@
 # TODO
+* Not accessible labels in the settings dialog for choosing between multiple keyboard shortcuts.
 * Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
 * Remove the Show Desktop item from File Explorer list.
+* Enable filtering also for the selected app windows list.
+* Feature to save apps and windows under shortcut, perhaps Control + Shift + 1 through 9.
 * Fix download links not working in Google Chrome.
-* Settings dialog for choosing between multiple keyboard shortcuts.
 * Format the code using Black.
 * Some apps cannot be switched to, e.g. the modern ones.
 * Filter results announcements.
