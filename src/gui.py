@@ -6,8 +6,8 @@ import util
 # Main frame class.
 class MainFrame(wx.Frame):
 
-  WINDOW_TITLE_SEPARATOR = ' | '
   WINDOW_TITLE = 'WinSwitcher'
+  SETTINGS_DIALOG_TITLE = _('Settings for WinSwitcher')
 
   # Initializes the object by linking it with the given WinSwitcher and Config objects, binding the event handlers, and creating the GUI.
   def __init__(self, switcher, config, title, parent = None):
@@ -173,8 +173,7 @@ class MainFrame(wx.Frame):
   # Handles the settings button click.
   def onSettingsButtonClick(self, event):
     self.openingSettings = True
-    title = _('Settings') + MainFrame.WINDOW_TITLE_SEPARATOR + MainFrame.WINDOW_TITLE
-    self.settingsDialog = SettingsDialog(self.switcher, self.config, title=title, parent = self)
+    self.settingsDialog = SettingsDialog(self.switcher, self.config, title=MainFrame.SETTINGS_DIALOG_TITLE, parent = self)
     self.openingSettings = False
 
   # Resets the text of the filter textbox and the listbox selection mappings.
