@@ -1,5 +1,10 @@
 # TODO
-* Solve the issue of Win + F12 or Win + F11 conflicting with the foreground app shortcuts, such as in Microsoft Word or Total commander, where WinSwitcher cannot be invoked.
+* Switching out of settings and back to switcher bug. Switching out should close the settings.
+* Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
+* Remove the Show Desktop item from File Explorer list.
+* Fix download links not working in Google Chrome.
+* Settings dialog for choosing between multiple keyboard shortcuts.
+* Format the code using Black.
 * Some apps cannot be switched to, e.g. the modern ones.
 * Filter results announcements.
 * Window and app closing functionality.

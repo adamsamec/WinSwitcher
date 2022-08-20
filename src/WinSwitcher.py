@@ -206,9 +206,11 @@ class WinSwitcher:
   def windowDeactivated(self):
     self.hideSwitcher()
 
-  # Cleans everything and exits the program.
+  # Cleans everything, including saving the settings to the config file, and exits the program.
   def exitSwitcher(self):
     self.srOutput(_('Exiting WinSwitcher'), True)
+    self.config.saveToFile()
+    self.ui.cleanAndClose()
 
     # Give some time to finish the speech before exiting
     time.sleep(3)

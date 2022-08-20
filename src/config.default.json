@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "enabledShortcuts": {
+      "showApps": {
+        "Win+F12": true,
+        "Win+Shift+A": false
+      },
+      "showWindows": {
+        "Win+F11": true,
+        "Win+Shift+W": false
+      }
+    }
+  }
+}

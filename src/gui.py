@@ -15,6 +15,8 @@ class MainFrame(wx.Frame):
     super(MainFrame, self).__init__(parent, title=title, style=style, size=(1300, 600))
     self.switcher = switcher
     self.config = config
+    self.settingsDialog = None
+    self.openingSettings = False
     self.showing = None
     
     self.Bind(wx.EVT_CLOSE, self.onClose)
@@ -30,7 +32,7 @@ class MainFrame(wx.Frame):
 
     # Filter textbox
     filterHbox = wx.BoxSizer(wx.HORIZONTAL)
-    filterLabel = wx.StaticText(self.panel, -1, _('Filter'))
+    filterLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Filter'))
     filterHbox.Add(filterLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.filterTextbox= wx.TextCtrl(self.panel, size=(800, 0))
     self.filterTextbox.Bind(wx.EVT_CHAR_HOOK, self.onFilterTextboxCharHook)
@@ -39,15 +41,24 @@ class MainFrame(wx.Frame):
 
     # Running apps or windows listbox
     runningHbox = wx.BoxSizer(wx.HORIZONTAL)
-    self.runningLabel = wx.StaticText(self.panel, -1, _('Running apps'))
+    self.runningLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Running apps'))
     runningHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.runningListbox = wx.ListBox(self.panel, size=(1200, 500), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
     self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
     runningHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
+    # Bottom buttons
+    bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
+
+    # Settings button
+    self.settingsButton = wx.Button(self.panel, label = _('Settings'))
+    self.settingsButton.Bind(wx.EVT_BUTTON, self.onSettingsButtonClick)
+    bottomButtonsHbox.Add(self.settingsButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+
     vbox.Add(filterHbox)
     vbox.Add(runningHbox)
+    vbox.Add(bottomButtonsHbox)
     self.panel.SetSizer(vbox)
 
   # Shows the window.
@@ -65,11 +76,12 @@ class MainFrame(wx.Frame):
     
       # Cleans everything and destroys the window.
   def cleanAndClose(self):
+    if self.settingsDialog:
+      self.settingsDialog.close()
     wx.CallAfter(self.Destroy)
   
   # Handles  the window close event.
   def onClose(self, event):
-    self.cleanAndClose()
     self.switcher.exitSwitcher()
 
   # Handles the window activate and deactivate events.
@@ -77,7 +89,10 @@ class MainFrame(wx.Frame):
     if event.GetActive():
       self.runningListbox.SetFocus()
     else:
-      self.switcher.windowDeactivated()
+      if self.settingsDialog:
+        self.settingsDialog.close()
+      if not self.openingSettings:
+        self.switcher.windowDeactivated()
     event.Skip()
 
   # Handles  the key press event for the whole frame.
@@ -154,6 +169,13 @@ class MainFrame(wx.Frame):
 
     else:
       event.Skip()
+
+  # Handles the settings button click.
+  def onSettingsButtonClick(self, event):
+    self.openingSettings = True
+    title = _('Settings') + MainFrame.WINDOW_TITLE_SEPARATOR + MainFrame.WINDOW_TITLE
+    self.settingsDialog = SettingsDialog(self.switcher, self.config, title=title, parent = self)
+    self.openingSettings = False
 
   # Resets the text of the filter textbox and the listbox selection mappings.
   def resetFilter(self):
@@ -261,3 +283,130 @@ class MainFrame(wx.Frame):
     hwnd = self.foregroundAppWindows[selection]['hwnd']
     self.switcher.switchToWindow(hwnd)
 
+# Settings dialog class.
+class SettingsDialog(wx.Dialog):
+
+  # Initializes the object by linking it with the given switcher and Config objects, binding the event handlers, and creating the GUI.
+  def __init__(self, switcher, config, title, parent = None):
+    super(SettingsDialog, self).__init__(parent = parent, title = title)
+    self.switcher = switcher
+    self.config = config
+    
+    self.Bind(wx.EVT_CHAR_HOOK, self.charHook)
+    
+    self.addWidgets()
+    self.Centre()
+    self.ShowModal()
+    self.Fit()
+
+  # Adds all the initial widgets to this dialog.
+  def addWidgets(self):
+    self.panel = wx.Panel(self)    
+    vbox = wx.BoxSizer(wx.VERTICAL)
+    settings = self.config.settings
+    
+    # Enabled show apps shortcuts check list
+    showAppsHbox = wx.BoxSizer(wx.HORIZONTAL)
+    showAppsLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Keyboard shortcuts for apps list'))
+    showAppsHbox.Add(showAppsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    showAppsChoices = ['Windows + F12', 'Windows + Shift + A']
+    self.showAppsCheckList = wx.ListCtrl(self.panel, wx.ID_ANY)
+    self.initShortcutsCheckList(self.showAppsCheckList, showAppsChoices, 'showApps')
+    self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowAppsItemCheck)
+    self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_UNCHECKED, self.onShowAppsItemUncheck)
+    showAppsHbox.Add(self.showAppsCheckList, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+
+    # Enabled show windows shortcuts check list
+    showWindowsHbox = wx.BoxSizer(wx.HORIZONTAL)
+    showWindowsLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Keyboard shortcuts for windows list'))
+    showWindowsHbox.Add(showWindowsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    showWindowsChoices = ['Windows + F11', 'Windows + Shift + W']
+    self.showWindowsCheckList = wx.ListCtrl(self.panel, wx.ID_ANY)
+    self.initShortcutsCheckList(self.showWindowsCheckList, showWindowsChoices, 'showWindows')
+    self.showWindowsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowWindowsItemCheck)
+    self.showWindowsCheckList.Bind(wx.EVT_LIST_ITEM_UNCHECKED, self.onShowWindowsItemUncheck)
+    showWindowsHbox.Add(self.showWindowsCheckList, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+
+    # Bottom buttons
+    bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
+
+    # Close button
+    self.closeButton = wx.Button(self.panel, label=_('Close'))
+    self.closeButton.SetDefault()
+    self.closeButton.Bind(wx.EVT_BUTTON, self.onCloseButtonClick)
+
+    bottomButtonsHbox.Add(self.closeButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+
+    vbox.Add(showAppsHbox)
+    vbox.Add(bottomButtonsHbox)
+    self.panel.SetSizer(vbox)
+
+  # Closes the dialog.
+  def close(self):
+    self.Parent.settingsDialog = None
+    self.Destroy()
+
+  # Handles  the key press events for the whole dialog.
+  def charHook(self, event):
+    key = event.GetKeyCode()
+    
+    # Escape
+    if key == wx.WXK_ESCAPE:
+      self.close()
+    else:
+      event.Skip()
+
+  # Handles the Close button click.
+  def onCloseButtonClick(self, event):
+    self.close()
+
+  # Handles the show apps check list item check.
+  def onShowAppsItemCheck(self, event):
+    self.onShortcutsCheckListCheckChange(event.Index, True, 'showApps')
+
+  # Handles the show apps check list item uncheck.
+  def onShowAppsItemUncheck(self, event):
+    self.onShortcutsCheckListCheckChange(event.Index, False, 'showApps')
+
+  # Handles the show windows check list item check.
+  def onShowWindowsItemCheck(self, event):
+    self.onShortcutsCheckListCheckChange(event.Index, True, 'showWindows')
+
+  # Handles the show windows check list item uncheck.
+  def onShowWindowsItemUncheck(self, event):
+    self.onShortcutsCheckListCheckChange(event.Index, False, 'showWindows')
+
+  # Handles the shortcuts check list item at the given index checked state change for the given command.
+  def onShortcutsCheckListCheckChange(self, index, doCheck, command):
+    self.tryChangeShortcutCheckState(self.showAppsCheckList, index, doCheck, command)
+
+  # Appends the given choices to the given check list and checks the enabled shortcuts for the given command by retrieving them from the settings.
+  def initShortcutsCheckList(self, checkList, choices, command):
+    for choice in choices:
+     checkList.Append([choice])
+    checkList.EnableCheckBoxes()
+    checkList.Select(0)
+    for index, shortcut in enumerate(self.config.settings['enabledShortcuts'][command]):
+      if self.config.settings['enabledShortcuts'][command][shortcut]:
+        checkList.CheckItem(index)
+
+  # Sets the shortcut at the given index in the settings to the given checked state for the given command.
+  def changeShortcutCheckState(self, index, doCheck, command):
+    for settingsIndex, shortcut in enumerate(self.config.settings['enabledShortcuts'][command]):
+      if settingsIndex == index:
+            self.config.settings['enabledShortcuts'][command][shortcut] = doCheck
+
+  # Determines if the checked state of the item at the given index of the given shortcuts check list results in no shortcut being checked for the given command, and if so, reverts the shortcut to the checked state, otherwise updates the settings using the given checked state for the given shortcut.
+  def tryChangeShortcutCheckState(self, checkList, index, doCheck, command):
+    isAnyChecked = False
+    for listIndex in range(checkList.GetItemCount()):
+      if checkList.IsItemChecked(listIndex):
+        isAnyChecked = True
+        break
+    if command == 'showApps':
+      if not isAnyChecked:
+        # If no shortcut is selected for this command, revert the item determined by the given index to the checked state, and don't update the settings
+        checkList.CheckItem(index)
+        return
+
+    self.changeShortcutCheckState(index, doCheck, command)
