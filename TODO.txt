@@ -1,12 +1,11 @@
 # TODO
 * Format the code using Black.
 * Replace == with is operator where relevant.
-* In the settings dialog, the labels for the lists for choosing the enabled keyboard shortcut are not accessible.
 * Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
 * Remove the Show Desktop item from File Explorer list.
 * Enable filtering also for the selected app windows list.
 * Feature to save apps and windows under shortcut, perhaps Control + Shift + 1 through 9.
-* Fix download links not working in Google Chrome.
+* Fix download links not working in Google Chrome, maybe by using https instead of http.
 * Some apps cannot be switched to, e.g. the modern ones.
 * Filter results announcements.
 * Window and app closing functionality.
