@@ -1,6 +1,5 @@
 # TODO
 * Update Readme.md and then binaries.
-* Replace == with is operator where relevant.
 * Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
 * Remove the Show Desktop item from File Explorer list.
 * Enable filtering also for the selected app windows list.
