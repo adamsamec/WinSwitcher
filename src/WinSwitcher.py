@@ -23,247 +23,262 @@ from util import MyKey
 # Main application class.
 class WinSwitcher:
 
-  # Window process filenames which to exclude from the list
-  EXCLUDED_WINDOW_FILENAMES = ['ApplicationFrameHost.exe', 'SystemSettings.exe', 'TextInputHost.exe']
+    # Window process filenames which to exclude from the list
+    EXCLUDED_WINDOW_FILENAMES = [
+        "ApplicationFrameHost.exe",
+        "SystemSettings.exe",
+        "TextInputHost.exe",
+    ]
 
-  # Replacements for app titles to make them shorter or more readable
-  REPLACED_APP_TITLES = {
-    'Windows Command Processor': _('Command Prompt'),
-  }
-
-  # Initializes the object.
-  def __init__(self, config):
-    self.config = config
-    self.sr = accessible_output2.outputs.auto.Auto()
-    self.pressedKeys = set()
-    self.openWindows = []
-    self.hwnd = self.getForegroundWindowHwnd()
-    self.prevWindowHwnd = self.hwnd
-
-  # Returns the hwnd of the window in the foreground.
-  def getForegroundWindowHwnd(self):
-    hwnd = win32gui.GetForegroundWindow()
-    return hwnd
-
-  # Returns the title of the app specified by the given process path.
-  def getAppTitle(self, path):
-    langs = win32api.GetFileVersionInfo(path, r'\VarFileInfo\Translation')
-    key = r'StringFileInfo\%04x%04x\FileDescription' % (langs[0][0], langs[0][1])
-    title = (win32api.GetFileVersionInfo(path, key))
-
-    # If the title is missing, use the filename without the .exe extension instead
-    name = os.path.splitext(Path(path).name)[0]
-    if not title:
-      title = name
-
-    # Some titles are not the same as in Taskbar, so replace at least those we know about
-    if title in list(WinSwitcher.REPLACED_APP_TITLES.keys()):
-      title = WinSwitcher.REPLACED_APP_TITLES[title]
-
-    return title
-    
-  # Returns the path for the process specified by the given window hwnd.
-  def getProcessPath(self, hwnd):
-    threadId, processId = win32process.GetWindowThreadProcessId(hwnd)
-    process = psutil.Process(processId)
-    path = process.exe()
-    return path
-
-  # Handler which is called for each open window and saves its information.
-  def winEnumHandler(self, hwnd, ctx):
-    # Do not include the switcher window in the list
-    if hwnd == self.guiHwnd:
-      return
-    if not win32gui.IsWindowVisible(hwnd):
-      return
-    title = win32gui.GetWindowText(hwnd)
-    if not title:
-      return
-    path = self.getProcessPath(hwnd)
-    filename = Path(path).name
-    if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
-      return
-    window = {
-      'hwnd': hwnd,
-      'path': path,
-      'filename': filename,
-      'title': title,
+    # Replacements for app titles to make them shorter or more readable
+    REPLACED_APP_TITLES = {
+        "Windows Command Processor": _("Command Prompt"),
     }
-    self.openWindows.append(window)
 
-  # Updates the list of the currently open windows.
-  def updateOpenWindows(self):
-    self.openWindows = []
-    win32gui.EnumWindows(self.winEnumHandler, None)
+    # Initializes the object.
+    def __init__(self, config):
+        self.config = config
+        self.sr = accessible_output2.outputs.auto.Auto()
+        self.pressedKeys = set()
+        self.openWindows = []
+        self.hwnd = self.getForegroundWindowHwnd()
+        self.prevWindowHwnd = self.hwnd
 
-    # Rename the  title for File Explorer desktop item
-    window = self.openWindows[-1]
-    if (window['filename'] == 'explorer.exe') and (window['title'] == 'Program Manager'):
-      window['title'] = _('Show Desktop')
+    # Returns the hwnd of the window in the foreground.
+    def getForegroundWindowHwnd(self):
+        hwnd = win32gui.GetForegroundWindow()
+        return hwnd
 
-  # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its open windows.
-  def getRunningAppsAndWindows(self):
-    self.updateOpenWindows()
-    apps = []
-    appIndexes = {}
-    appIndex = 0
+    # Returns the title of the app specified by the given process path.
+    def getAppTitle(self, path):
+        langs = win32api.GetFileVersionInfo(path, r"\VarFileInfo\Translation")
+        key = r"StringFileInfo\%04x%04x\FileDescription" % (langs[0][0], langs[0][1])
+        title = win32api.GetFileVersionInfo(path, key)
 
-    for window in self.openWindows:
-      appKey = window['path']
-      try:
-        appIndexes[appKey]
+        # If the title is missing, use the filename without the .exe extension instead
+        name = os.path.splitext(Path(path).name)[0]
+        if not title:
+            title = name
 
-        # We are on a window for which we've already created an ap, so add the window to that appp
-        app = apps[appIndexes[appKey]]
-        app['windows'].append(window)
+        # Some titles are not the same as in Taskbar, so replace at least those we know about
+        if title in list(WinSwitcher.REPLACED_APP_TITLES.keys()):
+            title = WinSwitcher.REPLACED_APP_TITLES[title]
 
-      except KeyError:
-        # We are on  a window for which we've not yet created an app, so create the app and save the index for that app
-        lastWindowHwnd = window['hwnd']
-        path = window['path']
+        return title
+
+    # Returns the path for the process specified by the given window hwnd.
+    def getProcessPath(self, hwnd):
+        threadId, processId = win32process.GetWindowThreadProcessId(hwnd)
+        process = psutil.Process(processId)
+        path = process.exe()
+        return path
+
+    # Handler which is called for each open window and saves its information.
+    def winEnumHandler(self, hwnd, ctx):
+        # Do not include the switcher window in the list
+        if hwnd == self.guiHwnd:
+            return
+        if not win32gui.IsWindowVisible(hwnd):
+            return
+        title = win32gui.GetWindowText(hwnd)
+        if not title:
+            return
+        path = self.getProcessPath(hwnd)
         filename = Path(path).name
-        title = self.getAppTitle(path)
-        app = {
-'lastWindowHwnd': lastWindowHwnd,
-'path': path,
-'filename': filename,
-'title': title,
-'windows': [window],
+        if filename in WinSwitcher.EXCLUDED_WINDOW_FILENAMES:
+            return
+        window = {
+            "hwnd": hwnd,
+            "path": path,
+            "filename": filename,
+            "title": title,
         }
-        apps.append(app)
-        appIndexes[appKey] = appIndex
-        appIndex += 1
+        self.openWindows.append(window)
 
-    # Add window count to the app title and rename the File Explorer app
-    for app in apps:
-      count = len(app['windows'])
-      if app['filename'] == 'explorer.exe':
-        # Rename the File Explorer app
-        app['title'] = _('File Explorer')
-        
-        # Do not count Desktop as a window of File Explorer
-        count -= 1
-      countText = _('{} windows').format(count)
-      app['titleAndCount'] = f'{app["title"]} ({countText})'
-    # rich.print(apps)
-    return apps
+    # Updates the list of the currently open windows.
+    def updateOpenWindows(self):
+        self.openWindows = []
+        win32gui.EnumWindows(self.winEnumHandler, None)
 
-  # Returns a list of open windows for the app with the given last window hwnd.
-  def getAppWindows(self, lastWindowHwnd):
-    self.updateOpenWindows()
-    path = self.getProcessPath(lastWindowHwnd)
-    windows = []
-    for window in self.openWindows:
-      if window['path'] == path:
-        windows.append(window)
-    return windows
+        # Rename the  title for File Explorer desktop item
+        window = self.openWindows[-1]
+        if (window["filename"] == "explorer.exe") and (
+            window["title"] == "Program Manager"
+        ):
+            window["title"] = _("Show Desktop")
 
-  # Switches to WinSwitcher.
-  def switchToSwitcher(self):
-    # Mouse movement out of the screen bypasses the Windows system windows switching restriction
-    mouse.move(coords=(-10000, 500))
-    self.switchToWindow(self.hwnd)
+    # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its open windows.
+    def getRunningAppsAndWindows(self):
+        self.updateOpenWindows()
+        apps = []
+        appIndexes = {}
+        appIndex = 0
 
-  # Switches to the window specified by the given hwnd.
-  def switchToWindow(self, hwnd):
-    try:
-      win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
-      win32gui.SetForegroundWindow(hwnd)
-    except:
-        print(f'Switching to window with handle: {hwnd} failed.')
+        for window in self.openWindows:
+            appKey = window["path"]
+            try:
+                appIndexes[appKey]
 
-  # Shows the app switcher.
-  def showSwitcher(self, type, args):
-    foregroundWindowHwnd = self.getForegroundWindowHwnd()
-    isStayingInSwitcher = foregroundWindowHwnd == self.guiHwnd
-    if not isStayingInSwitcher:
-      # Save the previous window hwnd if not switching from apps list to windows list or vice versa, that is, if not staying in WinSwitcher
-      self.prevWindowHwnd = foregroundWindowHwnd
+                # We are on a window for which we've already created an ap, so add the window to that appp
+                app = apps[appIndexes[appKey]]
+                app["windows"].append(window)
 
-    if type == 'apps':
-      apps = self.getRunningAppsAndWindows()
-      self.ui.updateListUsingApps(apps)
-    elif type == 'windows':
-      hwnd = foregroundWindowHwnd if not isStayingInSwitcher else self.prevWindowHwnd
-      windows = self.getAppWindows(hwnd)
-      self.ui.updateListUsingForegroundAppWindows(windows)
-    self.ui.show()
-    if isStayingInSwitcher:
-      return
-    # self.ui.Iconize(False)
-    self.switchToSwitcher()
-    self.ui.Raise()
+            except KeyError:
+                # We are on  a window for which we've not yet created an app, so create the app and save the index for that app
+                lastWindowHwnd = window["hwnd"]
+                path = window["path"]
+                filename = Path(path).name
+                title = self.getAppTitle(path)
+                app = {
+                    "lastWindowHwnd": lastWindowHwnd,
+                    "path": path,
+                    "filename": filename,
+                    "title": title,
+                    "windows": [window],
+                }
+                apps.append(app)
+                appIndexes[appKey] = appIndex
+                appIndex += 1
 
-  # Hides the switcher and switches to the window which was previously in the foreground.
-  def hideSwitcherAndShowPrevWindow(self):
-    self.hideSwitcher()
-    self.switchToWindow(self.prevWindowHwnd)
+        # Add window count to the app title and rename the File Explorer app
+        for app in apps:
+            count = len(app["windows"])
+            if app["filename"] == "explorer.exe":
+                # Rename the File Explorer app
+                app["title"] = _("File Explorer")
 
-  # Hides the switcher.
-  def hideSwitcher(self):
-    self.ui.hide()
+                # Do not count Desktop as a window of File Explorer
+                count -= 1
+            countText = _("{} windows").format(count)
+            app["titleAndCount"] = f'{app["title"]} ({countText})'
+        # rich.print(apps)
+        return apps
 
-  # Called when switched out of the apps window.
-  def windowDeactivated(self):
-    self.hideSwitcher()
+    # Returns a list of open windows for the app with the given last window hwnd.
+    def getAppWindows(self, lastWindowHwnd):
+        self.updateOpenWindows()
+        path = self.getProcessPath(lastWindowHwnd)
+        windows = []
+        for window in self.openWindows:
+            if window["path"] == path:
+                windows.append(window)
+        return windows
 
-  # Cleans everything, including saving the settings to the config file, and exits the program.
-  def exitSwitcher(self):
-    self.srOutput(_('Exiting WinSwitcher'), True)
-    self.config.saveToFile()
-    self.ui.cleanAndClose()
+    # Switches to WinSwitcher.
+    def switchToSwitcher(self):
+        # Mouse movement out of the screen bypasses the Windows system windows switching restriction
+        mouse.move(coords=(-10000, 500))
+        self.switchToWindow(self.hwnd)
 
-    # Give some time to finish the speech before exiting
-    time.sleep(3)
-    sys.exit()
+    # Switches to the window specified by the given hwnd.
+    def switchToWindow(self, hwnd):
+        try:
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+            win32gui.SetForegroundWindow(hwnd)
+        except:
+            print(f"Switching to window with handle: {hwnd} failed.")
 
-  # Called when key is pressed.
-  def onKeyDown(self, key):
-    key = MyKey(key)
-    self.pressedKeys.add(key)
+    # Shows the app switcher.
+    def showSwitcher(self, type, args):
+        foregroundWindowHwnd = self.getForegroundWindowHwnd()
+        isStayingInSwitcher = foregroundWindowHwnd == self.guiHwnd
+        if not isStayingInSwitcher:
+            # Save the previous window hwnd if not switching from apps list to windows list or vice versa, that is, if not staying in WinSwitcher
+            self.prevWindowHwnd = foregroundWindowHwnd
 
-  # Called when key is released.
-  def onKeyUp(self, key):
-    key = MyKey(key)
-    shortcuts = self.config.getShortcuts()
-    for shortcut in shortcuts:
-      for keys in shortcut['keys']:
-        if keys <= self.pressedKeys:
-          command = shortcut['command']
-          if command == 'showApps':
-            # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
-            thread = Thread(target=self.showSwitcher, args=('apps', None))
-            thread.start()
-          elif command == 'showWindows':
-            thread = Thread(target=self.showSwitcher, args=('windows', None))
-            thread.start()
+        if type == "apps":
+            apps = self.getRunningAppsAndWindows()
+            self.ui.updateListUsingApps(apps)
+        elif type == "windows":
+            hwnd = (
+                foregroundWindowHwnd if not isStayingInSwitcher else self.prevWindowHwnd
+            )
+            windows = self.getAppWindows(hwnd)
+            self.ui.updateListUsingForegroundAppWindows(windows)
+        self.ui.show()
+        if isStayingInSwitcher:
+            return
+        # self.ui.Iconize(False)
+        self.switchToSwitcher()
+        self.ui.Raise()
 
-    if key in self.pressedKeys:
-      self.pressedKeys.remove(key)
+    # Hides the switcher and switches to the window which was previously in the foreground.
+    def hideSwitcherAndShowPrevWindow(self):
+        self.hideSwitcher()
+        self.switchToWindow(self.prevWindowHwnd)
 
-      # Sets the apps UI object for the switcher and saves its hwnd.
-  def setUI(self, ui):
-    self.ui = ui
-    self.guiHwnd = ui.GetHandle()
+    # Hides the switcher.
+    def hideSwitcher(self):
+        self.ui.hide()
 
-  # Outputs the given text via screen reader, optionally interrupting the current output.
-  def srOutput(self, text, interrupt=False):
-    self.sr.output(text, interrupt=interrupt)
+    # Called when switched out of the apps window.
+    def windowDeactivated(self):
+        self.hideSwitcher()
 
-  # Starts the program by setting up global keyboard listener and initiating the main GUI loop.
-  def start(self, app, ui):
-    self.setUI(ui)
-    self.srOutput(_('WinSwitcher started'), True)
-    with keyboard.Listener(on_press=self.onKeyDown, on_release=self.onKeyUp) as self.listener:
-      app.MainLoop()
-      listener.join()
+    # Cleans everything, including saving the settings to the config file, and exits the program.
+    def exitSwitcher(self):
+        self.srOutput(_("Exiting WinSwitcher"), True)
+        self.config.saveToFile()
+        self.ui.cleanAndClose()
+
+        # Give some time to finish the speech before exiting
+        time.sleep(3)
+        sys.exit()
+
+    # Called when key is pressed.
+    def onKeyDown(self, key):
+        key = MyKey(key)
+        self.pressedKeys.add(key)
+
+    # Called when key is released.
+    def onKeyUp(self, key):
+        key = MyKey(key)
+        shortcuts = self.config.getShortcuts()
+        for shortcut in shortcuts:
+            for keys in shortcut["keys"]:
+                if keys <= self.pressedKeys:
+                    command = shortcut["command"]
+                    if command == "showApps":
+                        # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
+                        thread = Thread(target=self.showSwitcher, args=("apps", None))
+                        thread.start()
+                    elif command == "showWindows":
+                        thread = Thread(
+                            target=self.showSwitcher, args=("windows", None)
+                        )
+                        thread.start()
+
+        if key in self.pressedKeys:
+            self.pressedKeys.remove(key)
+
+            # Sets the apps UI object for the switcher and saves its hwnd.
+
+    def setUI(self, ui):
+        self.ui = ui
+        self.guiHwnd = ui.GetHandle()
+
+    # Outputs the given text via screen reader, optionally interrupting the current output.
+    def srOutput(self, text, interrupt=False):
+        self.sr.output(text, interrupt=interrupt)
+
+    # Starts the program by setting up global keyboard listener and initiating the main GUI loop.
+    def start(self, app, ui):
+        self.setUI(ui)
+        self.srOutput(_("WinSwitcher started"), True)
+        with keyboard.Listener(
+            on_press=self.onKeyDown, on_release=self.onKeyUp
+        ) as self.listener:
+            app.MainLoop()
+            listener.join()
+
 
 # Main function.
 def main():
-  app = wx.App()
-  config = Config()
-  switcher = WinSwitcher(config)
-  mainFrame = MainFrame(switcher, config, title=MainFrame.WINDOW_TITLE)
-  switcher.start(app, mainFrame)
+    app = wx.App()
+    config = Config()
+    switcher = WinSwitcher(config)
+    mainFrame = MainFrame(switcher, config, title=MainFrame.WINDOW_TITLE)
+    switcher.start(app, mainFrame)
+
 
 main()

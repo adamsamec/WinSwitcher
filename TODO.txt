@@ -1,6 +1,5 @@
 # TODO
 * Update Readme.md and then binaries.
-* Format the code using Black.
 * Replace == with is operator where relevant.
 * Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
 * Remove the Show Desktop item from File Explorer list.
