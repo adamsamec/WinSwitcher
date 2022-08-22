@@ -100,12 +100,12 @@ class WinSwitcher:
         self.openWindows = []
         win32gui.EnumWindows(self.winEnumHandler, None)
 
-        # Rename the  title for File Explorer desktop item
+        # Remove the File Explorer desktop item
         window = self.openWindows[-1]
         if (window["filename"] == "explorer.exe") and (
             window["title"] == "Program Manager"
         ):
-            window["title"] = _("Show Desktop")
+            self.openWindows.pop()
 
     # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its open windows.
     def getRunningAppsAndWindows(self):
@@ -146,9 +146,6 @@ class WinSwitcher:
             if app["filename"] == "explorer.exe":
                 # Rename the File Explorer app
                 app["title"] = _("File Explorer")
-
-                # Do not count Desktop as a window of File Explorer
-                count -= 1
             countText = _("{} windows").format(count)
             app["titleAndCount"] = f'{app["title"]} ({countText})'
         # rich.print(apps)
