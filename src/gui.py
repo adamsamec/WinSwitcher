@@ -40,13 +40,13 @@ class MainFrame(wx.Frame):
     filterHbox.Add(self.filterTextbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     # Running apps or windows listbox
-    runningHbox = wx.BoxSizer(wx.HORIZONTAL)
+    runningVbox = wx.BoxSizer(wx.VERTICAL)
     self.runningLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Running apps'))
-    runningHbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    runningVbox.Add(self.runningLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
     self.runningListbox = wx.ListBox(self.panel, size=(1200, 500), choices = [], style = wx.LB_SINGLE)
     self.runningListbox.Bind(wx.EVT_CHAR_HOOK, self.onRunningListboxCharHook)
     self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
-    runningHbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    runningVbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     # Bottom buttons
     bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -57,7 +57,7 @@ class MainFrame(wx.Frame):
     bottomButtonsHbox.Add(self.settingsButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     vbox.Add(filterHbox)
-    vbox.Add(runningHbox)
+    vbox.Add(runningVbox)
     vbox.Add(bottomButtonsHbox)
     self.panel.SetSizer(vbox)
 
@@ -306,26 +306,22 @@ class SettingsDialog(wx.Dialog):
     settings = self.config.settings
     
     # Enabled show apps shortcuts check list
-    showAppsHbox = wx.BoxSizer(wx.HORIZONTAL)
-    showAppsLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Keyboard shortcuts for apps list'))
-    showAppsHbox.Add(showAppsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    showAppsSbox = wx.StaticBoxSizer(wx.VERTICAL, self.panel, _('Enabled keyboard shortcuts for list of apps'))
     showAppsChoices = ['Windows + F12', 'Windows + Shift + A', 'Ctrl+Shift+1']
-    self.showAppsCheckList = wx.ListCtrl(self.panel, wx.ID_ANY)
+    self.showAppsCheckList = wx.ListCtrl(showAppsSbox.GetStaticBox(), wx.ID_ANY)
     self.initShortcutsCheckList(self.showAppsCheckList, showAppsChoices, 'showApps')
     self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowAppsItemCheck)
     self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_UNCHECKED, self.onShowAppsItemUncheck)
-    showAppsHbox.Add(self.showAppsCheckList, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    showAppsSbox.Add(self.showAppsCheckList, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     # Enabled show windows shortcuts check list
-    showWindowsHbox = wx.BoxSizer(wx.HORIZONTAL)
-    showWindowsLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Keyboard shortcuts for windows list'))
-    showWindowsHbox.Add(showWindowsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    showWindowsSbox = wx.StaticBoxSizer(wx.VERTICAL, self.panel, _('Enabled keyboard shortcuts for list of windows'))
     showWindowsChoices = ['Windows + F11', 'Windows + Shift + W', 'Ctrl+Shift+2']
-    self.showWindowsCheckList = wx.ListCtrl(self.panel, wx.ID_ANY)
+    self.showWindowsCheckList = wx.ListCtrl(showWindowsSbox.GetStaticBox(), wx.ID_ANY)
     self.initShortcutsCheckList(self.showWindowsCheckList, showWindowsChoices, 'showWindows')
     self.showWindowsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowWindowsItemCheck)
     self.showWindowsCheckList.Bind(wx.EVT_LIST_ITEM_UNCHECKED, self.onShowWindowsItemUncheck)
-    showWindowsHbox.Add(self.showWindowsCheckList, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
+    showWindowsSbox.Add(self.showWindowsCheckList, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
     # Bottom buttons
     bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
@@ -337,7 +333,8 @@ class SettingsDialog(wx.Dialog):
 
     bottomButtonsHbox.Add(self.closeButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
-    vbox.Add(showAppsHbox)
+    vbox.Add(showAppsSbox)
+    vbox.Add(showWindowsSbox)
     vbox.Add(bottomButtonsHbox)
     self.panel.SetSizer(vbox)
 
