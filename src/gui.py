@@ -309,7 +309,7 @@ class SettingsDialog(wx.Dialog):
     showAppsHbox = wx.BoxSizer(wx.HORIZONTAL)
     showAppsLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Keyboard shortcuts for apps list'))
     showAppsHbox.Add(showAppsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
-    showAppsChoices = ['Windows + F12', 'Windows + Shift + A']
+    showAppsChoices = ['Windows + F12', 'Windows + Shift + A', 'Ctrl+Shift+1']
     self.showAppsCheckList = wx.ListCtrl(self.panel, wx.ID_ANY)
     self.initShortcutsCheckList(self.showAppsCheckList, showAppsChoices, 'showApps')
     self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowAppsItemCheck)
@@ -320,7 +320,7 @@ class SettingsDialog(wx.Dialog):
     showWindowsHbox = wx.BoxSizer(wx.HORIZONTAL)
     showWindowsLabel = wx.StaticText(self.panel, wx.ID_ANY, _('Keyboard shortcuts for windows list'))
     showWindowsHbox.Add(showWindowsLabel, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
-    showWindowsChoices = ['Windows + F11', 'Windows + Shift + W']
+    showWindowsChoices = ['Windows + F11', 'Windows + Shift + W', 'Ctrl+Shift+2']
     self.showWindowsCheckList = wx.ListCtrl(self.panel, wx.ID_ANY)
     self.initShortcutsCheckList(self.showWindowsCheckList, showWindowsChoices, 'showWindows')
     self.showWindowsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowWindowsItemCheck)

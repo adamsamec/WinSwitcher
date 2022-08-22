@@ -18,6 +18,7 @@ import wx
 from config import Config
 from gui import MainFrame
 from lang import _
+from util import MyKey
 
 # Main application class.
 class WinSwitcher:
@@ -218,15 +219,16 @@ class WinSwitcher:
 
   # Called when key is pressed.
   def onKeyDown(self, key):
+    key = MyKey(key)
     self.pressedKeys.add(key)
 
   # Called when key is released.
   def onKeyUp(self, key):
-    # print(self.pressedKeys)
+    key = MyKey(key)
     shortcuts = self.config.getShortcuts()
     for shortcut in shortcuts:
       for keys in shortcut['keys']:
-        if keys.issubset(self.pressedKeys):
+        if keys <= self.pressedKeys:
           command = shortcut['command']
           if command == 'showApps':
             # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
@@ -252,7 +254,7 @@ class WinSwitcher:
   def start(self, app, ui):
     self.setUI(ui)
     self.srOutput(_('WinSwitcher started'), True)
-    with keyboard.Listener(on_press=self.onKeyDown, on_release=self.onKeyUp) as listener:
+    with keyboard.Listener(on_press=self.onKeyDown, on_release=self.onKeyUp) as self.listener:
       app.MainLoop()
       listener.join()
 
