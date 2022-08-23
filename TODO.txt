@@ -2,8 +2,6 @@
 * Check the GUI and make fixes to look better.
 * Update translations.
 * Update Readme.md and then binaries.
-* Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
-* Enable filtering also for the selected app windows list.
 * Feature to save apps and windows under shortcut, perhaps Control + Shift + 1 through 9.
 * Some apps cannot be switched to, e.g. the modern ones.
 * Filter results announcements.
