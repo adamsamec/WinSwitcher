@@ -170,7 +170,7 @@ class WinSwitcher:
     # Switches to the window specified by the given hwnd.
     def switchToWindow(self, hwnd):
         try:
-            win32gui.ShowWindow(hwnd, win32con.SW_SHOW)
+            win32gui.ShowWindow(hwnd, win32con.SW_SHOWNORMAL)
             win32gui.SetForegroundWindow(hwnd)
         except:
             print(f"Switching to window with handle: {hwnd} failed.")
