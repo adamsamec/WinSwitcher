@@ -1,4 +1,5 @@
 # TODO
+* Check the GUI and make fixes to look better.
 * Update translations.
 * Update Readme.md and then binaries.
 * Try Alt + Tab and Alt + Shift + Tab automation for fixing the window switching problem.
