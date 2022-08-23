@@ -24,6 +24,8 @@ class MainFrame(wx.Frame):
         self.config = config
         self.settingsDialog = None
         self.openingSettings = False
+        self.appsFilterText = ""
+        self.selectionMapping = {}
         self.showing = None
 
         self.Bind(wx.EVT_CLOSE, self.onClose)
@@ -138,9 +140,9 @@ class MainFrame(wx.Frame):
     # Handles  the text change event for the filter textbox.
     def onFilterTextboxChange(self, event):
         if self.showing:
-            if self.showing == "selectedAppWindows":
+            if False and self.showing == "selectedAppWindows":
                 self.updateListUsingApps(resetFilter=False)
-                self.updateList("runningApps")
+                # self.updateList("runningApps")
             else:
                 self.updateList(self.showing)
             self.setDefaultSelection()
@@ -193,34 +195,28 @@ class MainFrame(wx.Frame):
         )
         self.openingSettings = False
 
-    # Resets the text of the filter textbox and the listbox selection mappings.
+    # Clears the text of the filter textbox.
     def resetFilter(self):
         self.filterTextbox.SetValue("")
 
     # Sets the running apps and windows listbox selection to the default value, i.e., to the firs item in the listbox if not empty.
-    def setDefaultSelection(self):
-        if len(self.selectionMapping) > 0:
+    def setDefaultSelection(
+        self,
+    ):
+        if self.runningListbox.GetCount() >= 0:
             self.runningListbox.SetSelection(0)
 
-    # Returns the app or window selection index derived from the item currently selected in the running apps and windows listbox.
-    def getMappedSelection(self):
+    # Returns for the given list name the app or window selection index derived from the item currently selected in the running apps and windows listbox.
+    def getMappedSelection(self, listName):
         selection = self.runningListbox.GetSelection()
-        return self.selectionMapping[selection] if selection >= 0 else selection
+        if selection < 0:
+            return selection
+        return self.selectionMapping[listName][selection]
 
     # Updates the running apps or windows listbox with the filter applied.
     def updateList(self, showing):
         filterText = self.filterTextbox.GetValue().strip()
-        mappedSelection = self.getMappedSelection()
         self.runningListbox.Clear()
-
-        # If showing windows for the selected app, filter is ignored
-        if showing == "selectedAppWindows":
-            windows = self.runningApps[mappedSelection]["windows"]
-            length = len(windows)
-            self.selectionMapping = range(length)
-            for window in windows:
-                self.runningListbox.Append(window["title"])
-            return
 
         # If the filter text is empty, fil the listbox with all the items
         if len(filterText) == 0:
@@ -228,34 +224,49 @@ class MainFrame(wx.Frame):
                 for app in self.runningApps:
                     self.runningListbox.Append(app["titleAndCount"])
                 length = len(self.runningApps)
-                self.selectionMapping = range(length)
+                self.selectionMapping["appsAndForegroundAppWindows"] = range(length)
+            elif showing == "selectedAppWindows":
+                windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
+                for window in windows:
+                    self.runningListbox.Append(window["title"])
+                length = len(windows)
+                self.selectionMapping["selectedAppWindows"] = range(length)
             elif showing == "foregroundAppWindows":
                 for window in self.foregroundAppWindows:
                     self.runningListbox.Append(window["title"])
                 length = len(self.foregroundAppWindows)
-                self.selectionMapping = range(length)
+                self.selectionMapping["appsAndForegroundAppWindows"] = range(length)
             return
 
         # Filter text is not empty, so fill the listbox with filtred items
-        self.selectionMapping = []
         if showing == "runningApps":
+            self.selectionMapping["appsAndForegroundAppWindows"] = []
             for index, app in enumerate(self.runningApps):
                 if util.isFoundNotSensitive(filterText, app["title"]):
                     self.runningListbox.Append(app["titleAndCount"])
-                    self.selectionMapping.append(index)
+                    self.selectionMapping["appsAndForegroundAppWindows"].append(index)
+        elif showing == "selectedAppWindows":
+            self.selectionMapping["selectedAppWindows"] = []
+            windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
+            for index, window in enumerate(windows):
+                if util.isFoundNotSensitive(filterText, window["title"]):
+                    self.runningListbox.Append(window["title"])
+                    self.selectionMapping["selectedAppWindows"].append(index)
         elif showing == "foregroundAppWindows":
+            self.selectionMapping["appsAndForegroundAppWindows"] = []
             for index, window in enumerate(self.foregroundAppWindows):
                 if util.isFoundNotSensitive(filterText, window["title"]):
                     self.runningListbox.Append(window["title"])
-                    self.selectionMapping.append(index)
+                    self.selectionMapping["appsAndForegroundAppWindows"].append(index)
 
     # Updates the running apps or windows listbox with the given running apps.
     def updateListUsingApps(self, apps=None, resetFilter=True):
+        self.filterTextbox.SetValue(self.appsFilterText)
         if apps:
             self.runningApps = apps
         self.runningLabel.SetLabel(_("Running apps"))
-        if resetFilter:
-            self.resetFilter()
+        # if resetFilter:
+        # self.resetFilter()
         self.updateList("runningApps")
         if self.showing == "selectedAppWindows":
             self.runningListbox.SetSelection(self.runningAppsSelection)
@@ -265,8 +276,15 @@ class MainFrame(wx.Frame):
 
     # Updates the running apps or windows listbox with the open windows for the selected app.
     def updateListUsingSelectedAppWindows(self):
-        self.runningAppsMappedSelection = self.getMappedSelection()
+        self.runningAppsMappedSelection = self.getMappedSelection(
+            "appsAndForegroundAppWindows"
+        )
         self.runningAppsSelection = self.runningListbox.GetSelection()
+
+        # Save the filter text and reset the filter
+        self.appsFilterText = self.filterTextbox.GetValue()
+        self.resetFilter()
+
         self.runningLabel.SetLabel(_("Open windows"))
         self.updateList("selectedAppWindows")
         self.setDefaultSelection()
@@ -282,20 +300,20 @@ class MainFrame(wx.Frame):
 
     # Switch to the app currently selected in the apps listbox.
     def switchToSelectedApp(self):
-        selection = self.getMappedSelection()
+        selection = self.getMappedSelection("appsAndForegroundAppWindows")
         hwnd = self.runningApps[selection]["lastWindowHwnd"]
         self.switcher.switchToWindow(hwnd)
 
     # Switch to the selected app window currently selected in the running apps or windows listbox.
     def switchToSelectedAppSelectedWindow(self):
-        selection = self.getMappedSelection()
+        selection = self.getMappedSelection("selectedAppWindows")
         windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
         hwnd = windows[selection]["hwnd"]
         self.switcher.switchToWindow(hwnd)
 
     # Switch to the foreground app window currently selected in the running apps or windows listbox.
     def switchToForegroundAppSelectedWindow(self):
-        selection = self.getMappedSelection()
+        selection = self.getMappedSelection("appsAndForegroundAppWindows")
         hwnd = self.foregroundAppWindows[selection]["hwnd"]
         self.switcher.switchToWindow(hwnd)
 
