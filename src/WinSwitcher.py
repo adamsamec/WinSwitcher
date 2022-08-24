@@ -132,9 +132,9 @@ class WinSwitcher:
 
                 # Rename the File Explorer app
                 if filename == "explorer.exe":
-                    _("File Explorer")
-
-                title = self.getAppTitle(path)
+                    title = _("File Explorer")
+                else:
+                    title = self.getAppTitle(path)
                 app = {
                     "lastWindowHwnd": lastWindowHwnd,
                     "path": path,

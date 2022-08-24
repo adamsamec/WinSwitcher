@@ -335,6 +335,11 @@ class MainFrame(wx.Frame):
             hwnd = windows[selection]["hwnd"]
             self.switcher.closeWindow(hwnd)
             del windows[selection]
+            if len(windows) == 0:
+                del self.runningApps[self.runningAppsMappedSelection]
+                self.showing = "runningApps"
+                self.updateListUsingApps()
+                return
         elif self.showing == "foregroundAppWindows":
             selection = self.getMappedSelection("appsAndForegroundAppWindows")
             hwnd = self.foregroundAppWindows[selection]["hwnd"]
