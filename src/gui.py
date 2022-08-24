@@ -150,12 +150,7 @@ class MainFrame(wx.Frame):
 
         # Enter
         if key == wx.WXK_RETURN:
-            if self.showing == "runningApps":
-                self.switchToSelectedApp()
-            elif self.showing == "selectedAppWindows":
-                self.switchToSelectedAppSelectedWindow()
-            elif self.showing == "foregroundAppWindows":
-                self.switchToForegroundAppSelectedWindow()
+            self.switchToSelectedAppOrWindow()
 
         # Delete or Backspace
         if key in [wx.WXK_DELETE, wx.WXK_BACK]:
@@ -303,26 +298,35 @@ class MainFrame(wx.Frame):
         self.setDefaultSelection()
         self.showing = "foregroundAppWindows"
 
-    # Switch to the app currently selected in the apps listbox.
+    # Switches to the app or window currently selected in the apps listbox.
+    def switchToSelectedAppOrWindow(self):
+        if self.showing == "runningApps":
+            self.switchToSelectedApp()
+        elif self.showing == "selectedAppWindows":
+            self.switchToSelectedAppSelectedWindow()
+        elif self.showing == "foregroundAppWindows":
+            self.switchToForegroundAppSelectedWindow()
+
+    # Switches to the app currently selected in the apps listbox.
     def switchToSelectedApp(self):
         selection = self.getMappedSelection("appsAndForegroundAppWindows")
         hwnd = self.runningApps[selection]["lastWindowHwnd"]
         self.switcher.switchToWindow(hwnd)
 
-    # Switch to the selected app window currently selected in the running apps or windows listbox.
+    # Switches to the selected app window currently selected in the running apps or windows listbox.
     def switchToSelectedAppSelectedWindow(self):
         selection = self.getMappedSelection("selectedAppWindows")
         windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
         hwnd = windows[selection]["hwnd"]
         self.switcher.switchToWindow(hwnd)
 
-    # Switch to the foreground app window currently selected in the running apps or windows listbox.
+    # Switches to the foreground app window currently selected in the running apps or windows listbox.
     def switchToForegroundAppSelectedWindow(self):
         selection = self.getMappedSelection("appsAndForegroundAppWindows")
         hwnd = self.foregroundAppWindows[selection]["hwnd"]
         self.switcher.switchToWindow(hwnd)
 
-    # Closes the currently selected app or window.
+    # Closes the app or window currently selected in the apps listbox.
     def closeSelectedAppOrWindow(self):
         if self.showing == "runningApps":
             selection = self.getMappedSelection("appsAndForegroundAppWindows")
