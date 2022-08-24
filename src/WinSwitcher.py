@@ -28,6 +28,7 @@ class WinSwitcher:
         "ApplicationFrameHost.exe",
         "SystemSettings.exe",
         "TextInputHost.exe",
+        "HxOutlook.exe",
     ]
 
     # Replacements for app titles to make them shorter or more readable
@@ -105,7 +106,7 @@ class WinSwitcher:
         if (window["filename"] == "explorer.exe") and (
             window["title"] == "Program Manager"
         ):
-            self.openWindows.pop()
+            del self.openWindows[-1]
 
     # Returns a list of running apps where each app consists of info about itss last window hwnd, process path and filename, app title and its open windows.
     def getRunningAppsAndWindows(self):
@@ -128,6 +129,11 @@ class WinSwitcher:
                 lastWindowHwnd = window["hwnd"]
                 path = window["path"]
                 filename = Path(path).name
+
+                # Rename the File Explorer app
+                if filename == "explorer.exe":
+                    _("File Explorer")
+
                 title = self.getAppTitle(path)
                 app = {
                     "lastWindowHwnd": lastWindowHwnd,
@@ -139,15 +145,6 @@ class WinSwitcher:
                 apps.append(app)
                 appIndexes[appKey] = appIndex
                 appIndex += 1
-
-        # Add window count to the app title and rename the File Explorer app
-        for app in apps:
-            count = len(app["windows"])
-            if app["filename"] == "explorer.exe":
-                # Rename the File Explorer app
-                app["title"] = _("File Explorer")
-            countText = _("{} windows").format(count)
-            app["titleAndCount"] = f'{app["title"]} ({countText})'
         # rich.print(apps)
         return apps
 
@@ -174,6 +171,19 @@ class WinSwitcher:
             win32gui.SetForegroundWindow(hwnd)
         except:
             print(f"Switching to window with handle: {hwnd} failed.")
+
+    # Closes all the windows (one by one) of the app specified by the given last window hwnd.
+    def closeApp(self, lastWindowHwnd):
+        self.srOutput(_("Closing the app"), True)
+        windows = self.getAppWindows(lastWindowHwnd)
+        for window in windows:
+            self.closeWindow(window["hwnd"], False)
+
+    # Closes the window specified by the given hwnd.
+    def closeWindow(self, hwnd, srOutput=True):
+        if srOutput:
+            self.srOutput(_("Closing the window"), True)
+        win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
 
     # Shows the app switcher.
     def showSwitcher(self, type, args):

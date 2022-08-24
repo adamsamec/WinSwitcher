@@ -140,11 +140,7 @@ class MainFrame(wx.Frame):
     # Handles  the text change event for the filter textbox.
     def onFilterTextboxChange(self, event):
         if self.showing:
-            if False and self.showing == "selectedAppWindows":
-                self.updateListUsingApps(resetFilter=False)
-                # self.updateList("runningApps")
-            else:
-                self.updateList(self.showing)
+            self.updateList(self.showing)
             self.setDefaultSelection()
         event.Skip()
 
@@ -161,13 +157,16 @@ class MainFrame(wx.Frame):
             elif self.showing == "foregroundAppWindows":
                 self.switchToForegroundAppSelectedWindow()
 
+        # Delete or Backspace
+        if key in [wx.WXK_DELETE, wx.WXK_BACK]:
+            self.closeSelectedAppOrWindow()
         # Right arrow
         if (key == wx.WXK_RIGHT) and (self.showing == "runningApps"):
             self.updateListUsingSelectedAppWindows()
 
         # Left arrow
         if (key == wx.WXK_LEFT) and (self.showing == "selectedAppWindows"):
-            self.updateListUsingApps(resetFilter=False)
+            self.updateListUsingApps()
 
         else:
             event.Skip()
@@ -212,6 +211,13 @@ class MainFrame(wx.Frame):
         if selection < 0:
             return selection
         return self.selectionMapping[listName][selection]
+
+    # Calculates the number of open windows for each running app and saves the count together with the title.
+    def countWindowsForApps(self):
+        for app in self.runningApps:
+            count = len(app["windows"])
+            countText = _("{} windows").format(count)
+            app["titleAndCount"] = f'{app["title"]} ({countText})'
 
     # Updates the running apps or windows listbox with the filter applied.
     def updateList(self, showing):
@@ -260,13 +266,12 @@ class MainFrame(wx.Frame):
                     self.selectionMapping["appsAndForegroundAppWindows"].append(index)
 
     # Updates the running apps or windows listbox with the given running apps.
-    def updateListUsingApps(self, apps=None, resetFilter=True):
+    def updateListUsingApps(self, apps=None):
         self.filterTextbox.SetValue(self.appsFilterText)
         if apps:
             self.runningApps = apps
+        self.countWindowsForApps()
         self.runningLabel.SetLabel(_("Running apps"))
-        # if resetFilter:
-        # self.resetFilter()
         self.updateList("runningApps")
         if self.showing == "selectedAppWindows":
             self.runningListbox.SetSelection(self.runningAppsSelection)
@@ -317,13 +322,36 @@ class MainFrame(wx.Frame):
         hwnd = self.foregroundAppWindows[selection]["hwnd"]
         self.switcher.switchToWindow(hwnd)
 
+    # Closes the currently selected app or window.
+    def closeSelectedAppOrWindow(self):
+        if self.showing == "runningApps":
+            selection = self.getMappedSelection("appsAndForegroundAppWindows")
+            hwnd = self.runningApps[selection]["lastWindowHwnd"]
+            self.switcher.closeApp(hwnd)
+            del self.runningApps[selection]
+        elif self.showing == "selectedAppWindows":
+            selection = self.getMappedSelection("selectedAppWindows")
+            windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
+            hwnd = windows[selection]["hwnd"]
+            self.switcher.closeWindow(hwnd)
+            del windows[selection]
+        elif self.showing == "foregroundAppWindows":
+            selection = self.getMappedSelection("appsAndForegroundAppWindows")
+            hwnd = self.foregroundAppWindows[selection]["hwnd"]
+            self.switcher.closeWindow(hwnd)
+            del self.foregroundAppWindows[selection]
+        self.updateList(self.showing)
+        self.setDefaultSelection()
+
 
 # Settings dialog class.
 class SettingsDialog(wx.Dialog):
 
     # Initializes the object by linking it with the given switcher and Config objects, binding the event handlers, and creating the GUI.
     def __init__(self, switcher, config, title, parent=None):
-        super(SettingsDialog, self).__init__(parent=parent, title=title, size=(680, 600))
+        super(SettingsDialog, self).__init__(
+            parent=parent, title=title, size=(680, 600)
+        )
         self.switcher = switcher
         self.config = config
 
@@ -343,7 +371,9 @@ class SettingsDialog(wx.Dialog):
 
         # Enabled show apps shortcuts check list
         showAppsSbox = wx.StaticBoxSizer(
-            wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of running apps")
+            wx.VERTICAL,
+            self.panel,
+            _("Enabled keyboard shortcuts for list of running apps"),
         )
         showAppsChoices = ["Windows + F12", "Windows + Shift + A", "Ctrl+Shift+1"]
         self.showAppsCheckList = wx.ListCtrl(
@@ -360,7 +390,9 @@ class SettingsDialog(wx.Dialog):
 
         # Enabled show windows shortcuts check list
         showWindowsSbox = wx.StaticBoxSizer(
-            wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of foreground app open windows")
+            wx.VERTICAL,
+            self.panel,
+            _("Enabled keyboard shortcuts for list of foreground app open windows"),
         )
         showWindowsChoices = ["Windows + F11", "Windows + Shift + W", "Ctrl+Shift+2"]
         self.showWindowsCheckList = wx.ListCtrl(
