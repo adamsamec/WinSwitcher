@@ -174,7 +174,7 @@ class WinSwitcher:
 
     # Closes all the windows (one by one) of the app specified by the given last window hwnd.
     def closeApp(self, lastWindowHwnd):
-        self.srOutput(_("Closing the app"), True)
+        self.srOutput(_("Closing the app windows"), True)
         windows = self.getAppWindows(lastWindowHwnd)
         for window in windows:
             self.closeWindow(window["hwnd"], False)

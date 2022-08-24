@@ -21,8 +21,11 @@ msgstr "Príkazový riadok"
 msgid "File Explorer"
 msgstr "Prieskumník súborov"
 
-msgid "{} windows"
-msgstr "{} Okná"
+msgid "Closing the app windows"
+msgstr "Zatváram okná aplikácie"
+
+msgid "Closing the window"
+msgstr "Zatváram okno"
 
 msgid "Exiting WinSwitcher"
 msgstr "Ukončujem WinSwitcher"
@@ -33,14 +36,17 @@ msgstr "WinSwitcher spustený"
 msgid "Settings for WinSwitcher"
 msgstr "Nastavenia pre WinSwitcher"
 
+msgid "Settings"
+msgstr "Nastavenia"
+
 msgid "Filter"
 msgstr "Filter"
 
 msgid "Running apps"
 msgstr "Spustené aplikácie"
 
-msgid "Settings"
-msgstr "Nastavenia"
+msgid "{} windows"
+msgstr "{} Okná"
 
 msgid "Open windows"
 msgstr "Otvorené okná"

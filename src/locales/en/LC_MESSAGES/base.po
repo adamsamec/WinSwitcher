@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2022-08-24 13:29+0200\n"
+"POT-Creation-Date: 2022-08-24 23:34+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,10 @@ msgstr ""
 msgid "File Explorer"
 msgstr ""
 
-msgid "{} windows"
+msgid "Closing the app windows"
+msgstr ""
+
+msgid "Closing the window"
 msgstr ""
 
 msgid "Exiting WinSwitcher"
@@ -40,6 +43,9 @@ msgid "Filter"
 msgstr ""
 
 msgid "Running apps"
+msgstr ""
+
+msgid "{} windows"
 msgstr ""
 
 msgid "Open windows"
