@@ -39,6 +39,16 @@ class MainFrame(wx.Frame):
         self.panel = wx.Panel(self)
         vbox = wx.BoxSizer(wx.VERTICAL)
 
+        # Top buttons
+        topButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Settings button
+        self.settingsButton = wx.Button(self.panel, label=_("Settings"))
+        self.settingsButton.Bind(wx.EVT_BUTTON, self.onSettingsButtonClick)
+        topButtonsHbox.Add(
+            self.settingsButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5
+        )
+
         # Filter textbox
         filterHbox = wx.BoxSizer(wx.HORIZONTAL)
         filterLabel = wx.StaticText(self.panel, wx.ID_ANY, _("Filter"))
@@ -59,17 +69,7 @@ class MainFrame(wx.Frame):
         self.runningListbox.Bind(wx.EVT_KEY_DOWN, self.onRunningListboxKeyDown)
         runningVbox.Add(self.runningListbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5)
 
-        # Bottom buttons
-        bottomButtonsHbox = wx.BoxSizer(wx.HORIZONTAL)
-
-        # Settings button
-        self.settingsButton = wx.Button(self.panel, label=_("Settings"))
-        self.settingsButton.Bind(wx.EVT_BUTTON, self.onSettingsButtonClick)
-        bottomButtonsHbox.Add(
-            self.settingsButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5
-        )
-
-        vbox.Add(bottomButtonsHbox)
+        vbox.Add(topButtonsHbox)
         vbox.Add(filterHbox)
         vbox.Add(runningVbox)
         self.panel.SetSizer(vbox)
@@ -323,7 +323,7 @@ class SettingsDialog(wx.Dialog):
 
     # Initializes the object by linking it with the given switcher and Config objects, binding the event handlers, and creating the GUI.
     def __init__(self, switcher, config, title, parent=None):
-        super(SettingsDialog, self).__init__(parent=parent, title=title)
+        super(SettingsDialog, self).__init__(parent=parent, title=title, size=(680, 600))
         self.switcher = switcher
         self.config = config
 
@@ -343,10 +343,12 @@ class SettingsDialog(wx.Dialog):
 
         # Enabled show apps shortcuts check list
         showAppsSbox = wx.StaticBoxSizer(
-            wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of apps")
+            wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of running apps")
         )
         showAppsChoices = ["Windows + F12", "Windows + Shift + A", "Ctrl+Shift+1"]
-        self.showAppsCheckList = wx.ListCtrl(showAppsSbox.GetStaticBox(), wx.ID_ANY, size=(400, 120), style=wx.LC_LIST)
+        self.showAppsCheckList = wx.ListCtrl(
+            showAppsSbox.GetStaticBox(), wx.ID_ANY, size=(500, 120), style=wx.LC_LIST
+        )
         self.initShortcutsCheckList(self.showAppsCheckList, showAppsChoices, "showApps")
         self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowAppsItemCheck)
         self.showAppsCheckList.Bind(
@@ -358,11 +360,11 @@ class SettingsDialog(wx.Dialog):
 
         # Enabled show windows shortcuts check list
         showWindowsSbox = wx.StaticBoxSizer(
-            wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of windows")
+            wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of foreground app open windows")
         )
         showWindowsChoices = ["Windows + F11", "Windows + Shift + W", "Ctrl+Shift+2"]
         self.showWindowsCheckList = wx.ListCtrl(
-            showWindowsSbox.GetStaticBox(), wx.ID_ANY, size=(400, 120), style=wx.LC_LIST
+            showWindowsSbox.GetStaticBox(), wx.ID_ANY, size=(500, 120), style=wx.LC_LIST
         )
         self.initShortcutsCheckList(
             self.showWindowsCheckList, showWindowsChoices, "showWindows"
@@ -450,7 +452,7 @@ class SettingsDialog(wx.Dialog):
             checkList.Append([choice])
         checkList.EnableCheckBoxes()
         checkList.Select(0)
-        checkList.SetColumnWidth(0, 300)
+        checkList.SetColumnWidth(0, 400)
 
         # Determine the enabled shortcuts from the settings and check the corresponding check list items
         for index, shortcut in enumerate(

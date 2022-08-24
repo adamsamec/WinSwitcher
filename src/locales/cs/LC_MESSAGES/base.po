@@ -15,14 +15,11 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-msgid "File Explorer"
-msgstr "Průzkumník souborů"
-
 msgid "Command Prompt"
 msgstr "Příkazový řádek"
 
-msgid "Show Desktop"
-msgstr "Zobrazit Plochu"
+msgid "File Explorer"
+msgstr "Průzkumník souborů"
 
 msgid "{} windows"
 msgstr "{} okna"
@@ -33,12 +30,27 @@ msgstr "Ukončuji WinSwitcher"
 msgid "WinSwitcher started"
 msgstr "WinSwitcher spuštěn"
 
+msgid "Settings for WinSwitcher"
+msgstr "Nastavení pro WinSwitcher"
+
 msgid "Filter"
 msgstr "Filtr"
 
 msgid "Running apps"
 msgstr "Spuštěné aplikace"
 
+msgid "Settings"
+msgstr "Nastavení"
+
 msgid "Open windows"
 msgstr "Otevřená okna"
+
+msgid "Enabled keyboard shortcuts for list of running apps"
+msgstr "Povolené klávesové zkratky pro seznam spuštěných aplikací"
+
+msgid "Enabled keyboard shortcuts for list of foreground app open windows"
+msgstr "Povolené klávesové zkratky pro seznam otevřených oken aplikace v popředí"
+
+msgid "Close"
+msgstr "Zavřít"
 
