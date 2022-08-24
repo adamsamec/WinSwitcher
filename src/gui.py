@@ -18,7 +18,7 @@ class MainFrame(wx.Frame):
             & (~wx.MAXIMIZE_BOX)
         )
         super(MainFrame, self).__init__(
-            parent, title=title, style=style, size=(1300, 600)
+            parent, title=title, size=(1000, 600), style=style
         )
         self.switcher = switcher
         self.config = config
@@ -69,9 +69,9 @@ class MainFrame(wx.Frame):
             self.settingsButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5
         )
 
+        vbox.Add(bottomButtonsHbox)
         vbox.Add(filterHbox)
         vbox.Add(runningVbox)
-        vbox.Add(bottomButtonsHbox)
         self.panel.SetSizer(vbox)
 
     # Shows the window.
@@ -346,7 +346,7 @@ class SettingsDialog(wx.Dialog):
             wx.VERTICAL, self.panel, _("Enabled keyboard shortcuts for list of apps")
         )
         showAppsChoices = ["Windows + F12", "Windows + Shift + A", "Ctrl+Shift+1"]
-        self.showAppsCheckList = wx.ListCtrl(showAppsSbox.GetStaticBox(), wx.ID_ANY)
+        self.showAppsCheckList = wx.ListCtrl(showAppsSbox.GetStaticBox(), wx.ID_ANY, size=(400, 120), style=wx.LC_LIST)
         self.initShortcutsCheckList(self.showAppsCheckList, showAppsChoices, "showApps")
         self.showAppsCheckList.Bind(wx.EVT_LIST_ITEM_CHECKED, self.onShowAppsItemCheck)
         self.showAppsCheckList.Bind(
@@ -362,7 +362,7 @@ class SettingsDialog(wx.Dialog):
         )
         showWindowsChoices = ["Windows + F11", "Windows + Shift + W", "Ctrl+Shift+2"]
         self.showWindowsCheckList = wx.ListCtrl(
-            showWindowsSbox.GetStaticBox(), wx.ID_ANY
+            showWindowsSbox.GetStaticBox(), wx.ID_ANY, size=(400, 120), style=wx.LC_LIST
         )
         self.initShortcutsCheckList(
             self.showWindowsCheckList, showWindowsChoices, "showWindows"
@@ -450,6 +450,9 @@ class SettingsDialog(wx.Dialog):
             checkList.Append([choice])
         checkList.EnableCheckBoxes()
         checkList.Select(0)
+        checkList.SetColumnWidth(0, 300)
+
+        # Determine the enabled shortcuts from the settings and check the corresponding check list items
         for index, shortcut in enumerate(
             self.config.settings["enabledShortcuts"][command]
         ):
