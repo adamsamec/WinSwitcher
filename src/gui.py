@@ -200,6 +200,15 @@ class MainFrame(wx.Frame):
         if self.runningListbox.GetCount() >= 0:
             self.runningListbox.SetSelection(0)
 
+    # Sets the running apps and windows listbox selection to the new value after deleting the item at the given previous selection of the given list.
+    def setSelectionAfterDelete(self, selection, list):
+        if len(list) == 0:
+            return
+        newSelection = selection - 1
+        if newSelection < 0:
+            newSelection = 0
+        self.runningListbox.SetSelection(newSelection)
+
     # Returns for the given list name the app or window selection index derived from the item currently selected in the running apps and windows listbox.
     def getMappedSelection(self, listName):
         selection = self.runningListbox.GetSelection()
@@ -261,17 +270,18 @@ class MainFrame(wx.Frame):
                     self.selectionMapping["appsAndForegroundAppWindows"].append(index)
 
     # Updates the running apps or windows listbox with the given running apps.
-    def updateListUsingApps(self, apps=None):
+    def updateListUsingApps(self, apps=None, changeSelection=True):
         self.filterTextbox.SetValue(self.appsFilterText)
         if apps:
             self.runningApps = apps
         self.countWindowsForApps()
         self.runningLabel.SetLabel(_("Running apps"))
         self.updateList("runningApps")
-        if self.showing == "selectedAppWindows":
-            self.runningListbox.SetSelection(self.runningAppsSelection)
-        else:
-            self.setDefaultSelection()
+        if changeSelection:
+            if self.showing == "selectedAppWindows":
+                self.runningListbox.SetSelection(self.runningAppsSelection)
+            else:
+                self.setDefaultSelection()
         self.showing = "runningApps"
 
     # Updates the running apps or windows listbox with the open windows for the selected app.
@@ -326,32 +336,35 @@ class MainFrame(wx.Frame):
         hwnd = self.foregroundAppWindows[selection]["hwnd"]
         self.switcher.switchToWindow(hwnd)
 
-    # Closes the app or window currently selected in the apps listbox.
+    # Closes the app or window currently selected in the apps or windows listbox.
     def closeSelectedAppOrWindow(self):
         if self.showing == "runningApps":
             selection = self.getMappedSelection("appsAndForegroundAppWindows")
             hwnd = self.runningApps[selection]["lastWindowHwnd"]
             self.switcher.quitApp(hwnd)
             del self.runningApps[selection]
+            self.updateList("runningApps")
+            self.setSelectionAfterDelete(selection, self.runningApps)
         elif self.showing == "selectedAppWindows":
             selection = self.getMappedSelection("selectedAppWindows")
             windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
             hwnd = windows[selection]["hwnd"]
             self.switcher.closeWindow(hwnd)
             del windows[selection]
-            if len(windows) == 0:
+            if len(windows) >= 1:
+                self.updateList("selectedAppWindows")
+                self.setSelectionAfterDelete(selection, windows)
+            else:
                 del self.runningApps[self.runningAppsMappedSelection]
-                self.showing = "runningApps"
-                self.updateListUsingApps()
-                return
+                self.updateListUsingApps(None, False)
+                self.setSelectionAfterDelete(self.runningAppsSelection, self.runningApps)
         elif self.showing == "foregroundAppWindows":
             selection = self.getMappedSelection("appsAndForegroundAppWindows")
             hwnd = self.foregroundAppWindows[selection]["hwnd"]
             self.switcher.closeWindow(hwnd)
             del self.foregroundAppWindows[selection]
-        self.updateList(self.showing)
-        self.setDefaultSelection()
-
+            self.updateList("foregroundAppWindows")
+            self.setSelectionAfterDelete(selection, self.foregroundAppWindows)
 
 # Settings dialog class.
 class SettingsDialog(wx.Dialog):
