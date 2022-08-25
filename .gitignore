@@ -3,5 +3,6 @@ src/error.log
 build
 dist
 temp
+scripts/__pycache__
 scripts/build
 scripts/dist
