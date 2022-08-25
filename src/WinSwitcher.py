@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import psutil
 from pynput import keyboard
-from pywinauto import mouse
+from pywinauto import Application, mouse
 import rich
 import subprocess
 import sys
@@ -172,12 +172,23 @@ class WinSwitcher:
         except:
             print(f"Switching to window with handle: {hwnd} failed.")
 
-    # Closes all the windows (one by one) of the app specified by the given last window hwnd.
-    def closeApp(self, lastWindowHwnd):
-        self.srOutput(_("Closing the app windows"), True)
-        windows = self.getAppWindows(lastWindowHwnd)
-        for window in windows:
-            self.closeWindow(window["hwnd"], False)
+    # Quits the app specified by the given last window hwnd.
+    def quitApp(self, lastWindowHwnd):
+        self.srOutput(_("Quitting the app"), True)
+        threadId, processId = win32process.GetWindowThreadProcessId(lastWindowHwnd)
+        process = psutil.Process(processId)
+        filename= process.name()
+
+        # In case of File Explorer, don't kill the explorer.exe process but rather close its windows one by one
+        if filename == "explorer.exe":
+            windows = self.getAppWindows(lastWindowHwnd)
+            for window in windows:
+                self.closeWindow(window["hwnd"], False)
+            return
+
+            # In case of other apps, kill the process softly
+        app = Application().connect(process=processId)
+        app.kill(True)
 
     # Closes the window specified by the given hwnd.
     def closeWindow(self, hwnd, srOutput=True):

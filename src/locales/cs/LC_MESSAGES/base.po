@@ -21,8 +21,8 @@ msgstr "Příkazový řádek"
 msgid "File Explorer"
 msgstr "Průzkumník souborů"
 
-msgid "Closing the app windows"
-msgstr "Zavírám okna aplikace"
+msgid "Quitting the app"
+msgstr "Ukončuji aplikaci"
 
 msgid "Closing the window"
 msgstr "Zavírám okno"
