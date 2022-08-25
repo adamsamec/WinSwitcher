@@ -1,9 +1,9 @@
 # WinSwitcher
 ## Introduction
-WinSwicher is a utility which runs in background and brings easier application and windows switching to Microsoft Windows. WinSwitcher enables efficient applications and windows switching functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time.
+WinSwicher is a utility which runs in background and brings easier application and windows management to Microsoft Windows. WinSwitcher enables efficient applications and windows switching and closing functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time.
 
 ## Features
-After starting, WinSwitcher notifies the user it has been started and then runs in background until its applications or windows switching functionality is invoked using the corresponding keyboard shortcuts, which are global, that is, the shortcuts work no matter which application or window is currently in the foreground. The user can invoke the following lists:
+After starting, WinSwitcher notifies the user it has been started and then runs in background until its functionality is invoked using the corresponding keyboard shortcuts, which are global, that is, the shortcuts work no matter which application or window is currently in the foreground. The user can invoke the following lists:
 
 * List of running applications and their open windows.
 * List of open windows only for the application in the foreground.
@@ -15,6 +15,7 @@ After pressing Windows + F12 by default, or another shortcut configured in setti
 * Right arrow: When an application is selected, navigates to the list of open windows only for that selected application.
 * Left arrow: When a window is selected, navigates back to the list of running applications.
 * Enter: When an application is selected, switches to that application's most recently used window. If a window is selected, switches to that window. Then hides WinSwitcher.
+* Backspace or Delete: When an application is selected, quits that application. If a window is selected, closes that window.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
@@ -23,6 +24,7 @@ After pressing Windows + F11 by default, or another shortcut configured in setti
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
 * Enter: When a window is selected, switches to that window. Then hides WinSwitcher.
+* Backspace or Delete: When a window is selected, closes that window.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
