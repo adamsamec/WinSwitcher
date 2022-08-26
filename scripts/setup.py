@@ -8,7 +8,7 @@ main_path = "..\\src\\WinSwitcher.py"
 target = "WinSwitcher.exe"
 
 name = "WinSwitcher"
-version = "0.5.0"
+version = "0.6.0"
 description = "Utility which brings easier application and windows switching and closing to Microsoft Windows."
 author = "Adam Samec"
 author_email = "adam.samec@gmail.com"
