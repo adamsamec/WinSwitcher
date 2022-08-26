@@ -15,7 +15,7 @@ After pressing Windows + Shift + A by default, or another shortcut configured in
 * Right arrow: When an application is selected, navigates to the list of open windows only for that selected application.
 * Left arrow: When a window is selected, navigates back to the list of running applications.
 * Enter: When an application is selected, switches to that application's most recently used window. If a window is selected, switches to that window. Then hides WinSwitcher.
-* Backspace or Delete: When an application is selected, quits that application. If a window is selected, closes that window.
+* Backspace or Delete: When an application is selected, force quits that application. If a window is selected, closes that window. Note that quitting an application may cause unsaved work to be lost, whereas window closing may fail and require you to save work before closing.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
@@ -24,7 +24,7 @@ After pressing Windows + Shift + W by default, or another shortcut configured in
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
 * Enter: When a window is selected, switches to that window. Then hides WinSwitcher.
-* Backspace or Delete: When a window is selected, closes that window.
+* Backspace or Delete: When a window is selected, closes that window. Note that window closing may fail and require you to save work before closing.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 

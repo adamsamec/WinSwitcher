@@ -27,6 +27,9 @@ msgstr "Ukončujem aplikáciu"
 msgid "Closing the window"
 msgstr "Zatváram okno"
 
+msgid "Closing failed"
+msgstr "Zatváranie zlyhalo"
+
 msgid "Exiting WinSwitcher"
 msgstr "Ukončujem WinSwitcher"
 

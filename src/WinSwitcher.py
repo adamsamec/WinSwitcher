@@ -191,11 +191,21 @@ class WinSwitcher:
         app = Application().connect(process=processId)
         app.kill(True)
 
-    # Closes the window specified by the given hwnd.
+    # Closes the window specified by the given hwnd and returns if the closing was successfull.
     def closeWindow(self, hwnd, srOutput=True):
+        win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
         if srOutput:
             self.srOutput(_("Closing the window"), True)
-        win32gui.PostMessage(hwnd, win32con.WM_CLOSE, 0, 0)
+
+        # Give some time for closing and then check if closing succeeded
+        time.sleep(1)
+        self.updateOpenWindows()
+        for window in self.openWindows:
+            if window["hwnd"] == hwnd:
+                if srOutput:
+                    self.srOutput(_("Closing failed"), True)
+                return False
+        return True
 
     # Shows the app switcher.
     def showSwitcher(self, type, args):

@@ -349,22 +349,24 @@ class MainFrame(wx.Frame):
             selection = self.getMappedSelection("selectedAppWindows")
             windows = self.runningApps[self.runningAppsMappedSelection]["windows"]
             hwnd = windows[selection]["hwnd"]
-            self.switcher.closeWindow(hwnd)
-            del windows[selection]
-            if len(windows) >= 1:
-                self.updateList("selectedAppWindows")
-                self.setSelectionAfterDelete(selection, windows)
-            else:
-                del self.runningApps[self.runningAppsMappedSelection]
-                self.updateListUsingApps(None, False)
-                self.setSelectionAfterDelete(self.runningAppsSelection, self.runningApps)
+            success = self.switcher.closeWindow(hwnd)
+            if success:
+                del windows[selection]
+                if len(windows) >= 1:
+                    self.updateList("selectedAppWindows")
+                    self.setSelectionAfterDelete(selection, windows)
+                else:
+                    del self.runningApps[self.runningAppsMappedSelection]
+                    self.updateListUsingApps(None, False)
+                    self.setSelectionAfterDelete(self.runningAppsSelection, self.runningApps)
         elif self.showing == "foregroundAppWindows":
             selection = self.getMappedSelection("appsAndForegroundAppWindows")
             hwnd = self.foregroundAppWindows[selection]["hwnd"]
-            self.switcher.closeWindow(hwnd)
-            del self.foregroundAppWindows[selection]
-            self.updateList("foregroundAppWindows")
-            self.setSelectionAfterDelete(selection, self.foregroundAppWindows)
+            success = self.switcher.closeWindow(hwnd)
+            if success:
+                del self.foregroundAppWindows[selection]
+                self.updateList("foregroundAppWindows")
+                self.setSelectionAfterDelete(selection, self.foregroundAppWindows)
 
 # Settings dialog class.
 class SettingsDialog(wx.Dialog):
