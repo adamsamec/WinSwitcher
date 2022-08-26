@@ -156,7 +156,7 @@ class MainFrame(wx.Frame):
         if key in [wx.WXK_DELETE, wx.WXK_BACK]:
             self.closeSelectedAppOrWindow()
         # Right arrow
-        if (key == wx.WXK_RIGHT) and (self.showing == "runningApps"):
+        if (key == wx.WXK_RIGHT) and (self.showing == "runningApps") and (self.runningListbox.GetCount() >= 1):
             self.updateListUsingSelectedAppWindows()
 
         # Left arrow

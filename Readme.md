@@ -37,7 +37,7 @@ By pressing Control + F when WinSwitcher is invoked, the focus is moved to the f
 The filtering is not case sensitive and also matches the list items disregarding the diacritics, curls, strokes and other modified latin letters. 
 
 ### Changing the global keyboard shortcuts
-The WinSwitcher settings dialog allows you to configure the global keyboard shortcuts for invoking WinSwitcher. More than one shortcut can be enabled at the same time, so that the chance of conflicting with another program is minimized. The settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the WinSwitcher screen.
+The WinSwitcher settings dialog allows you to configure the global keyboard shortcuts for invoking WinSwitcher. More than one shortcut can be enabled at the same time, so that the chance of conflicting with another program is minimized. The settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the WinSwitcher window.
 
 For invoking the list of running applications, you can choose from the following shortcuts:
 * Windows + Shift + A (default).
