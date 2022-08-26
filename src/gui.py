@@ -397,7 +397,11 @@ class SettingsDialog(wx.Dialog):
             self.panel,
             _("Enabled keyboard shortcuts for list of running apps"),
         )
-        showAppsChoices = ["Windows + F12", "Windows + Shift + A", "Ctrl+Shift+1"]
+        showAppsChoices = [
+            "Windows + Shift + A",
+            "Windows + F12",
+            "Ctrl+Shift+1",
+            ]
         self.showAppsCheckList = wx.ListCtrl(
             showAppsSbox.GetStaticBox(), wx.ID_ANY, size=(500, 120), style=wx.LC_LIST
         )
@@ -416,7 +420,11 @@ class SettingsDialog(wx.Dialog):
             self.panel,
             _("Enabled keyboard shortcuts for list of foreground app open windows"),
         )
-        showWindowsChoices = ["Windows + F11", "Windows + Shift + W", "Ctrl+Shift+2"]
+        showWindowsChoices = [
+            "Windows + Shift + W",
+            "Windows + F11",
+            "Ctrl+Shift+2",
+            ]
         self.showWindowsCheckList = wx.ListCtrl(
             showWindowsSbox.GetStaticBox(), wx.ID_ANY, size=(500, 120), style=wx.LC_LIST
         )

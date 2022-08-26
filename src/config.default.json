@@ -1,15 +1,15 @@
 {
-  "version": "0.2.0",
+  "version": "0.4.0",
   "settings": {
     "enabledShortcuts": {
       "showApps": {
-        "Win+F12": true,
-        "Win+Shift+A": false,
+        "Win+Shift+A": true,
+        "Win+F12": false,
         "Ctrl+Shift+1": false
       },
       "showWindows": {
-        "Win+F11": true,
-        "Win+Shift+W": false,
+        "Win+Shift+W": true,
+        "Win+F11": false,
         "Ctrl+Shift+2": false
       }
     }
