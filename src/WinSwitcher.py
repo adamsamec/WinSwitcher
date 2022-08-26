@@ -29,6 +29,7 @@ class WinSwitcher:
         "SystemSettings.exe",
         "TextInputHost.exe",
         "HxOutlook.exe",
+        "ShellExperienceHost.exe",
     ]
 
     # Replacements for app titles to make them shorter or more readable
