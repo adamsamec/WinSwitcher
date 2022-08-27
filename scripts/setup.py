@@ -8,7 +8,7 @@ main_path = "..\\src\\WinSwitcher.py"
 target = "WinSwitcher.exe"
 
 name = "WinSwitcher"
-version = "0.6.0"
+version = "0.7.0"
 description = "WinSwitcher"
 author = "Adam Samec"
 author_email = "adam.samec@gmail.com"
