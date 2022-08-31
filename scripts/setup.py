@@ -5,6 +5,7 @@ import sys
 sys.path.append(os.path.realpath(sys.path[0] + "\\..\\src"))
 
 main_path = "..\\src\\WinSwitcher.py"
+base = "Win32GUI"
 target = "WinSwitcher.exe"
 
 name = "WinSwitcher"

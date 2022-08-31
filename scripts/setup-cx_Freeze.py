@@ -4,7 +4,7 @@ import setup
 options = {"build_exe": "..\\build\\WinSwitcher"}
 executables = [
     cx_Freeze.Executable(
-        setup.main_path, base="Win32GUI", targetName=setup.target
+        setup.main_path, base=setup.base, targetName=setup.target
     )
 ]
 
