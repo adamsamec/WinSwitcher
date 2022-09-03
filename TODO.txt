@@ -1,4 +1,5 @@
 # TODO
+* Reset pressed keys variable after executing the command.
 * Handle right windows key in shortcuts.
 * Try fixing switch to window exception by repeating the switch attempt.
 * Some apps cannot be switched to, e.g. the modern ones.
