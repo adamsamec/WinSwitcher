@@ -18,12 +18,15 @@ class Config:
         {
             "command": "showApps",
             "keys": {
-                "Win+F12": [
-                    {Key.cmd, Key.f12},
-                ],
                 "Win+Shift+A": [
-                    {Key.cmd, Key.shift_l, MyKey(KeyCode(char="A"))},
-                    {Key.cmd, Key.shift_r, MyKey(KeyCode(char="A"))},
+                    {Key.cmd_l, Key.shift_l, MyKey(KeyCode(char="A"))},
+                    {Key.cmd_r, Key.shift_l, MyKey(KeyCode(char="A"))},
+                    {Key.cmd_l, Key.shift_r, MyKey(KeyCode(char="A"))},
+                    {Key.cmd_r, Key.shift_r, MyKey(KeyCode(char="A"))},
+                ],
+                "Win+F12": [
+                    {Key.cmd_l, Key.f12},
+                    {Key.cmd_r, Key.f12},
                 ],
                 "Ctrl+Shift+1": [
                     {Key.ctrl_l, Key.shift_l, MyKey(KeyCode(vk=49))},
@@ -36,12 +39,15 @@ class Config:
         {
             "command": "showWindows",
             "keys": {
-                "Win+F11": [
-                    {Key.cmd, Key.f11},
-                ],
                 "Win+Shift+W": [
-                    {Key.cmd, Key.shift_l, MyKey(KeyCode(char="W"))},
-                    {Key.cmd, Key.shift_r, MyKey(KeyCode(char="W"))},
+                    {Key.cmd_l, Key.shift_l, MyKey(KeyCode(char="W"))},
+                    {Key.cmd_r, Key.shift_l, MyKey(KeyCode(char="W"))},
+                    {Key.cmd_l, Key.shift_r, MyKey(KeyCode(char="W"))},
+                    {Key.cmd_r, Key.shift_r, MyKey(KeyCode(char="W"))},
+                ],
+                "Win+F11": [
+                    {Key.cmd_l, Key.f11},
+                    {Key.cmd_r, Key.f11},
                 ],
                 "Ctrl+Shift+2": [
                     {Key.ctrl_l, Key.shift_l, MyKey(KeyCode(vk=50))},
