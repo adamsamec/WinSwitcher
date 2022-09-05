@@ -271,11 +271,13 @@ class WinSwitcher:
                         # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
                         thread = Thread(target=self.showSwitcher, args=("apps", None))
                         thread.start()
+                        self.pressedKeys = set()
                     elif command == "showWindows":
                         thread = Thread(
                             target=self.showSwitcher, args=("windows", None)
                         )
                         thread.start()
+                        self.pressedKeys = set()
 
         if key in self.pressedKeys:
             self.pressedKeys.remove(key)
