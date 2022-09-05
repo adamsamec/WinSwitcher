@@ -74,7 +74,7 @@ python WinSwitcher.py
 ```
 
 ## Troubleshooting
-If you encounter an error message right after starting WinSwitcher, try clearing the contents of C:\Users\<username>\AppData\Local\Temp\gen_py. If that folder doesn't exist, try looking if C:\Temp\gen_py exists, and if so, delete its content.
+If you encounter an error message right after starting WinSwitcher, try deleting the contents of C:\Users\<username>\AppData\Local\Temp\gen_py. If that folder doesn't exist, try looking if C:\Temp\gen_py exists, and if so, delete its content.
 
 ## License
 WinSwitcher is available under the MIT licence
