@@ -1,5 +1,5 @@
 # TODO
-* Reset pressed keys variable after executing the command.
+* System tray icon with settings option.
 * Try fixing switch to window exception by repeating the switch attempt.
 * Some apps cannot be switched to, e.g. the modern ones.
 * Feature to save apps and windows under shortcut, perhaps Control + Shift + 1 through 9.
