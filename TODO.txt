@@ -1,5 +1,5 @@
 # TODO
-* Solve the closing the first window of an app and lastWindowHwnd not updating afterwards bug.
+* Introduce a switch for showing all windows across all apps to the windows list.
 * System tray icon with settings option.
 * Try fixing switch to window exception by repeating the switch attempt.
 * Some apps cannot be switched to, e.g. the modern ones.

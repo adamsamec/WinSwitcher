@@ -156,7 +156,11 @@ class MainFrame(wx.Frame):
         if key in [wx.WXK_DELETE, wx.WXK_BACK]:
             self.closeSelectedAppOrWindow()
         # Right arrow
-        if (key == wx.WXK_RIGHT) and (self.showing == "runningApps") and (self.runningListbox.GetCount() >= 1):
+        if (
+            (key == wx.WXK_RIGHT)
+            and (self.showing == "runningApps")
+            and (self.runningListbox.GetCount() >= 1)
+        ):
             self.updateListUsingSelectedAppWindows()
 
         # Left arrow
@@ -355,10 +359,18 @@ class MainFrame(wx.Frame):
                 if len(windows) >= 1:
                     self.updateList("selectedAppWindows")
                     self.setSelectionAfterDelete(selection, windows)
+
+                    # Update the last window HWND of the app to match the first window
+                    self.runningApps[self.runningAppsMappedSelection][
+                        "lastWindowHwnd"
+                    ] = windows[0]["hwnd"]
+
                 else:
                     del self.runningApps[self.runningAppsMappedSelection]
                     self.updateListUsingApps(None, False)
-                    self.setSelectionAfterDelete(self.runningAppsSelection, self.runningApps)
+                    self.setSelectionAfterDelete(
+                        self.runningAppsSelection, self.runningApps
+                    )
         elif self.showing == "foregroundAppWindows":
             selection = self.getMappedSelection("appsAndForegroundAppWindows")
             hwnd = self.foregroundAppWindows[selection]["hwnd"]
@@ -367,6 +379,7 @@ class MainFrame(wx.Frame):
                 del self.foregroundAppWindows[selection]
                 self.updateList("foregroundAppWindows")
                 self.setSelectionAfterDelete(selection, self.foregroundAppWindows)
+
 
 # Settings dialog class.
 class SettingsDialog(wx.Dialog):
@@ -403,7 +416,7 @@ class SettingsDialog(wx.Dialog):
             "Windows + Shift + A",
             "Windows + F12",
             "Ctrl+Shift+1",
-            ]
+        ]
         self.showAppsCheckList = wx.ListCtrl(
             showAppsSbox.GetStaticBox(), wx.ID_ANY, size=(500, 120), style=wx.LC_LIST
         )
@@ -426,7 +439,7 @@ class SettingsDialog(wx.Dialog):
             "Windows + Shift + W",
             "Windows + F11",
             "Ctrl+Shift+2",
-            ]
+        ]
         self.showWindowsCheckList = wx.ListCtrl(
             showWindowsSbox.GetStaticBox(), wx.ID_ANY, size=(500, 120), style=wx.LC_LIST
         )
