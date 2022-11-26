@@ -9,7 +9,7 @@ After starting, WinSwitcher notifies the user it has been started and then runs 
 * List of open windows only for the application in the foreground.
 
 ### List of running applications and their open windows
-After pressing Windows + Shift + A by default, or another shortcut configured in settings, the user can invoke a list of currently running applications, ordered by the most recently used application first. The list can be operated using the following keys:
+After pressing Windows + F12 or Windows + Shift + A by default, or another shortcut configured in settings, the user can invoke a list of currently running applications, ordered by the most recently used application first. The list can be operated using the following keys:
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
 * Right arrow: When an application is selected, navigates to the list of open windows only for that selected application.
@@ -20,7 +20,7 @@ After pressing Windows + Shift + A by default, or another shortcut configured in
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
 ### List of open windows only for the application in the foreground
-After pressing Windows + Shift + W by default, or another shortcut configured in settings, the user can invoke a list of open windows  only for the application in the foreground, ordered by the most recently used window first. The list can be operated using the following keys:
+After pressing Windows + F11 or Windows + Shift + W by default, or another shortcut configured in settings, the user can invoke a list of open windows  only for the application in the foreground, ordered by the most recently used window first. The list can be operated using the following keys:
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
 * Enter: When a window is selected, switches to that window. Then hides WinSwitcher.
@@ -40,13 +40,13 @@ The filtering is not case sensitive and also matches the list items disregarding
 The WinSwitcher settings dialog allows you to configure the global keyboard shortcuts for invoking WinSwitcher. More than one shortcut can be enabled at the same time, so that the chance of conflicting with another program is minimized. The settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the WinSwitcher window.
 
 For invoking the list of running applications, you can choose from the following shortcuts:
+* Windows + F12 (default).
 * Windows + Shift + A (default).
-* Windows + F12.
 * Control + Shift + 1.
 
 For invoking the list of open windows for the application in the foreground, you can choose from the following shortcuts:
+* Windows + F11 (default).
 * Windows + Shift + W (default).
-* Windows + F11.
 * Control + Shift + 2.
 
 ### Known limitations
