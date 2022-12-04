@@ -15,7 +15,7 @@ After pressing Windows + F12 or Windows + Shift + A by default, or another short
 * Right arrow: When an application is selected, navigates to the list of open windows only for that selected application.
 * Left arrow: When a window is selected, navigates back to the list of running applications.
 * Enter: When an application is selected, switches to that application's most recently used window. If a window is selected, switches to that window. Then hides WinSwitcher.
-* Backspace or Delete: When an application is selected, force quits that application. If a window is selected, closes that window. Note that quitting an application may cause unsaved work to be lost, whereas window closing may fail and require you to save work before closing.
+* Delete: When an application is selected, force quits that application. If a window is selected, closes that window. Note that quitting an application may cause unsaved work to be lost, whereas window closing may fail and require you to save work before closing.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
@@ -24,9 +24,12 @@ After pressing Windows + F11 or Windows + Shift + W by default, or another short
 
 * Down or Up arrow: Navigates to the next or previous item in the list.
 * Enter: When a window is selected, switches to that window. Then hides WinSwitcher.
-* Backspace or Delete: When a window is selected, closes that window. Note that window closing may fail and require you to save work before closing.
+* Delete: When a window is selected, closes that window. Note that window closing may fail and require you to save work before closing.
 * Escape: Hides WinSwitcher.
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
+
+### WinSwitcher settings
+The settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the main WinSwitcher window.
 
 ### Navigation by typing in applications or windows lists
 To make the navigation in the applications or windows list faster, WinSwitcher supports the navigation by typing feature, that is, typing the first letters of an application name or a window title moves focus to the first matched item.
@@ -34,10 +37,12 @@ To make the navigation in the applications or windows list faster, WinSwitcher s
 ### Applications or windows list filtering
 By pressing Control + F when WinSwitcher is invoked, the focus is moved to the filter text field. Typing a text to that field immediately filters the applications or windows listed below. Pressing Enter when on the filter text field moves focus back to the applications or windows list. The navigation between the list of applications or windows and the filter text field is also possible using the Tab key or Shift + Tab.
 
-The filtering is not case sensitive and also matches the list items disregarding the diacritics, curls, strokes and other modified latin letters. 
+There is also an option in settings, which for the  running applications or windows lists, disables the first-letter navigation by typing feature described above and instead enables the filter by typing feature, that is, if enabled, typing when the focus is in the list will imediately filter that list by the letters typed. This option can also be toggled on or off easily by the Control + T keyboard shortcut when pressed in the main WinSwitcher window.
+
+The filtering is not case sensitive and also matches the list items disregarding the diacritics, curls, strokes and other modified latin letters.
 
 ### Changing the global keyboard shortcuts
-The WinSwitcher settings dialog allows you to configure the global keyboard shortcuts for invoking WinSwitcher. More than one shortcut can be enabled at the same time, so that the chance of conflicting with another program is minimized. The settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the WinSwitcher window.
+The WinSwitcher settings dialog allows you to configure the global keyboard shortcuts for invoking WinSwitcher. More than one shortcut can be enabled at the same time, so that the chance of conflicting with another program is minimized.
 
 For invoking the list of running applications, you can choose from the following shortcuts:
 * Windows + F12 (default).
