@@ -48,11 +48,20 @@ msgstr "Filtr"
 msgid "Running apps"
 msgstr "Spuštěné aplikace"
 
+msgid "Filter by typing disabled"
+msgstr "Filtrování psaním vypnuto"
+
+msgid "Filter by typing enabled"
+msgstr "Filtrování psaním zapnuto"
+
 msgid "{} windows"
 msgstr "{} okna"
 
 msgid "Open windows"
 msgstr "Otevřená okna"
+
+msgid "Filter running apps and windows list by typing"
+msgstr "Filtrovat  seznam aplikací a oken psaním"
 
 msgid "Enabled keyboard shortcuts for list of running apps"
 msgstr "Povolené klávesové zkratky pro seznam spuštěných aplikací"

@@ -436,7 +436,7 @@ class SettingsDialog(wx.Dialog):
         # Filter by typing checkbox
         filterByTypingHbox = wx.BoxSizer(wx.HORIZONTAL)
         self.filterByTypingCheckbox = wx.CheckBox(
-            self.panel, label=_("Filter running apps or windows list by typing"), pos=(10, 10)
+            self.panel, label=_("Filter running apps and windows list by typing"), pos=(10, 10)
         )
         self.filterByTypingCheckbox.SetValue(settings["filterByTyping"])
         self.filterByTypingCheckbox.Bind(wx.EVT_CHECKBOX,self.onFilterByTypingCheckChange)

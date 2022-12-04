@@ -35,6 +35,7 @@ class WinSwitcher:
     # Replacements for app titles to make them shorter or more readable
     REPLACED_APP_TITLES = {
         "Windows Command Processor": _("Command Prompt"),
+        "WindowsTerminal": _("Command Prompt"),
     }
 
     # Initializes the object.
