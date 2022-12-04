@@ -118,13 +118,22 @@ class MainFrame(wx.Frame):
         # Escape
         if key == wx.WXK_ESCAPE:
             self.switcher.hideSwitcherAndShowPrevWindow()
+            return
 
             # Control + F
-        elif (key == ord("F")) and onlyControlDown:
+        if (key == ord("F")) and onlyControlDown:
             self.filterTextbox.SetFocus()
+            return
 
-        else:
-            event.Skip()
+            # Control + T
+        if (key == ord("T")) and onlyControlDown:
+            settings = self.config.settings
+            settings["filterByTyping"] = not settings["filterByTyping"]
+            sayText = _("Filter by typing enabled") if settings["filterByTyping"] else _("Filter by typing disabled")
+            self.switcher.srOutput(sayText)
+            return
+
+        event.Skip()
 
     # Handles  the key press event for the filter textbox.
     def onFilterTextboxCharHook(self, event):
@@ -133,15 +142,16 @@ class MainFrame(wx.Frame):
         # Enter
         if key == wx.WXK_RETURN:
             self.runningListbox.SetFocus()
+            return
 
-        else:
-            event.Skip()
+        event.Skip()
 
     # Handles  the text change event for the filter textbox.
     def onFilterTextboxChange(self, event):
         if self.showing:
             self.updateList(self.showing)
             self.setDefaultSelection()
+
         event.Skip()
 
     # Handles  the key press event for the running apps and windows listbox.
@@ -151,10 +161,13 @@ class MainFrame(wx.Frame):
         # Enter
         if key == wx.WXK_RETURN:
             self.switchToSelectedAppOrWindow()
+            return
 
-        # Delete or Backspace
-        if key in [wx.WXK_DELETE, wx.WXK_BACK]:
+        # Delete
+        if key == wx.WXK_DELETE:
             self.closeSelectedAppOrWindow()
+            return
+
         # Right arrow
         if (
             (key == wx.WXK_RIGHT)
@@ -162,25 +175,39 @@ class MainFrame(wx.Frame):
             and (self.runningListbox.GetCount() >= 1)
         ):
             self.updateListUsingSelectedAppWindows()
+            return
 
         # Left arrow
         if (key == wx.WXK_LEFT) and (self.showing == "selectedAppWindows"):
             self.updateListUsingApps()
+            return
 
-        else:
-            event.Skip()
+        event.Skip()
 
     # Handles  the key down event for the running apps and windows listbox.
     def onRunningListboxKeyDown(self, event):
         key = event.GetKeyCode()
+        unicodeKey = event.GetUnicodeKey()
+        isModifier = event.GetModifiers()
 
         # Right or Left arrow
         if (key == wx.WXK_RIGHT) or (key == wx.WXK_LEFT):
             # Disable the navigation behavior  for the Right and Left arrow keys
-            pass
+            return
 
-        else:
-            event.Skip()
+        if self.config.settings["filterByTyping"]:
+            # Backspace
+            if key == wx.WXK_BACK:
+                self.filterTextbox.SetValue("")
+                return
+
+            # Any character key without any modifier
+            if (unicodeKey != wx.WXK_NONE) and not isModifier:
+                newValue = self.filterTextbox.GetValue() + chr(unicodeKey).lower()
+                self.filterTextbox.SetValue(newValue)
+                return
+
+        event.Skip()
 
     # Handles the settings button click.
     def onSettingsButtonClick(self, event):
@@ -201,7 +228,7 @@ class MainFrame(wx.Frame):
     def setDefaultSelection(
         self,
     ):
-        if self.runningListbox.GetCount() >= 0:
+        if self.runningListbox.GetCount() >= 1:
             self.runningListbox.SetSelection(0)
 
     # Sets the running apps and windows listbox selection to the new value after deleting the item at the given previous selection of the given list.
@@ -406,6 +433,17 @@ class SettingsDialog(wx.Dialog):
         vbox = wx.BoxSizer(wx.VERTICAL)
         settings = self.config.settings
 
+        # Filter by typing checkbox
+        filterByTypingHbox = wx.BoxSizer(wx.HORIZONTAL)
+        self.filterByTypingCheckbox = wx.CheckBox(
+            self.panel, label=_("Filter running apps or windows list by typing"), pos=(10, 10)
+        )
+        self.filterByTypingCheckbox.SetValue(settings["filterByTyping"])
+        self.filterByTypingCheckbox.Bind(wx.EVT_CHECKBOX,self.onFilterByTypingCheckChange)
+        filterByTypingHbox.Add(
+            self.filterByTypingCheckbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5
+        )
+
         # Enabled show apps shortcuts check list
         showAppsSbox = wx.StaticBoxSizer(
             wx.VERTICAL,
@@ -468,6 +506,7 @@ class SettingsDialog(wx.Dialog):
             self.closeButton, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5
         )
 
+        vbox.Add(filterByTypingHbox)
         vbox.Add(showAppsSbox)
         vbox.Add(showWindowsSbox)
         vbox.Add(bottomButtonsHbox)
@@ -500,6 +539,10 @@ class SettingsDialog(wx.Dialog):
     # Handles the Close button click.
     def onCloseButtonClick(self, event):
         self.close()
+
+    # Handles the filter by typing checkbox check change.
+    def onFilterByTypingCheckChange(self, event):
+        self.config.settings["filterByTyping"] = self.filterByTypingCheckbox.GetValue()
 
     # Handles the show apps check list item check.
     def onShowAppsItemCheck(self, event):

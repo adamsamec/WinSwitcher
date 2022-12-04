@@ -100,10 +100,8 @@ class Config:
         appDataVersion = [int(part) for part in appDataConfig["version"].split(".")]
         defaultVersion = [int(part) for part in defaultConfig["version"].split(".")]
 
-        # Update is needed if the major or first minor versions are lower, that is, if only the second minor version is lower, it will not result in the need for update
-        return (appDataVersion[0] < defaultVersion[0]) or (
-            appDataVersion[1] < defaultVersion[1]
-        )
+        # Update is needed if the major version part of the application data config is lower than that of the default config
+        return appDataVersion[0] < defaultVersion[0]
 
         # Overrides the target's dictionary values under the given category key with the values from the source dictionary.
 

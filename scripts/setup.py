@@ -9,7 +9,7 @@ base = "Win32GUI"
 target = "WinSwitcher.exe"
 
 name = "WinSwitcher"
-version = "0.8.1"
+version = "0.8.2"
 description = "WinSwitcher"
 author = "Adam Samec"
 author_email = "adam.samec@gmail.com"

@@ -1,6 +1,7 @@
 {
-  "version": "0.8.1",
+  "version": "0.8.2",
   "settings": {
+    "filterByTyping": true,
     "enabledShortcuts": {
       "showApps": {
         "Win+Shift+A": true,
