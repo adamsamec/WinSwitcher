@@ -29,15 +29,14 @@ After pressing Windows + F11 or Windows + Shift + W by default, or another short
 * Alt + F4: Exits WinSwitcher, so it no longer runs in background. WinSwitcher notifies the user it is exiting.
 
 ### WinSwitcher settings
-The settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the main WinSwitcher window.
+The WinSwitcher settings can be accessed by the "Settings" button which can be navigated to using Tab or Shift + Tab on the main WinSwitcher window.
 
-### Navigation by typing in applications or windows lists
-To make the navigation in the applications or windows list faster, WinSwitcher supports the navigation by typing feature, that is, typing the first letters of an application name or a window title moves focus to the first matched item.
+### Applications or windows list filtering and first-letter navigation
+To make the finding of the desired application or window faster, the list of applications or windows supports filter by typing feature, which means that whenever the list is focused, typing characters immediately filters the list,displaying only the applications or windows whose titles contain the typed characters. The filter can be reset and the original unfiltered list of applications or windows displayed back again by pressing Backspace.
 
-### Applications or windows list filtering
-By pressing Control + F when WinSwitcher is invoked, the focus is moved to the filter text field. Typing a text to that field immediately filters the applications or windows listed below. Pressing Enter when on the filter text field moves focus back to the applications or windows list. The navigation between the list of applications or windows and the filter text field is also possible using the Tab key or Shift + Tab.
+However,if you rather prefer astandard behavior of a list, that is, that typing characters navigates to the list item whose first characters matche the characters typed, you can switch to this behavior in settings by unchecking the "Filter running apps and windows list by typing" chekck box. This option can also be toggled on or off anytime easily by the Control + T keyboard shortcut, when pressed in the main WinSwitcher window.
 
-There is also an option in settings, which for the  running applications or windows lists, disables the first-letter navigation by typing feature described above and instead enables the filter by typing feature, that is, if enabled, typing when the focus is in the list will imediately filter that list by the letters typed. This option can also be toggled on or off easily by the Control + T keyboard shortcut when pressed in the main WinSwitcher window.
+If you choose to disable the filter list by typing feature described above, then you can still access the filter functionality by pressing Control + F when WinSwitcher is invoked. The focus will be moved to the filter text field located above the applications or windows list. Typing a text to that field immediately filters the applications or windows listed below the field. Pressing Enter when on the filter text field moves focus back to the applications or windows list. The navigation between the list of applications or windows and the filter text field is also possible using the Tab key or Shift + Tab.
 
 The filtering is not case sensitive and also matches the list items disregarding the diacritics, curls, strokes and other modified latin letters.
 
