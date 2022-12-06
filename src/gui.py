@@ -1,5 +1,6 @@
 import wx
 
+from key import getLayoutKey
 from lang import _
 import util
 
@@ -187,8 +188,10 @@ class MainFrame(wx.Frame):
     # Handles  the key down event for the running apps and windows listbox.
     def onRunningListboxKeyDown(self, event):
         key = event.GetKeyCode()
+        rawKey = event.GetRawKeyCode()
         unicodeKey = event.GetUnicodeKey()
-        isModifier = event.GetModifiers()
+        modifiers = event.GetModifiers()
+        onlyShiftDown = modifiers == (wx.MOD_SHIFT)
 
         # Right or Left arrow
         if (key == wx.WXK_RIGHT) or (key == wx.WXK_LEFT):
@@ -202,8 +205,9 @@ class MainFrame(wx.Frame):
                 return
 
             # Any character key without any modifier
-            if (unicodeKey != wx.WXK_NONE) and not isModifier:
-                newValue = self.filterTextbox.GetValue() + chr(unicodeKey).lower()
+            if unicodeKey != wx.WXK_NONE:
+                layoutKey = getLayoutKey(rawKey, onlyShiftDown)
+                newValue = self.filterTextbox.GetValue() + layoutKey
                 self.filterTextbox.SetValue(newValue)
                 return
 
