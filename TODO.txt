@@ -1,9 +1,5 @@
 # TODO
-* Enable Renaming applications in the list for easier first-letter navigation.
-* Consider creating a keyboard shortcut for switching to desired app. 
+* Check, download and install latest version feature (auto updater).
+* Some apps cannot be switched to, e.g. the modern ones.
 * Consider introducing a switch for showing all windows across all apps to the windows list.
 * System tray icon with settings option.
-* Try fixing switch to window exception by repeating the switch attempt.
-* Some apps cannot be switched to, e.g. the modern ones.
-* Feature to save apps and windows under shortcut, perhaps Control + Shift + 1 through 9.
-* Filter results announcements.
