@@ -113,7 +113,7 @@ def get_current_keyboard_layout():
                 break
     return keyboardLayout
 
-def getLayoutKey(key, shiftDown):
+def getCurrentLayoutChar(key, shiftDown):
     c_hkl = get_current_keyboard_layout()
     layoutKey = ToUn(key, 0, 0,c_hkl, shiftDown)
     return layoutKey

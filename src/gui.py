@@ -1,6 +1,6 @@
 import wx
 
-from key import getLayoutKey
+from key_layout import getCurrentLayoutChar
 from lang import _
 import util
 
@@ -130,7 +130,11 @@ class MainFrame(wx.Frame):
         if (key == ord("T")) and onlyControlDown:
             settings = self.config.settings
             settings["filterByTyping"] = not settings["filterByTyping"]
-            sayText = _("Filter by typing enabled") if settings["filterByTyping"] else _("Filter by typing disabled")
+            sayText = (
+                _("Filter by typing enabled")
+                if settings["filterByTyping"]
+                else _("Filter by typing disabled")
+            )
             self.switcher.srOutput(sayText)
             return
 
@@ -192,6 +196,7 @@ class MainFrame(wx.Frame):
         unicodeKey = event.GetUnicodeKey()
         modifiers = event.GetModifiers()
         onlyShiftDown = modifiers == (wx.MOD_SHIFT)
+        filterText = self.filterTextbox.GetValue()
 
         # Right or Left arrow
         if (key == wx.WXK_RIGHT) or (key == wx.WXK_LEFT):
@@ -201,13 +206,14 @@ class MainFrame(wx.Frame):
         if self.config.settings["filterByTyping"]:
             # Backspace
             if key == wx.WXK_BACK:
-                self.filterTextbox.SetValue("")
+                if len(filterText) > 0:
+                    self.filterTextbox.SetValue("")
                 return
 
-            # Any character key with no or only the Shift modifier 
+            # Any character key with no or only the Shift modifier
             if (unicodeKey != wx.WXK_NONE) and (not modifiers or onlyShiftDown):
-                layoutKey = getLayoutKey(rawKey, onlyShiftDown)
-                newValue = self.filterTextbox.GetValue() + layoutKey
+                char = getCurrentLayoutChar(rawKey, onlyShiftDown)
+                newValue = filterText + char
                 self.filterTextbox.SetValue(newValue)
                 return
 
@@ -440,10 +446,14 @@ class SettingsDialog(wx.Dialog):
         # Filter by typing checkbox
         filterByTypingHbox = wx.BoxSizer(wx.HORIZONTAL)
         self.filterByTypingCheckbox = wx.CheckBox(
-            self.panel, label=_("Filter running apps and windows list by typing"), pos=(10, 10)
+            self.panel,
+            label=_("Filter running apps and windows list by typing"),
+            pos=(10, 10),
         )
         self.filterByTypingCheckbox.SetValue(settings["filterByTyping"])
-        self.filterByTypingCheckbox.Bind(wx.EVT_CHECKBOX,self.onFilterByTypingCheckChange)
+        self.filterByTypingCheckbox.Bind(
+            wx.EVT_CHECKBOX, self.onFilterByTypingCheckChange
+        )
         filterByTypingHbox.Add(
             self.filterByTypingCheckbox, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 5
         )
