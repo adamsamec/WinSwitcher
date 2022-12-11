@@ -210,7 +210,7 @@ class MainFrame(wx.Frame):
                     self.filterTextbox.SetValue("")
                 return
 
-            # Any character key with no or only the Shift modifier
+            # Any character key without any or only with the Shift modifier
             if (unicodeKey != wx.WXK_NONE) and (not modifiers or onlyShiftDown):
                 char = getCurrentLayoutChar(rawKey, onlyShiftDown)
                 newValue = filterText + char
