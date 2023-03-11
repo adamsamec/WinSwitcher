@@ -1,6 +1,6 @@
 # WinSwitcher
 ## Introduction
-WinSwicher is a utility which runs in background and brings easier application and windows management to Microsoft Windows. WinSwitcher enables efficient applications and windows switching and closing functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time.
+WinSwitcher is a utility which runs in background and brings easier application and windows management to Microsoft Windows. WinSwitcher enables efficient applications and windows switching and closing functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time.
 
 ## Features
 After starting, WinSwitcher notifies the user it has been started and then runs in background until its functionality is invoked using the corresponding keyboard shortcuts, which are global, that is, the shortcuts work no matter which application or window is currently in the foreground. The user can invoke the following lists:
