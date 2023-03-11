@@ -44,11 +44,13 @@ The filtering is not case sensitive and also matches the list items disregarding
 The WinSwitcher settings dialog allows you to configure the global keyboard shortcuts for invoking WinSwitcher. More than one shortcut can be enabled at the same time, so that the chance of conflicting with another program is minimized.
 
 For invoking the list of running applications, you can choose from the following shortcuts:
+
 * Windows + F12 (checked by default).
 * Windows + Shift + A (checked by default).
 * Control + Shift + 1.
 
 For invoking the list of open windows for the application in the foreground, you can choose from the following shortcuts:
+
 * Windows + F11 (checked by default).
 * Windows + Shift + W (checked by default).
 * Control + Shift + 2.
