@@ -65,12 +65,12 @@ Below, you can download the installer for WinSwitcher, which also creates a star
 
 Note that Windows Defender security software may prevent this installer from starting. In that case, visit the "More info"link which should be available on the page displayed to you, and then press the "Run anyway" button.
 
-[Download WinSwitcher installer for Windows (32-bit)][installer-download].
+[Download WinSwitcher installer for Windows][installer-download].
 
 ### Portable version
 WinSwitcher is also available as a portable executable not requiring installation. Download the ZIP archive from the link below, extract it to a location of your choice and run it by executing the WinSwitcher.exe file. Note that the installer available for download above, as opposed to this portable version, also creates startup shortcut for you, so you don't have to start WinSwitcher manually every time your system restarts.
 
-[Download WinSwitcher portable for Windows (32-bit)][portable-download].
+[Download WinSwitcher portable for Windows][portable-download].
 
 ### Source files
 WinSwitcher is a free and open-source software developed in Python. You can find all the necessary source files in the "src" folder of this repo, and run the program from that folder by executing the following if all the Python dependancies are met:
