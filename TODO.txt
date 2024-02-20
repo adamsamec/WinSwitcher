@@ -1,5 +1,0 @@
-# TODO
-* Check, download and install latest version feature (auto updater).
-* Some apps cannot be switched to, e.g. the modern ones.
-* Consider introducing a switch for showing all windows across all apps to the windows list.
-* System tray icon with settings option.
