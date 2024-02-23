@@ -46,9 +46,7 @@ options = {
     ],
 }
 executables = [
-    cx_Freeze.Executable(
-        setup.main_path, base="Win32GUI", targetName=setup.target
-    )
+    cx_Freeze.Executable(setup.main_path, base=setup.base)
 ]
 
 cx_Freeze.setup(

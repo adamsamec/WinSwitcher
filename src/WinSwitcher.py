@@ -209,7 +209,7 @@ class WinSwitcher:
         return True
 
     # Shows the app switcher.
-    def showSwitcher(self, type, args):
+    def showSwitcher(self, type, args=None):
         foregroundWindowHwnd = self.getForegroundWindowHwnd()
         isStayingInSwitcher = foregroundWindowHwnd == self.guiHwnd
         if not isStayingInSwitcher:
@@ -269,14 +269,16 @@ class WinSwitcher:
                 if keys <= self.pressedKeys:
                     command = shortcut["command"]
                     if command == "showApps":
+                        self.showSwitcher("apps")
                         # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
-                        thread = Thread(target=self.showSwitcher, args=("apps", None))
-                        thread.start()
+                        # thread = Thread(target=self.showSwitcher, args=("apps", None))
+                        # thread.start()
                     elif command == "showWindows":
-                        thread = Thread(
-                            target=self.showSwitcher, args=("windows", None)
-                        )
-                        thread.start()
+                        self.showSwitcher("windows")
+                        # thread = Thread(
+                            # target=self.showSwitcher, args=("windows", None)
+                        # )
+                        # thread.start()
 
         if key in self.pressedKeys:
             self.pressedKeys.remove(key)
