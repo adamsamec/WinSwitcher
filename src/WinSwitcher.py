@@ -7,7 +7,6 @@ from pywinauto import Application, mouse
 import rich
 import subprocess
 import sys
-from threading import Thread
 import time
 import win32api
 import win32con
@@ -270,15 +269,8 @@ class WinSwitcher:
                     command = shortcut["command"]
                     if command == "showApps":
                         self.showSwitcher("apps")
-                        # running showSwitcher() in a new thread fixes the issue of Win key not being released after calling showSwitcher()
-                        # thread = Thread(target=self.showSwitcher, args=("apps", None))
-                        # thread.start()
                     elif command == "showWindows":
                         self.showSwitcher("windows")
-                        # thread = Thread(
-                            # target=self.showSwitcher, args=("windows", None)
-                        # )
-                        # thread.start()
 
         if key in self.pressedKeys:
             self.pressedKeys.remove(key)
