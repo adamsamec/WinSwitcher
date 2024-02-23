@@ -1,6 +1,6 @@
 # WinSwitcher
 ## Introduction
-WinSwitcher is a utility which runs in background and brings easier application and windows management to Microsoft Windows. WinSwitcher enables efficient applications and windows switching and closing functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time.
+WinSwitcher is a utility which runs in background and brings easier application and windows management to Microsoft Windows. WinSwitcher enables efficient applications and windows switching and closing functionality that is optimized for the keyboard and screen reader users, inspired by macOS and the VoiceOver screen reader way of switching between applications and windows. You will find the benefit of WinSwitcher especially if you are running many applications and their open windows at the same time. [Here is a demo of WinSwitcher on Youtube](https://youtu.be/ibMXW3su4zk?si=JjiggK3cDBcKtgAs).
 
 ## Features
 After starting, WinSwitcher notifies the user it has been started and then runs in background until its functionality is invoked using the corresponding keyboard shortcuts, which are global, that is, the shortcuts work no matter which application or window is currently in the foreground. The user can invoke the following lists:
@@ -106,5 +106,6 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+[demo]: https://youtu.be/ibMXW3su4zk?si=JjiggK3cDBcKtgAs
 [installer-download]: https://files.adamsamec.cz/apps/WinSwitcher-win32.msi
 [portable-download]: https://files.adamsamec.cz/apps/WinSwitcher-win32.zip
