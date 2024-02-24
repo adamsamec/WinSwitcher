@@ -14,6 +14,9 @@ namespace WinSwitcher
         private MainWindow _mainWindow;
         private static KeyboardHookManager _hook;
 
+        private const NonInvasiveKeyboardHookLibrary.ModifierKeys _appsShortcutModifier = NonInvasiveKeyboardHookLibrary.ModifierKeys.WindowsKey;
+        private const int _appsShortcutKey = 0x77; // F8
+        
         private static KeyboardHookManager Hook => _hook ?? (_hook = new KeyboardHookManager());
 
         public Switcher(MainWindow mainWindow)
@@ -26,9 +29,11 @@ namespace WinSwitcher
         private void InitKeyboardHook()
         {
             Hook.Start();
-            Hook.RegisterHotkey(NonInvasiveKeyboardHookLibrary.ModifierKeys.Control, 0x20, () => {
+            Hook.RegisterHotkey(_appsShortcutModifier, _appsShortcutKey, () => {
                 Application.Current.Dispatcher.Invoke(delegate
                 {
+                    Hook.Stop();
+
                     Process[] processes = Process.GetProcesses();
                     List<string> appsList = new List<string>();
                     foreach (Process process in processes)
@@ -41,6 +46,7 @@ namespace WinSwitcher
 
                     _mainWindow.SetItems(appsList);
                     _mainWindow.Display();
+                Hook.Start();
                 });
             });
         }
