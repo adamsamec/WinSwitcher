@@ -29,16 +29,26 @@ namespace WinSwitcher
             };
         }
 
-        void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        private void ItemsListBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                _switcher.SwitchToItem(itemsListBox.SelectedIndex);
+            }
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Hide();
             _switcher = new Switcher(this);
+            itemsListBox.KeyDown += new KeyEventHandler(ItemsListBox_KeyDown);
         }
 
         public void Display()
         {
             Show();
             Activate();
+            itemsListBox.Focus();
         }
 
         public void SetItems(List<string> itemsList)

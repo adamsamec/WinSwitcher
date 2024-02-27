@@ -8,8 +8,7 @@
         Title="WinSwitcher" Height="450" Width="800"
 Loaded="MainWindow_Loaded">
     <Grid>
-    <TextBlock Name="shortcutText" HorizontalAlignment="Left" Margin="387,60,0,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-    <ListBox Name="itemsListBox"/>
+    <ListBox Name="itemsListBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"/>
 
   </Grid>
 </Window>
