@@ -26,13 +26,7 @@ namespace WinSwitcher
         public Switcher(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
-
-            InitKeyboardHook();
-        }
-
-        private void InitKeyboardHook()
-        {
-            _hook = new KeyboardHook(_mainWindow, VirtualKeyCodes.A, ModifierKeyCodes.Windows | ModifierKeyCodes.Shift);
+_hook = new KeyboardHook(_mainWindow, VirtualKeyCodes.A, ModifierKeyCodes.Windows | ModifierKeyCodes.Shift);
             _hook.Triggered += () => {  
                     SystemSounds.Beep.Play();
 
@@ -56,6 +50,7 @@ namespace WinSwitcher
 
         public void SwitchToItem(int itemNum)
         {
+            _mainWindow.Hide();
             Process process = _processesList[itemNum];
             IntPtr handle = process.MainWindowHandle;
             SetForegroundWindow(handle);
