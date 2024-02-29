@@ -23,6 +23,7 @@ namespace WinSwitcher
         {
             InitializeComponent();
 
+            _switcher = new Switcher(this);
             Closing += (sender, e) =>
             {
                 _switcher.CleanUp();
@@ -40,7 +41,6 @@ namespace WinSwitcher
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             Hide();
-            _switcher = new Switcher(this);
             itemsListBox.KeyDown += new KeyEventHandler(ItemsListBox_KeyDown);
         }
 
