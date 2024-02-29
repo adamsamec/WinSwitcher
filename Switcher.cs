@@ -17,9 +17,6 @@ namespace WinSwitcher
         private KeyboardHook _hook;
         private List<Process> _processesList = new List<Process>();
 
-        //private const NonInvasiveKeyboardHookLibrary.ModifierKeys _appsShortcutModifier = NonInvasiveKeyboardHookLibrary.ModifierKeys.WindowsKey | NonInvasiveKeyboardHookLibrary.ModifierKeys.Shift;
-        //private const int _appsShortcutKey = 0x41; // Letter "A"
-        
         [DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr handle);
 
