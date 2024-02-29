@@ -86,7 +86,7 @@
             Triggered();
     }
 
-    public event Action Triggered;
+    public event Action? Triggered;
 
     public void Dispose()
     {
@@ -95,8 +95,6 @@
             ComponentDispatcher.ThreadPreprocessMessage -= ProcessMessage;
 
             UnregisterHotKey(host.Handle, Identifier);
-            Window = null;
-            host = null;
         }
         IsDisposed = true;
     }
