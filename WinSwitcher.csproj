@@ -9,9 +9,5 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="squirrel.windows" Version="2.0.1" />
-  </ItemGroup>
 			
 </Project>

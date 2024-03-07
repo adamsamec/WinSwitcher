@@ -26,7 +26,7 @@ namespace WinSwitcher
         public Switcher(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
-_hook = new KeyboardHook(_mainWindow, VirtualKeyCodes.A, ModifierKeyCodes.Windows | ModifierKeyCodes.Shift);
+_hook = new KeyboardHook(_mainWindow, 0x77, ModifierKeyCodes.Windows);
             _hook.Triggered += () => {  
                     SystemSounds.Beep.Play();
 

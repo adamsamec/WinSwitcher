@@ -15,35 +15,6 @@
     /// <summary>
     /// Virtual Key Codes
     /// </summary>
-    public enum VirtualKeyCodes : uint
-    {
-    A = 65,
-    B = 66,
-    C = 67,
-    D = 68,
-    E = 69,
-    F = 70,
-    G = 71,
-    H = 72,
-    I = 73,
-    J = 74,
-    K = 75,
-    L = 76,
-    M = 77,
-    N = 78,
-    O = 79,
-    P = 80,
-    Q = 81,
-    R = 82,
-    S = 83,
-    T = 84,
-    U = 85,
-    V = 86,
-    W = 87,
-    X = 88,
-    Y = 89,
-    Z = 90
-    }
 
     class KeyboardHook : IDisposable
     {
@@ -51,7 +22,7 @@
     public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
     [DllImport("user32.dll")]
-    public static extern bool RegisterHotKey(IntPtr hWnd, int id, ModifierKeyCodes fdModifiers, VirtualKeyCodes vk);
+    public static extern bool RegisterHotKey(IntPtr hWnd, int id, ModifierKeyCodes fdModifiers, int vk);
 
     #region Fields
     WindowInteropHelper host;
@@ -60,12 +31,12 @@
 
     public Window Window { get; private set; }
 
-    public VirtualKeyCodes Key { get; private set; }
+    public int Key { get; private set; }
 
     public ModifierKeyCodes Modifiers { get; private set; }
     #endregion
 
-    public KeyboardHook(Window Window, VirtualKeyCodes Key, ModifierKeyCodes Modifiers)
+    public KeyboardHook(Window Window, int Key, ModifierKeyCodes Modifiers)
     {
         this.Key = Key;
         this.Modifiers = Modifiers;
