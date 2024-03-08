@@ -5,6 +5,8 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Windows;
 
+using AccessibleOutput;
+
 namespace WinSwitcher
 {
     /// <summary>
@@ -12,9 +14,11 @@ namespace WinSwitcher
     /// </summary>
     public class Switcher
     {
-        private Process _currentProcess = Process.GetCurrentProcess();
         private MainWindow _mainWindow;
         private KeyboardHook _hook;
+        private AutoOutput _srOutput;
+
+        private Process _currentProcess = Process.GetCurrentProcess();
         private List<Process> _processesList = new List<Process>();
 
         [DllImport("User32.dll")]
@@ -28,11 +32,14 @@ namespace WinSwitcher
             _mainWindow = mainWindow;
             _hook = new KeyboardHook(_mainWindow, 0x77, ModifierKeyCodes.Windows);
             _hook.Triggered += ShowApps;
-            }
+
+            _srOutput = new AutoOutput();
+            _srOutput.Speak("WinSwitcher started");
+        }
 
         private void ShowApps()
-        { 
-                    SystemSounds.Hand.Play();
+        {
+            SystemSounds.Hand.Play();
 
                     Process[] processes = Process.GetProcesses();
                     List<string> appTitlesList = new List<string>();
