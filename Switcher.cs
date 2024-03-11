@@ -17,6 +17,7 @@ namespace WinSwitcher
         private MainWindow _mainWindow;
         private KeyboardHook _hook;
         private AutoOutput _srOutput;
+        private Config _config;
 
         private Process _currentProcess = Process.GetCurrentProcess();
         private List<Process> _processesList = new List<Process>();
@@ -30,6 +31,8 @@ namespace WinSwitcher
         public Switcher(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
+            _config = new Config();
+            _config.Load();
             _hook = new KeyboardHook(_mainWindow, 0x77, ModifierKeyCodes.Windows);
             _hook.Triggered += ShowApps;
 
