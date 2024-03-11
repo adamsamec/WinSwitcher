@@ -7,8 +7,8 @@ public class ConfigJson
 
 public class Settings
 {
-    public bool launchOnStartup { get; set; }
-    public bool filterByTyping { get; set; }
+    public string launchOnStartup { get; set; }
+    public string filterByTyping { get; set; }
     public Enabledshortcuts enabledShortcuts { get; set; }
 }
 
@@ -20,13 +20,13 @@ public class Enabledshortcuts
 
 public class Showapps
 {
-    public bool WinShiftA { get; set; }
-    public bool WinF12 { get; set; }
+    public string Win_F12 { get; set; }
+    public string Win_Shift_A { get; set; }
 }
 
 public class Showwindows
 {
-    public bool WinShiftW { get; set; }
-    public bool WinF11 { get; set; }
+    public string Win_F11 { get; set; }
+    public string Win_Shift_W { get; set; }
 }
 }

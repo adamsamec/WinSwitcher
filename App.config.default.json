@@ -1,15 +1,15 @@
 {
   "settings": {
-    "launchOnStartup": true,
-    "filterByTyping": true,
+    "launchOnStartup": "yes",
+    "filterByTyping": "yes",
     "enabledShortcuts": {
       "showApps": {
-        "Win+Shift+A": true,
-        "Win+F12": true
+        "Win_F12": "yes",
+        "Win_Shift_A": "no"
       },
       "showWindows": {
-        "Win+Shift+W": true,
-        "Win+F11": true
+        "Win_F11": "yes",
+        "Win_Shift_W": "no"
       }
     }
   }
