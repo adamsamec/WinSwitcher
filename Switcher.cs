@@ -37,7 +37,7 @@ namespace WinSwitcher
             _hook.Triggered += ShowApps;
 
             _srOutput = new AutoOutput();
-            _srOutput.Speak("WinSwitcher started");
+            _srOutput.Speak(Resources.startAnnouncement);
         }
 
         private void ShowApps()

@@ -61,11 +61,38 @@ namespace WinSwitcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hello there.
+        ///   Looks up a localized string similar to Exiting WinSwitcher.
         /// </summary>
-        public static string test {
+        public static string exitAnnouncement {
             get {
-                return ResourceManager.GetString("test", resourceCulture);
+                return ResourceManager.GetString("exitAnnouncement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open windows.
+        /// </summary>
+        public static string openWindows {
+            get {
+                return ResourceManager.GetString("openWindows", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Running apps.
+        /// </summary>
+        public static string runningApps {
+            get {
+                return ResourceManager.GetString("runningApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WinSwitcher started.
+        /// </summary>
+        public static string startAnnouncement {
+            get {
+                return ResourceManager.GetString("startAnnouncement", resourceCulture);
             }
         }
     }

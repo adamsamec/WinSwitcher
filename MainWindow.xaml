@@ -10,7 +10,7 @@ xmlns:lang="clr-namespace:WinSwitcher;assembly=WinSwitcher"
 SizeToContent="WidthAndHeight"
 Loaded="MainWindow_Loaded">
     <Grid>
-    <Label Name="testLabel" Content="{x:Static lang:Resources.test}" TextBlock.FontSize="20" HorizontalAlignment="Left"/>
+    <Label Name="runningAppsLabel" Content="{x:Static lang:Resources.runningApps}" TextBlock.FontSize="20" HorizontalAlignment="Left"/>
     <ListBox Name="itemsListBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"/>
 
   </Grid>

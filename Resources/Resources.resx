@@ -117,7 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="test" xml:space="preserve">
-    <value>Hello there</value>
+  <data name="exitAnnouncement" xml:space="preserve">
+    <value>Exiting WinSwitcher</value>
+  </data>
+  <data name="openWindows" xml:space="preserve">
+    <value>Open windows</value>
+  </data>
+  <data name="runningApps" xml:space="preserve">
+    <value>Running apps</value>
+  </data>
+  <data name="startAnnouncement" xml:space="preserve">
+    <value>WinSwitcher started</value>
   </data>
 </root>

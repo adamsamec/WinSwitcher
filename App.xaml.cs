@@ -9,6 +9,8 @@ namespace WinSwitcher
     /// </summary>
     public partial class App : Application
     {
+        private const bool _useCzechByDefault = false;
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
@@ -23,7 +25,8 @@ namespace WinSwitcher
                     WinSwitcher.Resources.Culture = new System.Globalization.CultureInfo("cs-CZ");
                     break;
                 default:
-                    WinSwitcher.Resources.Culture = new System.Globalization.CultureInfo("en-US");
+                    var lang = _useCzechByDefault ? "cs-CZ" : "en-US"; 
+                    WinSwitcher.Resources.Culture = new System.Globalization.CultureInfo(lang);
                     break;
             }
 
