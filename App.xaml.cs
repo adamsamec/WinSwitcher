@@ -1,6 +1,5 @@
 ﻿using System.Configuration;
 using System.Data;
-using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace WinSwitcher
@@ -11,11 +10,6 @@ namespace WinSwitcher
     public partial class App : Application
     {
         private const bool _useCzechByDefault = false;
-
-        public static IntPtr PrevWindowHandle = GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
 
         protected override void OnStartup(StartupEventArgs e)
         {

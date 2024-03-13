@@ -14,6 +14,7 @@ namespace WinSwitcher
     /// </summary>
     public class Switcher
     {
+        private IntPtr _prevWindowHandle = GetForegroundWindow();
         private MainWindow _mainWindow;
         private KeyboardHook _hook;
         private AutoOutput _srOutput;
@@ -50,7 +51,7 @@ namespace WinSwitcher
         public void HideAndSwitchToPrevWindow()
         {
             Hide();
-            SetForegroundWindow(App.PrevWindowHandle);
+            SetForegroundWindow(_prevWindowHandle);
         }
 
         private void Hide()
@@ -62,7 +63,7 @@ namespace WinSwitcher
         {
             SystemSounds.Hand.Play();
 
-            App.PrevWindowHandle = GetForegroundWindow();
+            _prevWindowHandle = GetForegroundWindow();
 
                     var processes = Process.GetProcesses();
                     var appTitlesList = new List<string>();
