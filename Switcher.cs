@@ -73,7 +73,8 @@ namespace WinSwitcher
                     {
                         if (!String.IsNullOrEmpty(process.MainWindowTitle))
                         {
-                            appTitlesList.Add(process.MainWindowTitle);
+                            //appTitlesList.Add(process.MainWindowTitle);
+                            appTitlesList.Add(process.ProcessName);
                             _processesList.Add(process);
                         }
                     }
