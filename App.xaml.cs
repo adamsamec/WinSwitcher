@@ -1,5 +1,6 @@
 ﻿using System.Configuration;
 using System.Data;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace WinSwitcher
@@ -11,10 +12,17 @@ namespace WinSwitcher
     {
         private const bool _useCzechByDefault = false;
 
+        public static IntPtr PrevWindowHandle = GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
             SetLanguageDictionary();
+
+            var mainWindow = new MainWindow();
         }
 
         private void SetLanguageDictionary()
