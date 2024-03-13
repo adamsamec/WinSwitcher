@@ -18,9 +18,13 @@ namespace WinSwitcher
         private KeyboardHook _hook;
         private AutoOutput _srOutput;
         private Config _config;
+        private IntPtr _prevWindowHandle;
 
         private Process _currentProcess = Process.GetCurrentProcess();
         private List<Process> _processesList = new List<Process>();
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
 
         [DllImport("User32.dll")]
         private static extern bool SetForegroundWindow(IntPtr handle);
@@ -41,16 +45,29 @@ namespace WinSwitcher
 
         public void HandleMainWindowLoad()
         {
+            Hide();
+        }
+
+        public void HideAndSwitchToPrevWindow()
+        {
+            Hide();
+            SetForegroundWindow(_prevWindowHandle);
+        }
+
+        private void Hide()
+        {
             _mainWindow.Hide();
+            _mainWindow.WindowState = WindowState.Minimized;
         }
 
         private void ShowApps()
         {
             SystemSounds.Hand.Play();
 
-                    Process[] processes = Process.GetProcesses();
-                    List<string> appTitlesList = new List<string>();
-                    List<Process> processesList = new List<Process>();
+            _prevWindowHandle = GetForegroundWindow();
+
+                    var processes = Process.GetProcesses();
+                    var appTitlesList = new List<string>();
                     _processesList.Clear();
                     foreach (var process in processes)
                     {
@@ -62,6 +79,7 @@ namespace WinSwitcher
                     }
 
                     _mainWindow.SetItems(appTitlesList);
+            _mainWindow.WindowState = WindowState.Normal;
                     _mainWindow.Display();
         }
 

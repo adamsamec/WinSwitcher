@@ -24,7 +24,18 @@ namespace WinSwitcher
         {
             InitializeComponent();
 
+            // Hack enabling hiding of the main window
+            var hiddenWindow = new Window();
+            hiddenWindow.ShowInTaskbar = false;
+            hiddenWindow.WindowStyle = WindowStyle.ToolWindow;
+            hiddenWindow.Show();
+            Owner = hiddenWindow;
+            hiddenWindow.Hide();
+            ShowInTaskbar = false;
+
             _switcher = new Switcher(this);
+
+            KeyDown += MainWindow_KeyDown;
             Closing += MainWindow_Closing;
         }
 
@@ -32,6 +43,14 @@ namespace WinSwitcher
         {
             _switcher.HandleMainWindowLoad();
             itemsListBox.KeyDown += new KeyEventHandler(ItemsListBox_KeyDown);
+        }
+
+        private void MainWindow_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                _switcher.HideAndSwitchToPrevWindow();
+            }
         }
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
