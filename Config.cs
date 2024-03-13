@@ -24,7 +24,7 @@ namespace WinSwitcher
             get { return _config.settings; }
         }
 
-        public void Load()
+        public Config()
         {
             Directory.CreateDirectory(_folder);
             string defaultPath = Path.Combine(Directory.GetCurrentDirectory(), _defaultFilename);

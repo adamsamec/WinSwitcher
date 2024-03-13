@@ -32,7 +32,6 @@ namespace WinSwitcher
         {
             _mainWindow = mainWindow;
             _config = new Config();
-            _config.Load();
             _hook = new KeyboardHook(_mainWindow, 0x77, ModifierKeyCodes.Windows);
             _hook.Triggered += ShowApps;
 
