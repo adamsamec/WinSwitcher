@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,10 +25,18 @@ namespace WinSwitcher
             InitializeComponent();
 
             _switcher = new Switcher(this);
-            Closing += (sender, e) =>
-            {
-                _switcher.CleanUp();
-            };
+            Closing += MainWindow_Closing;
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            _switcher.HandleMainWindowLoad();
+            itemsListBox.KeyDown += new KeyEventHandler(ItemsListBox_KeyDown);
+        }
+
+        private void MainWindow_Closing(object sender, CancelEventArgs e)
+{
+            _switcher.CleanUp();
         }
 
         private void ItemsListBox_KeyDown(object sender, KeyEventArgs e)
@@ -36,12 +45,6 @@ namespace WinSwitcher
             {
                 _switcher.SwitchToItem(itemsListBox.SelectedIndex);
             }
-        }
-
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            Hide();
-            itemsListBox.KeyDown += new KeyEventHandler(ItemsListBox_KeyDown);
         }
 
         public void Display()
@@ -54,7 +57,10 @@ namespace WinSwitcher
         public void SetItems(List<string> itemsList)
         {
             itemsListBox.Items.Clear();
-            itemsList.ForEach(item => itemsListBox.Items.Add(item));
+            foreach (var item in itemsList)
+            {
+                itemsListBox.Items.Add(item);
+            }
         }
     }
 }

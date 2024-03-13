@@ -25,7 +25,7 @@ namespace WinSwitcher
                     WinSwitcher.Resources.Culture = new System.Globalization.CultureInfo("cs-CZ");
                     break;
                 default:
-                    var lang = _useCzechByDefault ? "cs-CZ" : "en-US"; 
+                    var lang = _useCzechByDefault ? "cs-CZ" : "en-US";
                     WinSwitcher.Resources.Culture = new System.Globalization.CultureInfo(lang);
                     break;
             }

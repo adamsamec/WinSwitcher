@@ -39,6 +39,11 @@ namespace WinSwitcher
             _srOutput.Speak(Resources.startAnnouncement);
         }
 
+        public void HandleMainWindowLoad()
+        {
+            _mainWindow.Hide();
+        }
+
         private void ShowApps()
         {
             SystemSounds.Hand.Play();
@@ -47,7 +52,7 @@ namespace WinSwitcher
                     List<string> appTitlesList = new List<string>();
                     List<Process> processesList = new List<Process>();
                     _processesList.Clear();
-                    foreach (Process process in processes)
+                    foreach (var process in processes)
                     {
                         if (!String.IsNullOrEmpty(process.MainWindowTitle))
                         {
@@ -63,7 +68,7 @@ namespace WinSwitcher
         public void SwitchToItem(int itemNum)
         {
             _mainWindow.Hide();
-            Process process = _processesList[itemNum];
+            var process = _processesList[itemNum];
             IntPtr handle = process.MainWindowHandle;
             SetForegroundWindow(handle);
             SetActiveWindow(handle);

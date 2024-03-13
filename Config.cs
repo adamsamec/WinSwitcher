@@ -27,7 +27,7 @@ namespace WinSwitcher
         public Config()
         {
             Directory.CreateDirectory(_folder);
-            string defaultPath = Path.Combine(Directory.GetCurrentDirectory(), _defaultFilename);
+            var defaultPath = Path.Combine(Directory.GetCurrentDirectory(), _defaultFilename);
             _path = Path.Combine(_folder, _filename);
 
             // Create the config if it not yet exists
@@ -36,14 +36,14 @@ namespace WinSwitcher
                 File.Copy(defaultPath, _path);
             }
 
-            // Try to load the config
-            string configString = File.ReadAllText(_path, Encoding.UTF8);
+            // Load the config
+            var configString = File.ReadAllText(_path, Encoding.UTF8);
             _config = JsonSerializer.Deserialize<ConfigJson>(configString);
-            Settings settings = _config.settings;
+            var settings = _config.settings;
 
-            string defaultConfigString = File.ReadAllText(defaultPath, Encoding.UTF8);
-            ConfigJson defaultConfig = JsonSerializer.Deserialize<ConfigJson>(defaultConfigString);
-            Settings defaultSettings = defaultConfig.settings;
+            var defaultConfigString = File.ReadAllText(defaultPath, Encoding.UTF8);
+var             defaultConfig = JsonSerializer.Deserialize<ConfigJson>(defaultConfigString);
+            var defaultSettings = defaultConfig.settings;
 
             // Set missing JSON properties to defaults
             Utils.SetYesOrNo(settings, defaultSettings, ["launchOnStartup", "filterByTyping"]);
@@ -70,7 +70,7 @@ namespace WinSwitcher
         public void Save()
         {
             var options = new JsonSerializerOptions { WriteIndented = true };
-            string configString = JsonSerializer.Serialize(_config, options);
+            var configString = JsonSerializer.Serialize(_config, options);
             File.WriteAllText(_path, configString, Encoding.UTF8);
         }
     }
