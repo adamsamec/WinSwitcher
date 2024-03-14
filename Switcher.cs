@@ -1,5 +1,6 @@
 ﻿using AccessibleOutput;
 using System.Diagnostics;
+using System.IO;
 using System.Media;
 
 namespace WinSwitcher
@@ -59,8 +60,17 @@ namespace WinSwitcher
             {
                 if (!String.IsNullOrEmpty(process.MainWindowTitle))
                 {
-                    appTitlesList.Add(process.MainWindowTitle);
-                    _processesList.Add(process);
+                    try
+                    {
+                        var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.GetMainModuleFileName());
+                        var name = fileVersionInfo.FileDescription;
+                        if (String.IsNullOrEmpty(name))
+                        {
+                            continue;
+                        }
+                        appTitlesList.Add(name);
+                        _processesList.Add(process);
+                    } catch (FileNotFoundException ex) {}
                 }
             }
 
