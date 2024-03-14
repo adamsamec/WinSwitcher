@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using AccessibleOutput;
 using System.Diagnostics;
 using System.Media;
 using System.Runtime.InteropServices;
-using System.Windows;
-
-using AccessibleOutput;
 
 namespace WinSwitcher
 {

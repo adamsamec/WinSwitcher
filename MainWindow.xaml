@@ -8,6 +8,8 @@ xmlns:lang="clr-namespace:WinSwitcher;assembly=WinSwitcher"
         mc:Ignorable="d"
         Title="WinSwitcher"
 SizeToContent="WidthAndHeight"
+        ShowInTaskbar="False"
+WindowStyle="None"
 Loaded="MainWindow_Loaded"
 >
     <Grid>

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace WinSwitcher
+﻿namespace WinSwitcher
 {
     /// <summary>
     /// Utility class

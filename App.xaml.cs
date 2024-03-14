@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Data;
-using System.Windows;
+﻿using System.Windows;
 
 namespace WinSwitcher
 {
@@ -14,8 +12,8 @@ namespace WinSwitcher
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
-            SetLanguageDictionary();
 
+            SetLanguageDictionary();
             var mainWindow = new MainWindow();
         }
 

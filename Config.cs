@@ -1,10 +1,6 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Windows.Controls;
 
 namespace WinSwitcher
 {

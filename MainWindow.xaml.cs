@@ -1,15 +1,8 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Windows.Interop;
 
 namespace WinSwitcher
 {
@@ -20,19 +13,25 @@ namespace WinSwitcher
     {
         private Switcher _switcher;
 
+        [DllImport("user32", EntryPoint = "GetWindowLong")]
+        public static extern uint GetWindowLong(IntPtr hwnd, int nIndex);
+
+        [DllImport("user32", EntryPoint = "SetWindowLong")]
+        public static extern uint SetWindowLong(
+        IntPtr hwnd,
+        int nIndex,
+        uint dwNewLong
+        );
+
+        public const int WS_EX_TOOLWINDOW = 0x00000080;
+        public static readonly int GWL_EXSTYLE = -20;
+        
         public MainWindow()
         {
             InitializeComponent();
 
-            // Workaround enabling hiding of the main window
-            var hiddenWindow = new Window();
-            hiddenWindow.WindowStyle = WindowStyle.ToolWindow;
-            hiddenWindow.ShowInTaskbar = false;
-            hiddenWindow.Show();
-            Owner = hiddenWindow;
-            hiddenWindow.Hide();
 
-            ShowInTaskbar = false;
+            //ShowInTaskbar = false;
 
             _switcher = new Switcher(this);
 
@@ -40,8 +39,18 @@ namespace WinSwitcher
             Closing += MainWindow_Closing;
         }
 
+        private void SetWindowToolStyle(IntPtr hwnd)
+        {
+            uint extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
+            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle |
+            WS_EX_TOOLWINDOW);
+        }
+
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
+            // Hide window from task switching
+            SetWindowToolStyle(new WindowInteropHelper(this).Handle);
+
             _switcher.HandleMainWindowLoad();
             itemsListBox.KeyDown += new KeyEventHandler(ItemsListBox_KeyDown);
         }
