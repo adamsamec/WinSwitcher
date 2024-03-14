@@ -1,7 +1,6 @@
 ﻿using AccessibleOutput;
 using System.Diagnostics;
 using System.Media;
-using System.Runtime.InteropServices;
 
 namespace WinSwitcher
 {
@@ -10,7 +9,7 @@ namespace WinSwitcher
     /// </summary>
     public class Switcher
     {
-        private IntPtr _prevWindowHandle = GetForegroundWindow();
+        private IntPtr _prevWindowHandle = NativeMethods.GetForegroundWindow();
         private MainWindow _mainWindow;
         private KeyboardHook _hook;
         private AutoOutput _srOutput;
@@ -18,15 +17,6 @@ namespace WinSwitcher
 
         private Process _currentProcess = Process.GetCurrentProcess();
         private List<Process> _processesList = new List<Process>();
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        [DllImport("User32.dll")]
-        private static extern bool SetForegroundWindow(IntPtr handle);
-
-        [DllImport("User32.dll")]
-        private static extern bool SetActiveWindow(IntPtr handle);
 
         public Switcher(MainWindow mainWindow)
         {
@@ -47,7 +37,7 @@ namespace WinSwitcher
         public void HideAndSwitchToPrevWindow()
         {
             Hide();
-            SetForegroundWindow(_prevWindowHandle);
+            NativeMethods.SetForegroundWindow(_prevWindowHandle);
         }
 
         private void Hide()
@@ -59,7 +49,7 @@ namespace WinSwitcher
         {
             SystemSounds.Hand.Play();
 
-            _prevWindowHandle = GetForegroundWindow();
+            _prevWindowHandle = NativeMethods.GetForegroundWindow();
 
                     var processes = Process.GetProcesses();
                     var appTitlesList = new List<string>();
@@ -83,8 +73,8 @@ namespace WinSwitcher
             _mainWindow.Hide();
             var process = _processesList[itemNum];
             IntPtr handle = process.MainWindowHandle;
-            SetForegroundWindow(handle);
-            SetActiveWindow(handle);
+            NativeMethods.SetForegroundWindow(handle);
+            NativeMethods.SetActiveWindow(handle);
         }
 
         public void CleanUp()

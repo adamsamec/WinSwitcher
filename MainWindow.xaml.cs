@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
@@ -13,25 +12,9 @@ namespace WinSwitcher
     {
         private Switcher _switcher;
 
-        [DllImport("user32", EntryPoint = "GetWindowLong")]
-        public static extern uint GetWindowLong(IntPtr hwnd, int nIndex);
-
-        [DllImport("user32", EntryPoint = "SetWindowLong")]
-        public static extern uint SetWindowLong(
-        IntPtr hwnd,
-        int nIndex,
-        uint dwNewLong
-        );
-
-        public const int WS_EX_TOOLWINDOW = 0x00000080;
-        public static readonly int GWL_EXSTYLE = -20;
-        
         public MainWindow()
         {
             InitializeComponent();
-
-
-            //ShowInTaskbar = false;
 
             _switcher = new Switcher(this);
 
@@ -41,9 +24,9 @@ namespace WinSwitcher
 
         private void SetWindowToolStyle(IntPtr hwnd)
         {
-            uint extendedStyle = GetWindowLong(hwnd, GWL_EXSTYLE);
-            SetWindowLong(hwnd, GWL_EXSTYLE, extendedStyle |
-            WS_EX_TOOLWINDOW);
+            uint extendedStyle = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE);
+            NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, extendedStyle |
+            NativeMethods.WS_EX_TOOLWINDOW);
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -64,7 +47,7 @@ namespace WinSwitcher
         }
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
-{
+        {
             _switcher.CleanUp();
         }
 
