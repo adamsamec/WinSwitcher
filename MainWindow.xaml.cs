@@ -23,6 +23,15 @@ namespace WinSwitcher
         public MainWindow()
         {
             InitializeComponent();
+
+            // Workaround enabling hiding of the main window
+            var hiddenWindow = new Window();
+            hiddenWindow.WindowStyle = WindowStyle.ToolWindow;
+            hiddenWindow.ShowInTaskbar = false;
+            hiddenWindow.Show();
+            Owner = hiddenWindow;
+            hiddenWindow.Hide();
+
             ShowInTaskbar = false;
 
             _switcher = new Switcher(this);
