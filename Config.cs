@@ -38,7 +38,7 @@ namespace WinSwitcher
             var settings = _config.settings;
 
             var defaultConfigString = File.ReadAllText(defaultPath, Encoding.UTF8);
-var             defaultConfig = JsonSerializer.Deserialize<ConfigJson>(defaultConfigString);
+            var defaultConfig = JsonSerializer.Deserialize<ConfigJson>(defaultConfigString);
             var defaultSettings = defaultConfig.settings;
 
             // Set missing JSON properties to defaults

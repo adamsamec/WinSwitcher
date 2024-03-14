@@ -3,20 +3,20 @@ using System.Windows;
 using System.Windows.Interop;
 
 [Flags]
-    public enum ModifierKeyCodes : uint
-    {
-        Alt = 1,
-        Control = 2,
-        Shift = 4,
-        Windows = 8
-    }
+public enum ModifierKeyCodes : uint
+{
+    Alt = 1,
+    Control = 2,
+    Shift = 4,
+    Windows = 8
+}
 
-    /// <summary>
-    /// Virtual Key Codes
-    /// </summary>
+/// <summary>
+/// Virtual Key Codes
+/// </summary>
 
-    class KeyboardHook : IDisposable
-    {
+class KeyboardHook : IDisposable
+{
     [DllImport("user32.dll")]
     public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
@@ -68,4 +68,4 @@ using System.Windows.Interop;
         }
         IsDisposed = true;
     }
-    }
+}

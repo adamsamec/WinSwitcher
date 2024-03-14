@@ -38,6 +38,7 @@ namespace WinSwitcher
         {
             Hide();
             NativeMethods.SetForegroundWindow(_prevWindowHandle);
+            NativeMethods.SetActiveWindow(_prevWindowHandle);
         }
 
         private void Hide()
@@ -51,19 +52,19 @@ namespace WinSwitcher
 
             _prevWindowHandle = NativeMethods.GetForegroundWindow();
 
-                    var processes = Process.GetProcesses();
-                    var appTitlesList = new List<string>();
-                    _processesList.Clear();
-                    foreach (var process in processes)
-                    {
-                        if (!String.IsNullOrEmpty(process.MainWindowTitle))
-                        {
-                            appTitlesList.Add(process.MainWindowTitle);
-                            _processesList.Add(process);
-                        }
-                    }
+            var processes = Process.GetProcesses();
+            var appTitlesList = new List<string>();
+            _processesList.Clear();
+            foreach (var process in processes)
+            {
+                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                {
+                    appTitlesList.Add(process.MainWindowTitle);
+                    _processesList.Add(process);
+                }
+            }
 
-                    _mainWindow.SetItems(appTitlesList);
+            _mainWindow.SetItems(appTitlesList);
             _mainWindow.Show(); // This extra Show() fixes the initial display
             _mainWindow.Display();
         }
