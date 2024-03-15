@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Media;
+using System.Xml.Linq;
 
 namespace WinSwitcher
 {
@@ -58,20 +59,23 @@ namespace WinSwitcher
             _processesList.Clear();
             foreach (var process in processes)
             {
-                if (!String.IsNullOrEmpty(process.MainWindowTitle))
+                if (String.IsNullOrEmpty(process.MainWindowTitle))
                 {
+                    continue;
+                    }
                     try
                     {
-                        var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.GetMainModuleFileName());
+                        var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.GetMainModuleFilePath());
                         var name = fileVersionInfo.FileDescription;
                         if (String.IsNullOrEmpty(name))
                         {
-                            continue;
-                        }
-                        appTitlesList.Add(name);
-                        _processesList.Add(process);
-                    } catch (FileNotFoundException ex) {}
+                        continue;
+                    }
+                    appTitlesList.Add(name);
+                    } catch (FileNotFoundException ex) {
+                    appTitlesList.Add(process.MainWindowTitle);
                 }
+                _processesList.Add(process);
             }
 
             _mainWindow.SetItems(appTitlesList);
