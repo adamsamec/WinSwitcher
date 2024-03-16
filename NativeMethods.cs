@@ -30,6 +30,9 @@ namespace WinSwitcher
 
         [DllImport("User32.dll")]
         public static extern bool SetActiveWindow(IntPtr handle);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetWindow(IntPtr hWnd, int nIndex);
     }
 }
 

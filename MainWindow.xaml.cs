@@ -55,7 +55,7 @@ namespace WinSwitcher
         {
             if (e.Key == Key.Enter)
             {
-                _switcher.SwitchToItem(itemsListBox.SelectedIndex);
+                _switcher.SwitchToApp(itemsListBox.SelectedIndex);
             }
         }
 

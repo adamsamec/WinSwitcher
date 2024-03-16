@@ -17,8 +17,7 @@ namespace WinSwitcher
         private AutoOutput _srOutput;
         private Config _config;
 
-        private Process _currentProcess = Process.GetCurrentProcess();
-        private List<Process> _processesList = new List<Process>();
+        private List<RunningApplication> _appsList = new List<RunningApplication>();
 
         public Switcher(MainWindow mainWindow)
         {
@@ -54,39 +53,51 @@ namespace WinSwitcher
 
             _prevWindowHandle = NativeMethods.GetForegroundWindow();
 
+            // Update the list of running applications
             var processes = Process.GetProcesses();
-            var appTitlesList = new List<string>();
-            _processesList.Clear();
+            _appsList.Clear();
             foreach (var process in processes)
             {
                 if (String.IsNullOrEmpty(process.MainWindowTitle))
                 {
                     continue;
-                    }
-                    try
+                }
+                String appName;
+                try
+                {
+                    var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.GetMainModuleFilePath());
+                    appName = fileVersionInfo.FileDescription;
+                    if (String.IsNullOrEmpty(appName))
                     {
-                        var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.GetMainModuleFilePath());
-                        var name = fileVersionInfo.FileDescription;
-                        if (String.IsNullOrEmpty(name))
-                        {
                         continue;
                     }
-                    appTitlesList.Add(name);
-                    } catch (FileNotFoundException ex) {
-                    appTitlesList.Add(process.MainWindowTitle);
                 }
-                _processesList.Add(process);
+                catch (FileNotFoundException ex)
+                {
+                    appName = process.MainWindowTitle;
+                }
+                var app = new RunningApplication(process, appName);
+                _appsList.Add(app);
+            }
+            _appsList = _appsList.OrderBy(app => app.ZIndex).ToList();
+
+            // Create applications names list
+            var appsNamesList = new List<string>();
+            foreach (var app in _appsList)
+            {
+                appsNamesList.Add(app.Name);
             }
 
-            _mainWindow.SetItems(appTitlesList);
+            // Update and show the window
+            _mainWindow.SetItems(appsNamesList);
             _mainWindow.Show(); // This extra Show() fixes the initial display
             _mainWindow.Display();
         }
 
-        public void SwitchToItem(int itemNum)
+        public void SwitchToApp(int itemNum)
         {
-            _mainWindow.Hide();
-            var process = _processesList[itemNum];
+            Hide();
+            var process = _appsList[itemNum].LastWindowProcess;
             IntPtr handle = process.MainWindowHandle;
             NativeMethods.SetForegroundWindow(handle);
             NativeMethods.SetActiveWindow(handle);
