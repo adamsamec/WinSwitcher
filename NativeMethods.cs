@@ -10,11 +10,11 @@ namespace WinSwitcher
     public static class NativeMethods
     {
         [DllImport("user32", EntryPoint = "GetWindowLong")]
-        public static extern uint GetWindowLong(IntPtr hwnd, int nIndex);
+        public static extern uint GetWindowLong(IntPtr handle, int nIndex);
 
         [DllImport("user32", EntryPoint = "SetWindowLong")]
         public static extern uint SetWindowLong(
-        IntPtr hwnd,
+        IntPtr handle,
         int nIndex,
         uint dwNewLong
         );
@@ -32,7 +32,7 @@ namespace WinSwitcher
         public static extern bool SetActiveWindow(IntPtr handle);
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr GetWindow(IntPtr hWnd, int nIndex);
+        public static extern IntPtr GetWindow(IntPtr handle, int nIndex);
     }
 }
 
