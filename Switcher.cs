@@ -98,6 +98,7 @@ namespace WinSwitcher
             Hide();
             var process = _appsList[itemNum].LastWindowProcess;
             IntPtr handle = process.MainWindowHandle;
+            NativeMethods.ShowWindow(handle, 5);
             NativeMethods.SetForegroundWindow(handle);
             NativeMethods.SetActiveWindow(handle);
         }
