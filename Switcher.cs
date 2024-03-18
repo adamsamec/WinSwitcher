@@ -49,7 +49,6 @@ namespace WinSwitcher
         private void ShowApps()
         {
             SystemSounds.Hand.Play();
-
             _prevWindowHandle = NativeMethods.GetForegroundWindow();
 
             // Update the list of running applications
