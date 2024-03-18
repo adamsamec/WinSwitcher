@@ -1,6 +1,6 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using System.Text;
+using static WinSwitcher.Utils;
 
 namespace WinSwitcher
 {
@@ -36,20 +36,24 @@ namespace WinSwitcher
 
         [DllImport("user32.dll")]
         public static extern bool ShowWindow(IntPtr handle, uint nCmdShow);
-    }
-}
 
-internal static class Extensions
-{
-    [DllImport("Kernel32.dll")]
-    private static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
+        [DllImport("Kernel32.dll")]
+        public static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
 
-    public static string GetMainModuleFilePath(this Process process, int buffer = 1024)
-    {
-        var filePathBuilder = new StringBuilder(buffer);
-        uint bufferLength = (uint)filePathBuilder.Capacity + 1;
-        return QueryFullProcessImageName(process.Handle, 0, filePathBuilder, ref bufferLength) ?
-            filePathBuilder.ToString() :
-            null;
+        [DllImport("user32.dll")]
+        public static extern int ToUnicode(
+    uint wVirtKey,
+    uint wScanCode,
+    byte[] lpKeyState,
+    [Out, MarshalAs( UnmanagedType.LPWStr, SizeParamIndex = 4 )]
+        StringBuilder pwszBuff,
+    int cchBuff,
+    uint wFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetKeyboardState(byte[] lpKeyState);
+
+        [DllImport("user32.dll")]
+        public static extern uint MapVirtualKey(uint uCode, Utils.MapType uMapType);
     }
 }

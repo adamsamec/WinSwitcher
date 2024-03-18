@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Media;
+using System.Windows.Input;
 
 namespace WinSwitcher
 {
@@ -100,6 +101,19 @@ namespace WinSwitcher
             NativeMethods.ShowWindow(handle, 5);
             NativeMethods.SetForegroundWindow(handle);
             NativeMethods.SetActiveWindow(handle);
+        }
+
+        public void HandleFilterAddChar(char character)
+        {
+            if (_config.Settings.filterByTyping != Config.TRUE)
+            {
+                return;
+            }
+            var filteredAppsList = new List<RunningApplication>();
+            foreach (var (item, index) in _appsList.Select((item, index) => (item, index)))
+            {
+                filteredAppsList.Add(item);
+            }
         }
 
         public void CleanUp()

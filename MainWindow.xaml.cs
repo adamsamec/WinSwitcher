@@ -56,6 +56,12 @@ namespace WinSwitcher
             if (e.Key == Key.Enter)
             {
                 _switcher.SwitchToApp(itemsListBox.SelectedIndex);
+                return;
+            }
+            var character = e.Key.ConvertToChar();
+            if (character != null)
+            {
+            _switcher.HandleFilterAddChar((char) character);
             }
         }
 

@@ -14,7 +14,6 @@ Loaded="MainWindow_Loaded"
 >
     <Grid>
     <Label Name="runningAppsLabel" Target="{Binding ElementName=itemsListBox}" Content="{x:Static lang:Resources.runningApps}" TextBlock.FontSize="20" HorizontalAlignment="Left"/>
-    <Label Name="runningAppsLabel" Target="{Binding ElementName=itemsListBox}" Content="{x:Static lang:Resources.runningApps}" TextBlock.FontSize="20" HorizontalAlignment="Left"/>
     <ListBox Name="itemsListBox" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,20,0,0"/>
 
   </Grid>
