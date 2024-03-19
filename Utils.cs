@@ -68,11 +68,6 @@ namespace WinSwitcher
                     break;
                 case 0:
                     break;
-                case 1:
-                    {
-                        character = stringBuilder[0].ToString();
-                        break;
-                    }
                 default:
                     {
                         character = stringBuilder[0].ToString();
