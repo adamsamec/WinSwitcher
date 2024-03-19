@@ -58,10 +58,10 @@ namespace WinSwitcher
                 _switcher.SwitchToApp(itemsListBox.SelectedIndex);
                 return;
             }
-            var character = e.Key.ConvertToChar();
-            if (character != null)
+            var character = e.Key.ToPrintableCharacter();
+            if (character != "")
             {
-            _switcher.HandleFilterAddChar((char) character);
+            _switcher.HandleFilterCharacterTyped(character);
             }
         }
 

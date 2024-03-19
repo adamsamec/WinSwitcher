@@ -103,7 +103,7 @@ namespace WinSwitcher
             NativeMethods.SetActiveWindow(handle);
         }
 
-        public void HandleFilterAddChar(char character)
+        public void HandleFilterCharacterTyped(string character)
         {
             if (_config.Settings.filterByTyping != Config.TRUE)
             {

@@ -51,13 +51,9 @@ namespace WinSwitcher
                 null;
         }
 
-        public static char? ConvertToChar(this Key key)
+        public static string ToPrintableCharacter(this Key key)
         {
-            if (key == Key.Space)
-            {
-                return ' ';
-            }
-            char character = ' ';
+            string character = "";
             int virtualKey = KeyInterop.VirtualKeyFromKey(key);
             var keyboardState = new byte[256];
             NativeMethods.GetKeyboardState(keyboardState);
@@ -74,18 +70,14 @@ namespace WinSwitcher
                     break;
                 case 1:
                     {
-                        character = stringBuilder[0];
+                        character = stringBuilder[0].ToString();
                         break;
                     }
                 default:
                     {
-                        character = stringBuilder[0];
+                        character = stringBuilder[0].ToString();
                         break;
                     }
-            }
-            if (character == ' ')
-            {
-                return null;
             }
             return character;
         }
