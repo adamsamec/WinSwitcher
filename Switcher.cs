@@ -32,7 +32,7 @@ namespace WinSwitcher
             _srOutput.Speak(Resources.startAnnouncement);
         }
 
-        public string GetResource(string name)
+        public static string GetResource(string name)
         {
             return (string)typeof(Resources).GetProperty(name).GetValue(null, null);
         }
