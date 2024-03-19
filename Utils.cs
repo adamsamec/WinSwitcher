@@ -54,6 +54,13 @@ namespace WinSwitcher
         public static string ToPrintableCharacter(this Key key)
         {
             string character = "";
+
+            // Consider Backspace as non-printable character
+            if (key == Key.Back)
+            {
+                return character;
+            }
+
             int virtualKey = KeyInterop.VirtualKeyFromKey(key);
             var keyboardState = new byte[256];
             NativeMethods.GetKeyboardState(keyboardState);

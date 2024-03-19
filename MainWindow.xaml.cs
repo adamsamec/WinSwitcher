@@ -64,7 +64,7 @@ namespace WinSwitcher
                 _switcher.ResetFilter();
             }
             var character = e.Key.ToPrintableCharacter();
-            if (character != "")
+            if (e.Key != Key.Tab && character != "")
             {
                 _switcher.ApplyTypedCharacterToFilter(character);
             }
@@ -80,17 +80,14 @@ namespace WinSwitcher
         public void SetItems(List<string> itemsList)
         {
             itemsListBox.Items.Clear();
+            if (itemsList.Count == 0)
+            {
+                itemsListBox.Items.Add("No apps found");
+                return;
+            }
             foreach (var item in itemsList)
             {
                 itemsListBox.Items.Add(item);
-            }
-
-            // Focus the first listBox item
-            if (itemsListBox.Items.Count > 0)
-            {
-                var firstItem = (ListBoxItem)itemsListBox.ItemContainerGenerator
-               .ContainerFromItem(0);
-                //firstItem?.Focus();
             }
         }
     }

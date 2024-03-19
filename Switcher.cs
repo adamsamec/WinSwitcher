@@ -100,8 +100,13 @@ namespace WinSwitcher
 
         public void SwitchToApp(int itemNum)
         {
+            // Ignore switching if there are no apps after applying filter
+            if (_filteredAppsList.Count == 0)
+            {
+                return;
+            }
             Hide();
-            var process = _appsList[itemNum].LastWindowProcess;
+            var process = _filteredAppsList[itemNum].LastWindowProcess;
             IntPtr handle = process.MainWindowHandle;
             NativeMethods.ShowWindow(handle, 5);
             NativeMethods.SetForegroundWindow(handle);
