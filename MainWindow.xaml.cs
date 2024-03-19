@@ -82,7 +82,9 @@ namespace WinSwitcher
             itemsListBox.Items.Clear();
             if (itemsList.Count == 0)
             {
-                itemsListBox.Items.Add("No apps found");
+                var listBoxItem = new ListBoxItem();
+                listBoxItem.Content = _switcher.GetResource("noAppsFound");
+                itemsListBox.Items.Add(listBoxItem);
                 return;
             }
             foreach (var item in itemsList)

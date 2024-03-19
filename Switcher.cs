@@ -32,6 +32,11 @@ namespace WinSwitcher
             _srOutput.Speak(Resources.startAnnouncement);
         }
 
+        public string GetResource(string name)
+        {
+            return (string)typeof(Resources).GetProperty(name).GetValue(null, null);
+        }
+
         public void HandleMainWindowLoad()
         {
             Hide();
@@ -142,6 +147,10 @@ namespace WinSwitcher
             {
                 _filteredAppsList.Add(app);
                 appsNamesList.Add(app.Name);
+            }
+            if (appsNamesList.Count == 0)
+            {
+                //appsNamesList.Add(Resources.noAppsFound);
             }
             _mainWindow.SetItems(appsNamesList);
         }
