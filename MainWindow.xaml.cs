@@ -87,7 +87,9 @@ namespace WinSwitcher
             }
             foreach (var item in itemsList)
             {
-                itemsListBox.Items.Add(item);
+                var listBoxItem = new ListBoxItem();
+                listBoxItem.Content = item;
+                itemsListBox.Items.Add(listBoxItem);
             }
         }
     }
