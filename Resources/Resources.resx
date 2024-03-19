@@ -129,4 +129,13 @@
   <data name="startAnnouncement" xml:space="preserve">
     <value>WinSwitcher started</value>
   </data>
+    <data name="settingsButton" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="noAppsFound" xml:space="preserve">
+    <value>No apps found</value>
+  </data>
+  <data name="noWindowsFound" xml:space="preserve">
+    <value>No windows found</value>
+  </data>
 </root>

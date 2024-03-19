@@ -129,4 +129,13 @@
   <data name="startAnnouncement" xml:space="preserve">
     <value>WinSwitcher spuštěn</value>
   </data>
+  <data name="settingsButton" xml:space="preserve">
+    <value>Nastavení</value>
+  </data>
+  <data name="noAppsFound" xml:space="preserve">
+    <value>Žádné aplikace nenalezeny</value>
+  </data>
+  <data name="noWindowsFound" xml:space="preserve">
+    <value>Žádná okna nenalezena</value>
+  </data>
 </root>

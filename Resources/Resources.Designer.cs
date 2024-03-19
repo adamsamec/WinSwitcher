@@ -70,6 +70,24 @@ namespace WinSwitcher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No apps found.
+        /// </summary>
+        public static string noAppsFound {
+            get {
+                return ResourceManager.GetString("noAppsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No windows found.
+        /// </summary>
+        public static string noWindowsFound {
+            get {
+                return ResourceManager.GetString("noWindowsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open windows.
         /// </summary>
         public static string openWindows {
@@ -84,6 +102,15 @@ namespace WinSwitcher {
         public static string runningApps {
             get {
                 return ResourceManager.GetString("runningApps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string settingsButton {
+            get {
+                return ResourceManager.GetString("settingsButton", resourceCulture);
             }
         }
         
