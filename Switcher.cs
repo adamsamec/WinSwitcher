@@ -18,6 +18,8 @@ namespace WinSwitcher
         private Config _config;
 
         private List<RunningApplication> _appsList = new List<RunningApplication>();
+        private List<RunningApplication> _filteredAppsList = new List<RunningApplication>();
+        private string _filterText;
 
         public Switcher(MainWindow mainWindow)
         {
@@ -52,7 +54,7 @@ namespace WinSwitcher
             SystemSounds.Hand.Play();
             _prevWindowHandle = NativeMethods.GetForegroundWindow();
 
-            // Update the list of running applications
+            // Update list of running applications
             var processes = Process.GetProcesses();
             _appsList.Clear();
             foreach (var process in processes)
@@ -61,7 +63,7 @@ namespace WinSwitcher
                 {
                     continue;
                 }
-                String appName;
+                string appName;
                 try
                 {
                     var fileVersionInfo = FileVersionInfo.GetVersionInfo(process.GetMainModuleFilePath());
@@ -71,7 +73,7 @@ namespace WinSwitcher
                         continue;
                     }
                 }
-                catch (FileNotFoundException ex)
+                catch (Exception ex)
                 {
                     appName = process.MainWindowTitle;
                 }
@@ -80,15 +82,18 @@ namespace WinSwitcher
             }
             _appsList = _appsList.OrderBy(app => app.ZIndex).ToList();
 
-            // Create applications names list
+            // Update filtred apps and set apps names list for main window
+            _filteredAppsList.Clear();
+            _filterText = "";
             var appsNamesList = new List<string>();
             foreach (var app in _appsList)
             {
+                _filteredAppsList.Add(app);
                 appsNamesList.Add(app.Name);
             }
-
-            // Update and show the window
             _mainWindow.SetItems(appsNamesList);
+
+            // Display main window
             _mainWindow.Show(); // This extra Show() fixes the initial display
             _mainWindow.Display();
         }
@@ -103,17 +108,37 @@ namespace WinSwitcher
             NativeMethods.SetActiveWindow(handle);
         }
 
-        public void HandleFilterCharacterTyped(string character)
+        public void ApplyTypedCharacterToFilter(string character)
         {
             if (_config.Settings.filterByTyping != Config.TRUE)
             {
                 return;
             }
-            var filteredAppsList = new List<RunningApplication>();
-            foreach (var (item, index) in _appsList.Select((item, index) => (item, index)))
+            character = character.ToLower();
+            _filterText += character;
+            _filteredAppsList.Clear();
+            var appsNamesList = new List<string>();
+            foreach (var app in _appsList)
             {
-                filteredAppsList.Add(item);
+                if (app.Name.ToLower().Contains(_filterText))
+                {
+                _filteredAppsList.Add(app);
+                    appsNamesList.Add(app.Name);
+                }
+                _mainWindow.SetItems(appsNamesList);
             }
+        }
+
+        public void ResetFilter()
+        {
+            _filteredAppsList.Clear();
+            var appsNamesList = new List<string>();
+            foreach (var app in _appsList)
+            {
+                _filteredAppsList.Add(app);
+                appsNamesList.Add(app.Name);
+            }
+            _mainWindow.SetItems(appsNamesList);
         }
 
         public void CleanUp()

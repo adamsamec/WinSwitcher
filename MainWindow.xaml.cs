@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 
@@ -58,10 +59,14 @@ namespace WinSwitcher
                 _switcher.SwitchToApp(itemsListBox.SelectedIndex);
                 return;
             }
+            if (e.Key == Key.Back)
+            {
+                _switcher.ResetFilter();
+            }
             var character = e.Key.ToPrintableCharacter();
             if (character != "")
             {
-            _switcher.HandleFilterCharacterTyped(character);
+                _switcher.ApplyTypedCharacterToFilter(character);
             }
         }
 
@@ -78,6 +83,14 @@ namespace WinSwitcher
             foreach (var item in itemsList)
             {
                 itemsListBox.Items.Add(item);
+            }
+
+            // Focus the first listBox item
+            if (itemsListBox.Items.Count > 0)
+            {
+                var firstItem = (ListBoxItem)itemsListBox.ItemContainerGenerator
+               .ContainerFromItem(0);
+                //firstItem?.Focus();
             }
         }
     }
