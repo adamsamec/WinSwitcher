@@ -84,6 +84,7 @@ namespace WinSwitcher
             {
                 var listBoxItem = new ListBoxItem();
                 listBoxItem.Content = Switcher.GetResource("noAppsFound");
+                //listBoxItem.Content = Resources.noAppsFound;
                 itemsListBox.Items.Add(listBoxItem);
                 return;
             }
