@@ -3,14 +3,14 @@
 namespace WinSwitcher
 {
     /// <summary>
-    /// Class for storing application information
+    /// Class for storing running application information
     /// </summary>
     public class RunningApplication
     {
         private int _zIndex;
 
         public Process LastWindowProcess { get; set; }
-        public String Name { get; set; }
+        public string Name { get; set; }
         public int ZIndex
         {
             get
@@ -19,7 +19,7 @@ namespace WinSwitcher
             }
         }
 
-        public RunningApplication(Process lastWindowProcess, String name)
+        public RunningApplication(Process lastWindowProcess, string name)
         {
             LastWindowProcess = lastWindowProcess;
             Name = name;

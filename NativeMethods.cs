@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
-using static WinSwitcher.Utils;
+using System.Windows;
 
 namespace WinSwitcher
 {
@@ -55,5 +55,30 @@ namespace WinSwitcher
 
         [DllImport("user32.dll")]
         public static extern uint MapVirtualKey(uint uCode, Utils.MapType uMapType);
+
+        public delegate bool EnumWindowsProc(IntPtr handle, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+
+        public delegate int WindowEnumProc(IntPtr handle, IntPtr lparam);
+
+        [DllImport("user32.dll")]
+        public static extern bool EnumChildWindows(IntPtr handle, WindowEnumProc callback, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetDesktopWindow();
+
+        [DllImport("user32.dll")]
+        public static extern int GetClassName(IntPtr handle, StringBuilder lpClassName, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetAncestor(IntPtr handle, uint gaFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsWindowVisible(IntPtr handle);
+
+        [DllImport("dwmapi.dll")]
+        public static extern int DwmGetWindowAttribute(IntPtr handle, uint dwAttribute, out uint pvAttribute, int cbAttribute);
     }
 }
