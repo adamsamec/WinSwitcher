@@ -32,11 +32,6 @@ namespace WinSwitcher
             _srOutput.Speak(Resources.startAnnouncement);
         }
 
-        public static string GetResource(string name)
-        {
-            return (string)typeof(Resources).GetProperty(name).GetValue(null, null);
-        }
-
         public void HandleMainWindowLoad()
         {
             Hide();
