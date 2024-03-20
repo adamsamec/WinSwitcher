@@ -122,5 +122,14 @@ namespace WinSwitcher {
                 return ResourceManager.GetString("startAnnouncement", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to windows.
+        /// </summary>
+        public static string windowsCount {
+            get {
+                return ResourceManager.GetString("windowsCount", resourceCulture);
+            }
+        }
     }
 }

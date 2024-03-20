@@ -17,7 +17,7 @@ namespace WinSwitcher
 
         private static List<OpenWindow> _windows = new List<OpenWindow>();
 
-        public static List<OpenWindow> GetOpenWindows()
+        public static List<OpenWindow> GetWindows()
         {
             _windows.Clear();
             NativeMethods.EnumWindows(GetAltTabWindows, IntPtr.Zero);
@@ -82,9 +82,9 @@ namespace WinSwitcher
                 return false;
 
             // The window must not be cloaked by the shell
-            NativeMethods.DwmGetWindowAttribute(handle, DWMWA_CLOAKED, out uint cloaked, sizeof(uint));
-            if (cloaked == DWM_CLOAKED_SHELL)
-                return false;
+            //NativeMethods.DwmGetWindowAttribute(handle, DWMWA_CLOAKED, out uint cloaked, sizeof(uint));
+            //if (cloaked == DWM_CLOAKED_SHELL)
+                //return false;
 
             // The window must not have the extended style WS_EX_TOOLWINDOW
             uint style = NativeMethods.GetWindowLong(handle, GWL_EXSTYLE);

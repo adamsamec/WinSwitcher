@@ -11,6 +11,7 @@ namespace WinSwitcher
 
         public string Name { get; set; }
         public Process LastWindowProcess { get; set; }
+        public List<OpenWindow> Windows { get; set; }
         public int ZIndex
         {
             get
@@ -23,6 +24,7 @@ namespace WinSwitcher
         {
             Name = name;
             LastWindowProcess = lastWindowProcess;
+            Windows = new List<OpenWindow>();
 
             SetZOrder();
         }

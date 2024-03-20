@@ -53,7 +53,25 @@ namespace WinSwitcher
         {
             SystemSounds.Hand.Play();
             _prevWindowHandle = NativeMethods.GetForegroundWindow();
+            UpdateApps();
+            UpdateWindows();
 
+            // Set apps items list for main window
+            var appsItemsList = new List<string>();
+            foreach (var app in _filteredAppsList)
+            {
+                var itemText = $"{app.Name} ({app.Windows.Count} {Resources.windowsCount})";
+                appsItemsList.Add(itemText);
+            }
+            _mainWindow.SetItems(appsItemsList);
+
+            // Display main window
+            _mainWindow.Show(); // This extra Show() fixes the initial display
+            _mainWindow.Display();
+        }
+
+        private void UpdateApps()
+        {
             // Update list of running applications
             var processes = Process.GetProcesses();
             _appsList.Clear();
@@ -82,20 +100,28 @@ namespace WinSwitcher
             }
             _appsList = _appsList.OrderBy(app => app.ZIndex).ToList();
 
-            // Update filtred apps and set apps names list for main window
+            // Update filtred apps list
             _filteredAppsList.Clear();
             _filterText = "";
-            var appsNamesList = new List<string>();
             foreach (var app in _appsList)
             {
                 _filteredAppsList.Add(app);
-                appsNamesList.Add(app.Name);
             }
-            _mainWindow.SetItems(appsNamesList);
+        }
 
-            // Display main window
-            _mainWindow.Show(); // This extra Show() fixes the initial display
-            _mainWindow.Display();
+        private void UpdateWindows()
+        {
+            var windows = WindowsFinder.GetWindows();
+            foreach (var window in windows)
+            {
+                foreach (var app in _filteredAppsList)
+                {
+                    if (window.Pid == app.LastWindowProcess.Id)
+                    {
+                        app.Windows.Add(window);
+                    }
+                }
+            }
         }
 
         public void SwitchToApp(int itemNum)

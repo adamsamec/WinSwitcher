@@ -138,4 +138,7 @@
   <data name="noWindowsFound" xml:space="preserve">
     <value>No windows found</value>
   </data>
+    <data name="windowsCount" xml:space="preserve">
+    <value>windows</value>
+  </data>
 </root>
