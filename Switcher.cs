@@ -77,7 +77,7 @@ namespace WinSwitcher
                 {
                     appName = process.MainWindowTitle;
                 }
-                var app = new RunningApplication(process, appName);
+                var app = new RunningApplication(appName, process);
                 _appsList.Add(app);
             }
             _appsList = _appsList.OrderBy(app => app.ZIndex).ToList();

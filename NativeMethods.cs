@@ -80,5 +80,11 @@ namespace WinSwitcher
 
         [DllImport("dwmapi.dll")]
         public static extern int DwmGetWindowAttribute(IntPtr handle, uint dwAttribute, out uint pvAttribute, int cbAttribute);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowTextLength(IntPtr handle);
+
+        [DllImport("user32.dll")]
+        public static extern int GetWindowText(IntPtr handle, StringBuilder lpString, int nMaxCount);
     }
 }

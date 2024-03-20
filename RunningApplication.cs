@@ -9,8 +9,8 @@ namespace WinSwitcher
     {
         private int _zIndex;
 
-        public Process LastWindowProcess { get; set; }
         public string Name { get; set; }
+        public Process LastWindowProcess { get; set; }
         public int ZIndex
         {
             get
@@ -19,10 +19,10 @@ namespace WinSwitcher
             }
         }
 
-        public RunningApplication(Process lastWindowProcess, string name)
+        public RunningApplication(string name, Process lastWindowProcess)
         {
-            LastWindowProcess = lastWindowProcess;
             Name = name;
+            LastWindowProcess = lastWindowProcess;
 
             SetZOrder();
         }

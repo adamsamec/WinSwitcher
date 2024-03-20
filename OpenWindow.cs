@@ -5,11 +5,13 @@
     /// </summary>
     public class OpenWindow
     {
-        public string Name { get; set; }
+        public string Title { get; set; }
+        public IntPtr Handle { get; set; }
 
-        public OpenWindow(string name)
+        public OpenWindow(string title, IntPtr handle)
         {
-            Name = name;
+            Title = title;
+            Handle = handle;
         }
 
     }
