@@ -86,5 +86,8 @@ namespace WinSwitcher
 
         [DllImport("user32.dll")]
         public static extern int GetWindowText(IntPtr handle, StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr handle, out uint processId);
     }
 }

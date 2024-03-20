@@ -25,6 +25,15 @@ namespace WinSwitcher
             return _windows;
         }
 
+        private static void AddWindow(IntPtr handle)
+        {
+            var title = GetWindowTitle(handle);
+            uint pid;
+            NativeMethods.GetWindowThreadProcessId(handle, out pid);
+            var window = new OpenWindow(title, handle, pid);
+            _windows.Add(window);
+        }
+
         public static string GetWindowTitle(IntPtr handle)
         {
             var length = NativeMethods.GetWindowTextLength(handle) + 1;
@@ -37,9 +46,7 @@ namespace WinSwitcher
         {
             if (IsAltTabWindow(handle))
             {
-                var title = GetWindowTitle(handle); 
-                var window = new OpenWindow(title, handle);
-                _windows.Add(window);
+                AddWindow(handle);
             }
 
             return true;
@@ -58,9 +65,7 @@ namespace WinSwitcher
 
             if (IsFullScreenUWPWindows(rootOwner))
             {
-                var title = GetWindowTitle(handle); 
-                var window = new OpenWindow(title, handle);
-                _windows.Add(window);
+                AddWindow(handle);
             }
 
             return 0;
