@@ -27,10 +27,10 @@ namespace WinSwitcher
             Closing += MainWindow_Closing;
         }
 
-        private void SetWindowToolStyle(IntPtr hwnd)
+        private void SetWindowToolStyle(IntPtr handle)
         {
-            uint extendedStyle = NativeMethods.GetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE);
-            NativeMethods.SetWindowLong(hwnd, NativeMethods.GWL_EXSTYLE, extendedStyle |
+            uint extendedStyle = NativeMethods.GetWindowLong(handle, NativeMethods.GWL_EXSTYLE);
+            NativeMethods.SetWindowLong(handle, NativeMethods.GWL_EXSTYLE, extendedStyle |
             NativeMethods.WS_EX_TOOLWINDOW);
         }
 
@@ -70,18 +70,13 @@ namespace WinSwitcher
                         _prevItemsListIndex = itemsListBox.SelectedIndex;
                     if (_switcher.ShowSelectedAppWindows(itemsListBox.SelectedIndex))
                     {
-                        itemsListBox.SelectedIndex = 0;
-                        ((ListBoxItem) itemsListBox.SelectedItem).Focus();
-                        //var firstItem = (ListBoxItem)itemsListBox.ItemContainerGenerator.ContainerFromItem(itemsListBox.SelectedItem);
-                        //firstItem.Focus();
+                        FocusItemAfterDelay(0);
                     }
                     break;
                 case Key.Left:
                     if (_switcher.ShowApps())
                     {
-                        itemsListBox.SelectedIndex = _prevItemsListIndex;
-                        FocusSelectedItemAfterDelay();
-                        //((ListBoxItem)itemsListBox.SelectedItem).Focus();
+                        FocusItemAfterDelay(_prevItemsListIndex);
                     }
                     break;
                 default:
@@ -99,18 +94,18 @@ namespace WinSwitcher
         {
             Show();
             Activate();
-            itemsListBox.Focus();
-            itemsListBox.SelectedIndex = 0;
+            FocusItemAfterDelay(0);
         }
 
-        private void FocusSelectedItemAfterDelay()
+        private void FocusItemAfterDelay(int itemIndex)
         {
+                        itemsListBox.SelectedIndex = itemIndex;
             var timer = new System.Windows.Threading.DispatcherTimer();
             timer.Tick += new EventHandler((sender, e) => {
                 (sender as DispatcherTimer).Stop();
                 ((ListBoxItem)itemsListBox.SelectedItem).Focus();
             });
-            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Interval = TimeSpan.FromMilliseconds(100);
             timer.Start();
         }
 
