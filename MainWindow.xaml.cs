@@ -80,7 +80,6 @@ namespace WinSwitcher
                     }
                     break;
                 default:
-                    return;
                     var character = e.Key.ToPrintableCharacter();
                     if (e.Key != Key.Tab && character != "")
                     {

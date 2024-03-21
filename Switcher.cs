@@ -117,9 +117,8 @@ namespace WinSwitcher
 
         private void UpdateApps()
         {
-            // Update list of running applications
             var processes = Process.GetProcesses();
-            _appsList.Clear();
+            var processesAppsList = new List<RunningApplication>();
             foreach (var process in processes)
             {
                 if (String.IsNullOrEmpty(process.MainWindowTitle))
@@ -140,10 +139,34 @@ namespace WinSwitcher
                 {
                     appName = process.MainWindowTitle;
                 }
+
                 var app = new RunningApplication(appName, process);
-                _appsList.Add(app);
+                processesAppsList.Add(app);
             }
-            _appsList = _appsList.OrderBy(app => app.ZIndex).ToList();
+            processesAppsList = processesAppsList.OrderBy(app => app.ZIndex).ToList();
+
+            // Turn apps with the same process name into windows
+            _appsList.Clear();
+            foreach (var processApp in processesAppsList)
+            {
+                var appExists = false;
+                foreach (var app in _appsList)
+                {
+                    var process = app.LastWindowProcess;
+                    if (processApp.LastWindowProcess.ProcessName == process.ProcessName)
+                    {
+                        appExists = true;
+                        var handle = process.Handle;
+                        uint pid;
+                        NativeMethods.GetWindowThreadProcessId(handle, out pid);
+                        var window = new OpenWindow(process.MainWindowTitle, handle, pid);
+                    }
+                }
+                if (!appExists)
+                {
+                    _appsList.Add(processApp);
+            }
+        }
 
             // Update filtred apps list
             _filteredAppsList.Clear();
@@ -198,7 +221,7 @@ namespace WinSwitcher
             {
                 if (app.Name.ToLower().Contains(_filterText))
                 {
-                _filteredAppsList.Add(app);
+                    _filteredAppsList.Add(app);
                     appsNamesList.Add(app.Name);
                 }
                 _mainWindow.SetItems(appsNamesList);
