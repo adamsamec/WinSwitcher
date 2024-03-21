@@ -1,9 +1,6 @@
 ﻿using AccessibleOutput;
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.Media;
-using System.Windows.Input;
 
 namespace WinSwitcher
 {
@@ -152,21 +149,22 @@ namespace WinSwitcher
                 var appExists = false;
                 foreach (var app in _appsList)
                 {
-                    var process = app.LastWindowProcess;
-                    if (processApp.LastWindowProcess.ProcessName == process.ProcessName)
+                    var process = processApp.LastWindowProcess;
+                    if (app.LastWindowProcess.ProcessName == process.ProcessName)
                     {
                         appExists = true;
                         var handle = process.Handle;
                         uint pid;
                         NativeMethods.GetWindowThreadProcessId(handle, out pid);
                         var window = new OpenWindow(process.MainWindowTitle, handle, pid);
+                        app.Windows.Add(window);
                     }
                 }
                 if (!appExists)
                 {
                     _appsList.Add(processApp);
+                }
             }
-        }
 
             // Update filtred apps list
             _filteredAppsList.Clear();
