@@ -108,13 +108,13 @@ namespace WinSwitcher
             timer.Start();
         }
 
-    public void SetItems(List<string> itemsList)
+    public void SetListBoxItems(List<string> itemsList)
         {
             itemsListBox.Items.Clear();
             if (itemsList.Count == 0)
             {
                 var listBoxItem = new ListBoxItem();
-                listBoxItem.Content = WinSwitcher.Resources.noAppsFound;
+                listBoxItem.Content = _switcher.View == Switcher.ListView.Apps ? WinSwitcher.Resources.noAppsFound : WinSwitcher.Resources.noWindowsFound;
                 itemsListBox.Items.Add(listBoxItem);
                 return;
             }

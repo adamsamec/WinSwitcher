@@ -1,6 +1,8 @@
 ﻿using AccessibleOutput;
 using System.Diagnostics;
 using System.Media;
+using System.Speech.Synthesis.TtsEngine;
+using System.Windows.Markup.Localizer;
 
 namespace WinSwitcher
 {
@@ -17,7 +19,10 @@ namespace WinSwitcher
 
         private List<RunningApplication> _appsList = new List<RunningApplication>();
         private List<RunningApplication> _filteredAppsList = new List<RunningApplication>();
-        private string _filterText;
+        private List<OpenWindow> _filteredWindowsList = new List<OpenWindow>();
+        private string _appsOrWindowsFilterText;
+        private string _SelectedAppWindowsFilterText;
+        private int _selectedAppIndex = 0;
         private ListView _view = ListView.Hidden;
 
         public ListView View
@@ -80,35 +85,52 @@ namespace WinSwitcher
             {
                 return false;
             }
+
             _view = ListView.Apps;
+
+            // Determine and update ListBox items
             var appsItemsList = new List<string>();
             foreach (var app in _filteredAppsList)
             {
-                var itemText = $"{app.Name} ({app.Windows.Count} {Resources.windowsCount})";
-                appsItemsList.Add(itemText);
+                appsItemsList.Add(GetAppItemText(app));
             }
-            _mainWindow.SetItems(appsItemsList);
+            _mainWindow.SetListBoxItems(appsItemsList);
+
             return true;
         }
 
-        public bool ShowSelectedAppWindows(int appNum)
+        public static string GetAppItemText(RunningApplication app)
         {
-            if (View != ListView.Apps)
+                var itemText = $"{app.Name} ({app.Windows.Count} {Resources.windowsCount})";
+            return itemText;
+        }
+
+        public bool ShowSelectedAppWindows(int appIndex)
+        {
+            if (View != ListView.Apps || _filteredAppsList.Count == 0)
             {
                 return false;
             }
-            if (_filteredAppsList.Count == 0)
+
+            // Determine selected app and its windows
+            _filteredWindowsList.Clear();
+            _SelectedAppWindowsFilterText = "";
+            _selectedAppIndex = appIndex;
+            var windows = _filteredAppsList[appIndex].Windows;
+            foreach (var window in windows)
             {
-                return false;
+                _filteredWindowsList.Add(window);
             }
             _view = ListView.SelectedAppWindows;
-            var app = _filteredAppsList[appNum];
+
+            // Determine and update ListBox items
             var windowsTitlesList = new List<string>();
-            foreach (var window in app.Windows)
+            foreach (var window in _filteredWindowsList)
             {
                 windowsTitlesList.Add(window.Title);
             }
-            _mainWindow.SetItems(windowsTitlesList);
+            _mainWindow.SetListBoxItems(windowsTitlesList);
+
             return true;
         }
 
@@ -168,7 +190,7 @@ namespace WinSwitcher
 
             // Update filtred apps list
             _filteredAppsList.Clear();
-            _filterText = "";
+            _appsOrWindowsFilterText = "";
             foreach (var app in _appsList)
             {
                 _filteredAppsList.Add(app);
@@ -190,16 +212,37 @@ namespace WinSwitcher
             }
         }
 
-        public void SwitchToItem(int itemNum)
+        public void SwitchToItem(int itemIndex)
         {
-            // Ignore switching if there are no apps after applying filter
-            if (_filteredAppsList.Count == 0)
+            // Ignore switching if there are no items after applying filter
+            if (View == ListView.Apps && _filteredAppsList.Count == 0)
             {
                 return;
             }
-            Hide();
-            var process = _filteredAppsList[itemNum].AppProcess;
-            IntPtr handle = process.MainWindowHandle;
+            if ((View == ListView.FrontAppWindows || View == ListView.SelectedAppWindows) && _filteredWindowsList.Count == 0)
+            {
+                return;
+            }
+
+            // Determine window handle to switch to
+            IntPtr handle = -1;
+            switch (View)
+            {
+                case ListView.Apps:
+            var process = _filteredAppsList[itemIndex].AppProcess;
+            handle = process.MainWindowHandle;
+                    break;
+                case ListView.SelectedAppWindows:
+                    handle = _filteredWindowsList[itemIndex].Handle;
+                    break;
+            }
+            if (handle == -1)
+            {
+                return;
+            }
+
+            // Hide switcher and switch to app or window using handle
+                Hide();
             NativeMethods.ShowWindow(handle, 5);
             NativeMethods.SetForegroundWindow(handle);
             NativeMethods.SetActiveWindow(handle);
@@ -211,35 +254,66 @@ namespace WinSwitcher
             {
                 return;
             }
+
             character = character.ToLower();
-            _filterText += character;
-            _filteredAppsList.Clear();
-            var appsNamesList = new List<string>();
-            foreach (var app in _appsList)
+            var itemsTextsList = new List<string>();
+            switch (View)
             {
-                if (app.Name.ToLower().Contains(_filterText))
-                {
-                    _filteredAppsList.Add(app);
-                    appsNamesList.Add(app.Name);
-                }
-                _mainWindow.SetItems(appsNamesList);
+                case ListView.Apps:
+                    _appsOrWindowsFilterText += character;
+                    _filteredAppsList.Clear();
+                    foreach (var app in _appsList)
+                    {
+                        if (app.Name.ToLower().Contains(_appsOrWindowsFilterText))
+                        {
+                            _filteredAppsList.Add(app);
+                            itemsTextsList.Add(GetAppItemText(app));
+                        }
+                    }
+                    break;
+                case ListView.SelectedAppWindows:
+                    _SelectedAppWindowsFilterText += character;
+                    _filteredWindowsList.Clear();
+                    var windows = _filteredAppsList[_selectedAppIndex].Windows;
+                    foreach (var window in windows)
+                    {
+                        if (window.Title.ToLower().Contains(_SelectedAppWindowsFilterText))
+                        {
+                            _filteredWindowsList.Add(window);
+                            itemsTextsList.Add(window.Title);
+                        }
+                    }
+                    break;
             }
+
+                _mainWindow.SetListBoxItems(itemsTextsList);
         }
 
         public void ResetFilter()
         {
-            _filteredAppsList.Clear();
-            var appsNamesList = new List<string>();
-            foreach (var app in _appsList)
+                    var itemsTextsList = new List<string>();
+            switch (View)
             {
-                _filteredAppsList.Add(app);
-                appsNamesList.Add(app.Name);
+                case ListView.Apps:
+                    _filteredAppsList.Clear();
+                    foreach (var app in _appsList)
+                    {
+                        _filteredAppsList.Add(app);
+                        itemsTextsList.Add(GetAppItemText(app));
+                    }
+            break;
+                case ListView.SelectedAppWindows:
+                    _filteredWindowsList.Clear();
+                    var windows = _filteredAppsList[_selectedAppIndex].Windows;
+                    foreach (var window in windows)
+                    {
+                        _filteredWindowsList.Add(window);
+                        itemsTextsList.Add(window.Title);
+                    }
+                    break;
             }
-            if (appsNamesList.Count == 0)
-            {
-                //appsNamesList.Add(Resources.noAppsFound);
-            }
-            _mainWindow.SetItems(appsNamesList);
+
+            _mainWindow.SetListBoxItems(itemsTextsList);
         }
 
         public void CleanUp()
