@@ -1,4 +1,5 @@
 ﻿using AccessibleOutput;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Media;
@@ -20,13 +21,27 @@ namespace WinSwitcher
         private List<RunningApplication> _appsList = new List<RunningApplication>();
         private List<RunningApplication> _filteredAppsList = new List<RunningApplication>();
         private string _filterText;
+        private ListView _view = ListView.Hidden;
+
+        public ListView View
+        {
+            get { return _view; }
+        }
+
+        public enum ListView
+        {
+            Hidden,
+            Apps,
+            SelectedAppWindows,
+            FrontAppWindows
+        }
 
         public Switcher(MainWindow mainWindow)
         {
             _mainWindow = mainWindow;
             _config = new Config();
             _hook = new KeyboardHook(_mainWindow, 0x77, ModifierKeyCodes.Windows);
-            _hook.Triggered += ShowApps;
+            _hook.Triggered += Show;
 
             _srOutput = new AutoOutput();
             _srOutput.Speak(Resources.startAnnouncement);
@@ -49,14 +64,26 @@ namespace WinSwitcher
             _mainWindow.Hide();
         }
 
-        private void ShowApps()
+        private void Show()
         {
             SystemSounds.Hand.Play();
             _prevWindowHandle = NativeMethods.GetForegroundWindow();
             UpdateApps();
             UpdateWindows();
+            ShowApps();
 
-            // Set apps items list for main window
+            // Display main window
+            _mainWindow.Show(); // This extra Show() fixes the initial display
+            _mainWindow.Display();
+        }
+
+        public bool ShowApps()
+        {
+            if (View != ListView.Hidden && View != ListView.SelectedAppWindows)
+            {
+                return false;
+            }
+            _view = ListView.Apps;
             var appsItemsList = new List<string>();
             foreach (var app in _filteredAppsList)
             {
@@ -64,10 +91,28 @@ namespace WinSwitcher
                 appsItemsList.Add(itemText);
             }
             _mainWindow.SetItems(appsItemsList);
+            return true;
+        }
 
-            // Display main window
-            _mainWindow.Show(); // This extra Show() fixes the initial display
-            _mainWindow.Display();
+        public bool ShowSelectedAppWindows(int appNum)
+        {
+            if (View != ListView.Apps)
+            {
+                return false;
+            }
+            if (_filteredAppsList.Count == 0)
+            {
+                return false;
+            }
+            _view = ListView.SelectedAppWindows;
+            var app = _filteredAppsList[appNum];
+            var windowsTitlesList = new List<string>();
+            foreach (var window in app.Windows)
+            {
+                windowsTitlesList.Add(window.Title);
+            }
+            _mainWindow.SetItems(windowsTitlesList);
+            return true;
         }
 
         private void UpdateApps()
@@ -124,7 +169,7 @@ namespace WinSwitcher
             }
         }
 
-        public void SwitchToApp(int itemNum)
+        public void SwitchToItem(int itemNum)
         {
             // Ignore switching if there are no apps after applying filter
             if (_filteredAppsList.Count == 0)

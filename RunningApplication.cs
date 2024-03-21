@@ -14,10 +14,7 @@ namespace WinSwitcher
         public List<OpenWindow> Windows { get; set; }
         public int ZIndex
         {
-            get
-            {
-                return _zIndex;
-            }
+            get { return _zIndex; }
         }
 
         public RunningApplication(string name, Process lastWindowProcess)

@@ -1,8 +1,11 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using System.Timers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Diagnostics;
+using System.Windows.Threading;
 
 namespace WinSwitcher
 {
@@ -12,6 +15,7 @@ namespace WinSwitcher
     public partial class MainWindow : Window
     {
         private Switcher _switcher;
+        private int _prevItemsListIndex = 0;
 
         public MainWindow()
         {
@@ -54,19 +58,38 @@ namespace WinSwitcher
 
         private void ItemsListBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            switch (e.Key)
             {
-                _switcher.SwitchToApp(itemsListBox.SelectedIndex);
-                return;
-            }
-            if (e.Key == Key.Back)
-            {
-                _switcher.ResetFilter();
-            }
-            var character = e.Key.ToPrintableCharacter();
-            if (e.Key != Key.Tab && character != "")
-            {
-                _switcher.ApplyTypedCharacterToFilter(character);
+                case Key.Enter:
+                    _switcher.SwitchToItem(itemsListBox.SelectedIndex);
+                    break;
+                case Key.Back:
+                    _switcher.ResetFilter();
+                    break;
+                case Key.Right:
+                    if (_switcher.ShowSelectedAppWindows(itemsListBox.SelectedIndex))
+                    {
+                        _prevItemsListIndex = itemsListBox.SelectedIndex;
+                        itemsListBox.SelectedIndex = 0;
+                        ((ListBoxItem) itemsListBox.SelectedItem).Focus();
+                        //var firstItem = (ListBoxItem)itemsListBox.ItemContainerGenerator.ContainerFromItem(itemsListBox.SelectedItem);
+                        //firstItem.Focus();
+                    }
+                    break;
+                case Key.Left:
+                    if (_switcher.ShowApps())
+                    {
+                        itemsListBox.SelectedIndex = _prevItemsListIndex;
+                        //((ListBoxItem)itemsListBox.SelectedItem).Focus();
+                    }
+                    break;
+                default:
+                    var character = e.Key.ToPrintableCharacter();
+                    if (e.Key != Key.Tab && character != "")
+                    {
+                        _switcher.ApplyTypedCharacterToFilter(character);
+                    }
+                    break;
             }
         }
 
@@ -75,9 +98,21 @@ namespace WinSwitcher
             Show();
             Activate();
             itemsListBox.Focus();
+            itemsListBox.SelectedIndex = 0;
+            var timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Tick += new EventHandler(FocusSelectedItem);
+            timer.Interval = TimeSpan.FromSeconds(1);
+            timer.Start();
         }
 
-        public void SetItems(List<string> itemsList)
+        private void FocusSelectedItem(object sender, EventArgs e)
+        {
+            (sender as DispatcherTimer).Stop();
+            ((ListBoxItem) itemsListBox.SelectedItem).Focus();
+            Debug.WriteLine("testing");
+            }
+
+    public void SetItems(List<string> itemsList)
         {
             itemsListBox.Items.Clear();
             if (itemsList.Count == 0)
