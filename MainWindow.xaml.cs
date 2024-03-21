@@ -89,6 +89,11 @@ namespace WinSwitcher
             }
         }
 
+        public void SetListBoxLabel(string text)
+        {
+            llistboxLabel.Content = text;
+        }
+
         public void Display()
         {
             Show();

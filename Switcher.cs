@@ -94,6 +94,7 @@ namespace WinSwitcher
             {
                 appsItemsList.Add(GetAppItemText(app));
             }
+            _mainWindow.SetListBoxLabel(Resources.runningApps);
             _mainWindow.SetListBoxItems(appsItemsList);
 
             return true;
@@ -129,6 +130,7 @@ namespace WinSwitcher
             {
                 windowsTitlesList.Add(window.Title);
             }
+            _mainWindow.SetListBoxLabel(Resources.openWindows);
             _mainWindow.SetListBoxItems(windowsTitlesList);
 
             return true;
