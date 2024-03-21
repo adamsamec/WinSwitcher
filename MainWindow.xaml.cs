@@ -67,9 +67,9 @@ namespace WinSwitcher
                     _switcher.ResetFilter();
                     break;
                 case Key.Right:
+                        _prevItemsListIndex = itemsListBox.SelectedIndex;
                     if (_switcher.ShowSelectedAppWindows(itemsListBox.SelectedIndex))
                     {
-                        _prevItemsListIndex = itemsListBox.SelectedIndex;
                         itemsListBox.SelectedIndex = 0;
                         ((ListBoxItem) itemsListBox.SelectedItem).Focus();
                         //var firstItem = (ListBoxItem)itemsListBox.ItemContainerGenerator.ContainerFromItem(itemsListBox.SelectedItem);
@@ -80,10 +80,11 @@ namespace WinSwitcher
                     if (_switcher.ShowApps())
                     {
                         itemsListBox.SelectedIndex = _prevItemsListIndex;
-                        //((ListBoxItem)itemsListBox.SelectedItem).Focus();
+                        ((ListBoxItem)itemsListBox.SelectedItem).Focus();
                     }
                     break;
                 default:
+                    return;
                     var character = e.Key.ToPrintableCharacter();
                     if (e.Key != Key.Tab && character != "")
                     {
