@@ -10,17 +10,17 @@ namespace WinSwitcher
         private int _zIndex;
 
         public string Name { get; set; }
-        public Process LastWindowProcess { get; set; }
+        public Process AppProcess { get; set; }
         public List<OpenWindow> Windows { get; set; }
         public int ZIndex
         {
             get { return _zIndex; }
         }
 
-        public RunningApplication(string name, Process lastWindowProcess)
+        public RunningApplication(string name, Process appProcess)
         {
             Name = name;
-            LastWindowProcess = lastWindowProcess;
+            AppProcess = appProcess;
             Windows = new List<OpenWindow>();
 
             SetZOrder();
@@ -28,7 +28,7 @@ namespace WinSwitcher
 
         public void SetZOrder()
         {
-            IntPtr handle = LastWindowProcess.MainWindowHandle;
+            IntPtr handle = AppProcess.MainWindowHandle;
             var z = 0;
             // 3 is GetWindowType.GW_HWNDPREV
             for (var h = handle; h != IntPtr.Zero; h = NativeMethods.GetWindow(h, 3))

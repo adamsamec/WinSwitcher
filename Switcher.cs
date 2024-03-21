@@ -149,8 +149,8 @@ namespace WinSwitcher
                 var appExists = false;
                 foreach (var app in _appsList)
                 {
-                    var process = processApp.LastWindowProcess;
-                    if (app.LastWindowProcess.ProcessName == process.ProcessName)
+                    var process = processApp.AppProcess;
+                    if (app.AppProcess.ProcessName == process.ProcessName)
                     {
                         appExists = true;
                         var handle = process.Handle;
@@ -182,7 +182,7 @@ namespace WinSwitcher
             {
                 foreach (var app in _filteredAppsList)
                 {
-                    if (window.Pid == app.LastWindowProcess.Id)
+                    if (window.Pid == app.AppProcess.Id)
                     {
                         app.Windows.Add(window);
                     }
@@ -198,7 +198,7 @@ namespace WinSwitcher
                 return;
             }
             Hide();
-            var process = _filteredAppsList[itemNum].LastWindowProcess;
+            var process = _filteredAppsList[itemNum].AppProcess;
             IntPtr handle = process.MainWindowHandle;
             NativeMethods.ShowWindow(handle, 5);
             NativeMethods.SetForegroundWindow(handle);
