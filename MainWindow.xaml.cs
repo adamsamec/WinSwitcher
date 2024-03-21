@@ -80,7 +80,8 @@ namespace WinSwitcher
                     if (_switcher.ShowApps())
                     {
                         itemsListBox.SelectedIndex = _prevItemsListIndex;
-                        ((ListBoxItem)itemsListBox.SelectedItem).Focus();
+                        FocusSelectedItemAfterDelay();
+                        //((ListBoxItem)itemsListBox.SelectedItem).Focus();
                     }
                     break;
                 default:
@@ -100,18 +101,18 @@ namespace WinSwitcher
             Activate();
             itemsListBox.Focus();
             itemsListBox.SelectedIndex = 0;
-            var timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Tick += new EventHandler(FocusSelectedItem);
-            timer.Interval = TimeSpan.FromSeconds(1);
-            timer.Start();
         }
 
-        private void FocusSelectedItem(object sender, EventArgs e)
+        private void FocusSelectedItemAfterDelay()
         {
-            (sender as DispatcherTimer).Stop();
-            ((ListBoxItem) itemsListBox.SelectedItem).Focus();
-            Debug.WriteLine("testing");
-            }
+            var timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Tick += new EventHandler((sender, e) => {
+                (sender as DispatcherTimer).Stop();
+                ((ListBoxItem)itemsListBox.SelectedItem).Focus();
+            });
+            timer.Interval = TimeSpan.FromMilliseconds(500);
+            timer.Start();
+        }
 
     public void SetItems(List<string> itemsList)
         {
