@@ -1,0 +1,25 @@
+﻿<Window x:Class="WinSwitcher.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WinSwitcher"
+        xmlns:lang="clr-namespace:WinSwitcher;assembly=WinSwitcher"
+        mc:Ignorable="d"
+        Title="{x:Static lang:Resources.settingsDialogTitle}"
+        SizeToContent="WidthAndHeight"
+WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        WindowStyle="None"
+        Loaded="SettingsDialog_Loaded">
+    <Grid>
+        <CheckBox Name="launchOnStartupCheckBox"
+                  Content="{x:Static lang:Resources.LaunchOnStartupCheckBox}"
+                  Checked="launchOnStartupCheckBox_Checked" Unchecked="launchOnStartupCheckBox_Unchecked"
+                  HorizontalAlignment="Left" />
+        <Button Name="closeButton"
+                Content="{x:Static lang:Resources.closeButton}"
+IsDefault="True"
+                HorizontalAlignment="Right" />
+    </Grid>
+</Window>

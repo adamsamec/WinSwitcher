@@ -89,6 +89,12 @@ namespace WinSwitcher
             }
         }
 
+        private void settingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var settingsDialog = new SettingsDialog();
+            settingsDialog.ShowDialog();
+        }
+
         public void SetListBoxLabel(string text)
         {
             llistboxLabel.Content = text;

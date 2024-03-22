@@ -61,11 +61,29 @@ namespace WinSwitcher {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        public static string closeButton {
+            get {
+                return ResourceManager.GetString("closeButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exiting WinSwitcher.
         /// </summary>
         public static string exitAnnouncement {
             get {
                 return ResourceManager.GetString("exitAnnouncement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Launch WinSwitcher on Windows startup.
+        /// </summary>
+        public static string LaunchOnStartupCheckBox {
+            get {
+                return ResourceManager.GetString("LaunchOnStartupCheckBox", resourceCulture);
             }
         }
         
@@ -115,7 +133,16 @@ namespace WinSwitcher {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WinSwitcher started.
+        ///   Looks up a localized string similar to Settings for WinSwitcher.
+        /// </summary>
+        public static string settingsDialogTitle {
+            get {
+                return ResourceManager.GetString("settingsDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WinSwitcher 2 started.
         /// </summary>
         public static string startAnnouncement {
             get {

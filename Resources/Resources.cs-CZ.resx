@@ -141,4 +141,16 @@
       <data name="windowsCount" xml:space="preserve">
     <value>okna</value>
   </data>
+      <data name="settingsDialogTitle"
+          xml:space="preserve">
+        <value>Nastavení pro WinSwitcher</value>
+    </data>
+        <data name="LaunchOnStartupCheckBox"
+          xml:space="preserve">
+        <value>Spustit WinSwitcher po startu Windows</value>
+    </data>
+        <data name="closeButton"
+          xml:space="preserve">
+        <value>Zavřít</value>
+    </data>
 </root>
