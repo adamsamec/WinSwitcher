@@ -1,8 +1,6 @@
 ﻿using AccessibleOutput;
 using System.Diagnostics;
 using System.Media;
-using System.Speech.Synthesis.TtsEngine;
-using System.Windows.Markup.Localizer;
 
 namespace WinSwitcher
 {
@@ -25,6 +23,10 @@ namespace WinSwitcher
         private int _selectedAppIndex = 0;
         private ListView _view = ListView.Hidden;
 
+        public Settings Settings
+        {
+            get { return _config.Settings; }
+        }
         public ListView View
         {
             get { return _view; }
@@ -102,7 +104,7 @@ namespace WinSwitcher
 
         public static string GetAppItemText(RunningApplication app)
         {
-                var itemText = $"{app.Name} ({app.Windows.Count} {Resources.windowsCount})";
+            var itemText = $"{app.Name} ({app.Windows.Count} {Resources.windowsCount})";
             return itemText;
         }
 
@@ -231,8 +233,8 @@ namespace WinSwitcher
             switch (View)
             {
                 case ListView.Apps:
-            var process = _filteredAppsList[itemIndex].AppProcess;
-            handle = process.MainWindowHandle;
+                    var process = _filteredAppsList[itemIndex].AppProcess;
+                    handle = process.MainWindowHandle;
                     break;
                 case ListView.SelectedAppWindows:
                     handle = _filteredWindowsList[itemIndex].Handle;
@@ -244,7 +246,7 @@ namespace WinSwitcher
             }
 
             // Hide switcher and switch to app or window using handle
-                Hide();
+            Hide();
             NativeMethods.ShowWindow(handle, 5);
             NativeMethods.SetForegroundWindow(handle);
             NativeMethods.SetActiveWindow(handle);
@@ -288,12 +290,12 @@ namespace WinSwitcher
                     break;
             }
 
-                _mainWindow.SetListBoxItems(itemsTextsList);
+            _mainWindow.SetListBoxItems(itemsTextsList);
         }
 
         public void ResetFilter()
         {
-                    var itemsTextsList = new List<string>();
+            var itemsTextsList = new List<string>();
             switch (View)
             {
                 case ListView.Apps:
@@ -303,7 +305,7 @@ namespace WinSwitcher
                         _filteredAppsList.Add(app);
                         itemsTextsList.Add(GetAppItemText(app));
                     }
-            break;
+                    break;
                 case ListView.SelectedAppWindows:
                     _filteredWindowsList.Clear();
                     var windows = _filteredAppsList[_selectedAppIndex].Windows;
@@ -316,6 +318,11 @@ namespace WinSwitcher
             }
 
             _mainWindow.SetListBoxItems(itemsTextsList);
+        }
+
+        public void SaveSettings()
+        {
+            _config.Save();
         }
 
         public void CleanUp()

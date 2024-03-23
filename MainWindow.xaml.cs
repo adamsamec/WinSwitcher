@@ -1,10 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Windows;
-using System.Timers;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Diagnostics;
 using System.Windows.Threading;
 
 namespace WinSwitcher
@@ -67,7 +65,7 @@ namespace WinSwitcher
                     _switcher.ResetFilter();
                     break;
                 case Key.Right:
-                        _prevItemsListIndex = itemsListBox.SelectedIndex;
+                    _prevItemsListIndex = itemsListBox.SelectedIndex;
                     if (_switcher.ShowSelectedAppWindows(itemsListBox.SelectedIndex))
                     {
                         FocusItemAfterDelay(0);
@@ -91,7 +89,7 @@ namespace WinSwitcher
 
         private void settingsButton_Click(object sender, RoutedEventArgs e)
         {
-            var settingsDialog = new SettingsDialog();
+            var settingsDialog = new SettingsDialog(_switcher);
             settingsDialog.ShowDialog();
         }
 
@@ -109,9 +107,10 @@ namespace WinSwitcher
 
         private void FocusItemAfterDelay(int itemIndex)
         {
-                        itemsListBox.SelectedIndex = itemIndex;
+            itemsListBox.SelectedIndex = itemIndex;
             var timer = new System.Windows.Threading.DispatcherTimer();
-            timer.Tick += new EventHandler((sender, e) => {
+            timer.Tick += new EventHandler((sender, e) =>
+            {
                 (sender as DispatcherTimer).Stop();
                 ((ListBoxItem)itemsListBox.SelectedItem).Focus();
             });
@@ -119,7 +118,7 @@ namespace WinSwitcher
             timer.Start();
         }
 
-    public void SetListBoxItems(List<string> itemsList)
+        public void SetListBoxItems(List<string> itemsList)
         {
             itemsListBox.Items.Clear();
             if (itemsList.Count == 0)

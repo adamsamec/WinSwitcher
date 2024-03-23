@@ -15,7 +15,7 @@ namespace WinSwitcher
         private string _path;
         private ConfigJson _config;
 
-        public const string TRUE= "yes";
+        public const string TRUE = "yes";
         public const string FALSE = "no";
         public Settings Settings
         {
