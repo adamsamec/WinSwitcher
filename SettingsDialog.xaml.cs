@@ -13,7 +13,7 @@ namespace WinSwitcher
 
         public SettingsDialog(Switcher switcher)
         {
-        InitializeComponent();
+            InitializeComponent();
 
             _switcher = switcher;
         }
@@ -28,19 +28,18 @@ namespace WinSwitcher
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
-            _switcher.SaveSettings();
             DialogResult = true;
         }
 
         private void launchOnStartupCheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            _switcher.Settings.launchOnStartup = Config.TRUE;
+            _switcher.ChangeLaunchOnStartupSetting(true);
         }
 
         private void launchOnStartupCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
-            _switcher.Settings.launchOnStartup = Config.FALSE;
-        }
+            _switcher.ChangeLaunchOnStartupSetting(false);
+                }
 
     }
 }

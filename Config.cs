@@ -17,6 +17,7 @@ namespace WinSwitcher
 
         public const string TRUE = "yes";
         public const string FALSE = "no";
+
         public Settings Settings
         {
             get { return _config.settings; }

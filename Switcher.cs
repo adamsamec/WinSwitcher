@@ -1,5 +1,7 @@
 ﻿using AccessibleOutput;
+using Microsoft.Win32;
 using System.Diagnostics;
+using System.IO;
 using System.Media;
 
 namespace WinSwitcher
@@ -9,6 +11,9 @@ namespace WinSwitcher
     /// </summary>
     public class Switcher
     {
+        public const string ExecutableFilename = "WinSwitcher.exe";
+        private const string _startupRegistryKeyName = "WinSwitcher";
+
         private IntPtr _prevWindowHandle = NativeMethods.GetForegroundWindow();
         private MainWindow _mainWindow;
         private KeyboardHook _hook;
@@ -47,6 +52,9 @@ namespace WinSwitcher
             _hook = new KeyboardHook(_mainWindow, 0x77, ModifierKeyCodes.Windows);
             _hook.Triggered += Show;
 
+            // Update WinSwitcher launch on startup seting from config
+            ChangeLaunchOnStartupSetting(Settings.launchOnStartup == Config.TRUE);
+            // Announce WinSwitcher start
             _srOutput = new AutoOutput();
             _srOutput.Speak(Resources.startAnnouncement);
         }
@@ -320,7 +328,34 @@ namespace WinSwitcher
             _mainWindow.SetListBoxItems(itemsTextsList);
         }
 
-        public void SaveSettings()
+        public void ChangeLaunchOnStartupSetting(bool value)
+        {
+            // The path to the key where Windows looks for startup applications
+            RegistryKey startupRegistryKey = Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", true);
+
+            //Path to the WinSwitcher launch executable
+            var startPath = Path.Combine(Directory.GetCurrentDirectory(), ExecutableFilename);
+
+            // Modify the registry
+            try { 
+            if (value)
+            {
+                startupRegistryKey.SetValue(_startupRegistryKeyName, startPath);
+            }
+            else if (startupRegistryKey.GetValue(_startupRegistryKeyName, "none") != "none")
+            {
+                startupRegistryKey.DeleteValue(_startupRegistryKeyName);
+            }
+            } catch (Exception ex)
+            {
+                Debug.WriteLine("Failed to update launch on startup registry");
+            }
+            // Update settings
+            Settings.launchOnStartup = value ? Config.TRUE : Config.FALSE; ;
+            SaveSettings();
+        }
+
+        private void SaveSettings()
         {
             _config.Save();
         }
