@@ -18,6 +18,11 @@ namespace WinSwitcher
         {
         }
 
+        private void closeButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+        }
+
         private void launchOnStartupCheckBox_Checked(object sender, RoutedEventArgs e)
         {
 

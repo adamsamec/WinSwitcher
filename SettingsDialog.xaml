@@ -19,6 +19,7 @@ WindowStartupLocation="CenterScreen"
                   HorizontalAlignment="Left" />
         <Button Name="closeButton"
                 Content="{x:Static lang:Resources.closeButton}"
+Click="closeButton_Click"
 IsDefault="True"
                 HorizontalAlignment="Right" />
     </Grid>
