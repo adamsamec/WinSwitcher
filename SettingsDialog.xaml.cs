@@ -16,6 +16,7 @@ namespace WinSwitcher
 
         private void SettingsDialog_Loaded(object sender, RoutedEventArgs e)
         {
+            launchOnStartupCheckBox.Focus();
         }
 
         private void closeButton_Click(object sender, RoutedEventArgs e)
