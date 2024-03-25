@@ -26,7 +26,9 @@ namespace WinSwitcher
         public Config()
         {
             Directory.CreateDirectory(_folder);
-            var defaultPath = Path.Combine(Directory.GetCurrentDirectory(), _defaultFilename);
+            var assemblyPath = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            var installFolder = System.IO.Path.GetDirectoryName(assemblyPath);
+            var defaultPath = Path.Combine(installFolder, _defaultFilename);
             _path = Path.Combine(_folder, _filename);
 
             // Create the config if it not yet exists
